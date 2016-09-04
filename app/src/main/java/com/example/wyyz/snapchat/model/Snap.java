@@ -4,6 +4,7 @@ package com.example.wyyz.snapchat.model;
 import java.util.Date;
 
 /**
+ * A snap is a picture or a vedio.
  * Created by ZIYUAN on 3/09/2016.
  */
 public class Snap {

@@ -17,6 +17,8 @@ import java.util.Date;
 import java.util.List;
 
 /**
+ * Setup database
+ * Includes some basic options.
  * Created by ZIYUAN on 3/09/2016.
  */
 public class SnapChatDB {

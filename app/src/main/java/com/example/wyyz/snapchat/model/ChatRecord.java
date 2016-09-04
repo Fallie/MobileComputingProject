@@ -3,6 +3,7 @@ package com.example.wyyz.snapchat.model;
 import java.util.Date;
 
 /**
+ * A ChatRecord from User(senderId) to User(receiverId).
  * Created by ZIYUAN on 3/09/2016.
  */
 public class ChatRecord {

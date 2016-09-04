@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
+ * A story is made up by several snaps.
  * Created by ZIYUAN on 3/09/2016.
  */
 public class Story {

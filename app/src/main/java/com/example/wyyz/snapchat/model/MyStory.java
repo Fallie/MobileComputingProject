@@ -4,6 +4,7 @@ package com.example.wyyz.snapchat.model;
 import java.util.Date;
 
 /**
+ * MyStory is the story sent out to discover
  * Created by ZIYUAN on 3/09/2016.
  */
 public class MyStory {
@@ -12,7 +13,7 @@ public class MyStory {
     private int storyId;
     private int snapId;
     private Date timestamp;
-    private boolean whetherPublic;
+    private boolean whetherPublic;  //User can set myStory public to everybody or not
     private int snapNum;
 
     public int getId() {

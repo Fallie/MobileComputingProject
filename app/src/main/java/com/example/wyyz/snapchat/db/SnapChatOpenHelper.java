@@ -5,7 +5,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 /**
- * Setup Database
+ * SnapChatOpenHelper includes creating table statements,
+ * constructor of setup database,
+ * override onCreate() and onUpdate().
  * Created by ZIYUAN on 2/09/2016.
  */
 public class SnapChatOpenHelper extends SQLiteOpenHelper{

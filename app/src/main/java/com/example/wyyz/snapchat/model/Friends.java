@@ -4,6 +4,8 @@ package com.example.wyyz.snapchat.model;
 import java.util.Date;
 
 /**
+ * An instance of this class is one friend of User(ownerId),
+ * its fields involve all the information that can be seen by user(ownerId).
  * Created by ZIYUAN on 3/09/2016.
  */
 public class Friends {
