@@ -8,7 +8,7 @@ import java.util.Date;
  * its fields involve all the information that can be seen by user(ownerId).
  * Created by ZIYUAN on 3/09/2016.
  */
-public class Friends {
+public class Friend {
     private int ownerId;
     private int friendId;
     private Date createTime;
@@ -16,42 +16,42 @@ public class Friends {
     private boolean blocked;
     private Date lastChatTimeStamp;
     private String userName;
+    private String nickName;
     private String avatar;
-
-    public String getUserName() {
-        return userName;
-    }
+    private String QRcode;
 
     public void setUserName(String userName) {
         this.userName = userName;
-    }
-
-    public String getAvatar() {
-        return avatar;
-    }
-
-    public void setAvatar(String avatar) {
-        this.avatar = avatar;
-    }
-
-    public String getQRcode() {
-        return QRcode;
-    }
-
-    public void setQRcode(String QRcode) {
-        this.QRcode = QRcode;
-    }
-
-    public String getNickName() {
-        return nickName;
     }
 
     public void setNickName(String nickName) {
         this.nickName = nickName;
     }
 
-    private String QRcode;
-    private String nickName;
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
+    }
+
+    public void setQRcode(String QRcode) {
+        this.QRcode = QRcode;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public String getQRcode() {
+        return QRcode;
+    }
+
+
+    public String getNickName() {
+        return nickName;
+    }
 
     public int getOwnerId() {
         return ownerId;

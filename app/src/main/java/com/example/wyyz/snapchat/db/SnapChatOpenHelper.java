@@ -4,6 +4,11 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.example.wyyz.snapchat.model.Friend;
+import com.example.wyyz.snapchat.model.User;
+
+import java.util.Date;
+
 /**
  * SnapChatOpenHelper includes creating table statements,
  * constructor of setup database,

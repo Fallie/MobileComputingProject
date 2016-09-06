@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.example.wyyz.snapchat.R;
 import com.example.wyyz.snapchat.db.SnapChatDB;
+import com.example.wyyz.snapchat.model.User;
 
 import java.util.ArrayList;
 
@@ -24,12 +25,12 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     private PagerAdapter adapter;
     private TextView tv_tab0, tv_tab1, tv_tab2;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         snapChatDB = SnapChatDB.getInstance(this);
+        feedData();
 
         initView();
     }
@@ -92,6 +93,17 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                 break;
             default:
                 break;
+        }
+    }
+
+    public SnapChatDB getDbInstance(){
+        return snapChatDB;
+    }
+
+    private void feedData(){
+        User user=snapChatDB.findUserByUsername("ziyuan_w");
+        if(user==null){
+            snapChatDB.seedData();
         }
     }
 
