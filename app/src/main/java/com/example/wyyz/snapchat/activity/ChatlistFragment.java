@@ -1,16 +1,19 @@
 package com.example.wyyz.snapchat.activity;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.example.wyyz.snapchat.R;
 import com.example.wyyz.snapchat.model.Friend;
 import com.example.wyyz.snapchat.model.User;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +43,16 @@ public class ChatlistFragment extends Fragment {
         listView=(ListView) chatlistView.findViewById(R.id.list_view);
         adapter=new FriendAdapter(mainActivity,R.layout.single_friend_item,friends);
         listView.setAdapter(adapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent=new Intent(mainActivity,ChatActivity.class);
+                Gson gson=new Gson();
+                String jsonFriend=gson.toJson(friends.get(position));
+                intent.putExtra("friend", jsonFriend);
+                startActivity(intent);
+            }
+        });
         return chatlistView;
     }
 

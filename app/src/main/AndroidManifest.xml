@@ -22,7 +22,8 @@
             android:name=".LoginActivity"
             android:theme="@style/AppTheme" />
         <activity android:name=".activity.LoginActivity" />
-        <activity android:name=".activity.SignupActivity"></activity>
+        <activity android:name=".activity.SignupActivity" />
+        <activity android:name=".activity.ChatActivity" ></activity>
     </application>
 
 </manifest>
