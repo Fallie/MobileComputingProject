@@ -2,8 +2,9 @@ package com.example.wyyz.snapchat.activity;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -12,6 +13,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.wyyz.snapchat.R;
+import com.example.wyyz.snapchat.db.SnapChatDB;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -20,6 +27,9 @@ public class LoginActivity extends AppCompatActivity {
 
     private static final String TAG = "LoginActivity";
     private static final int REQUEST_SIGNUP = 0;
+    private SnapChatDB snapChatDB;
+    private FirebaseAuth mAuth;
+    private FirebaseAuth.AuthStateListener mAuthListener;
 
     @Bind(R.id.input_email) EditText _emailText;
     @Bind(R.id.input_password)EditText _passwordText;
@@ -31,8 +41,10 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
         ButterKnife.bind(this);
+        snapChatDB = SnapChatDB.getInstance(this);
+        mAuth = FirebaseAuth.getInstance();
+
 
         _loginButton.setOnClickListener(new View.OnClickListener() {
 
@@ -45,11 +57,25 @@ public class LoginActivity extends AppCompatActivity {
         _signupLink.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
-
+                finish();
                 Intent intent = new Intent(getApplicationContext(),SignupActivity.class);
-                startActivityForResult(intent,REQUEST_SIGNUP);
+                startActivity(intent);
             }
         });
+        mAuthListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+                if (user != null) {
+                    // User is signed in
+                    Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
+                } else {
+                    // User is signed out
+                    Log.d(TAG, "onAuthStateChanged:signed_out");
+                }
+
+            }
+        };
     }
 
     private void login() {
@@ -72,7 +98,30 @@ public class LoginActivity extends AppCompatActivity {
         String password = _passwordText.getText().toString();
 
         // TODO: Implement your own authentication logic here.
+        // [START sign_in_with_email]
+            mAuth.signInWithEmailAndPassword(email, password)
+                    .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            Log.d(TAG, "signInWithEmail:onComplete:" + task.isSuccessful());
 
+                            // If sign in fails, display a message to the user. If sign in succeeds
+                            // the auth state listener will be notified and logic to handle the
+                            // signed in user can be handled in the listener.
+                            if (!task.isSuccessful()) {
+                                Log.w(TAG, "signInWithEmail:failed", task.getException());
+                                Toast.makeText(LoginActivity.this, R.string.auth_failed,
+                                        Toast.LENGTH_SHORT).show();
+                            }
+
+                            // [START_EXCLUDE]
+                            if (!task.isSuccessful()) {
+                                onLoginFailed();
+                            }
+                            // [END_EXCLUDE]
+                        }
+                    });
+        // [END sign_in_with_email]
         new android.os.Handler().postDelayed(
                 new Runnable() {
                     public void run() {

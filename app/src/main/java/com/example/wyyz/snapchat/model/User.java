@@ -1,7 +1,6 @@
 package com.example.wyyz.snapchat.model;
 
 import java.util.Date;
-import java.util.List;
 
 /**
  * Created by ZIYUAN on 3/09/2016.
