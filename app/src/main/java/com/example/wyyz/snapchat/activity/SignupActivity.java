@@ -2,9 +2,11 @@ package com.example.wyyz.snapchat.activity;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -23,6 +25,10 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import net.glxn.qrgen.android.QRCode;
+
+import java.io.ByteArrayOutputStream;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
@@ -32,7 +38,7 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
     private SnapChatDB snapChatDB;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
-    //private Bitmap myBitmap;
+    private Bitmap myBitmap = null;
     private boolean isValid = false;
 
     @Bind(R.id.input_name)
@@ -135,11 +141,19 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
                             isValid = true;
                             FirebaseDatabase database = FirebaseDatabase.getInstance();
                             DatabaseReference thisRef = database.getReference("Users");
-                            DatabaseReference db = thisRef.child(mAuth.getCurrentUser().getUid());
-                            //myBitmap = QRCode.from(id).bitmap();
+                            String uid = mAuth.getCurrentUser().getUid();
+                            DatabaseReference db = thisRef.child(uid);
+                            myBitmap = QRCode.from(uid).bitmap();
+                            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                            myBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                            byte[] bytes = baos.toByteArray();
+                            String base64Image = Base64.encodeToString(bytes, Base64.DEFAULT);
+                            db.child("qrcode").setValue(base64Image);
                             db.child("username").setValue(name);
                             db.child("email").setValue(email);
-                            createUser(email,name);
+
+
+                            createUser(email,name,myBitmap);
 
                         }
 
@@ -194,16 +208,16 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
 
     }
 
-    private void createUser(String email, String name) {
+    private void createUser(String email, String name,Bitmap code) {
 
         if (isValid) {
             User currentUser = new User() {
             };
             currentUser.setEmail(email);
             currentUser.setUserName(name);
-            //currentUser.setQRcode(myBitmap);
+            currentUser.setQRcode(myBitmap);
             snapChatDB.saveUser(currentUser);
-            //db.child("qrcode").setValue(myBitmap);
+
         }
 
 
