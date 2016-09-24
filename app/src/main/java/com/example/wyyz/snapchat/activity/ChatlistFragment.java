@@ -22,7 +22,6 @@ public class ChatlistFragment extends Fragment {
     ListView listView;
     FriendAdapter adapter;
     List<Friend> friends=new ArrayList<>();
-    private MainActivity mainActivity;
 
     public ChatlistFragment() {
         // Required empty public constructor

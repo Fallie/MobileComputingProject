@@ -36,7 +36,7 @@
         android:layout_width="0dp"
         android:layout_weight="1"
         android:layout_height="match_parent"
-        android:text="signUp"
+        android:text="SignOut"
         android:textSize="16sp"
         android:gravity="center"
         />

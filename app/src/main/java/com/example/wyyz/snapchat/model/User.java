@@ -1,5 +1,7 @@
 package com.example.wyyz.snapchat.model;
 
+import android.graphics.Bitmap;
+
 import java.util.Date;
 
 /**
@@ -79,4 +81,6 @@ public class User {
         this.nickName = nickName;
     }
 
+    public void setQRcode(Bitmap myBitmap) {
+    }
 }

@@ -26,13 +26,13 @@ import com.google.firebase.database.FirebaseDatabase;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class SignupActivity extends AppCompatActivity {
+public class SignupActivity extends AppCompatActivity implements View.OnClickListener{
 
     private static final String TAG = "SignupActivity";
     private SnapChatDB snapChatDB;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
-
+    //private Bitmap myBitmap;
     private boolean isValid = false;
 
     @Bind(R.id.input_name)
@@ -52,24 +52,9 @@ public class SignupActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         snapChatDB = SnapChatDB.getInstance(this);
         mAuth = FirebaseAuth.getInstance();
+        _signupButton.setOnClickListener(this);
 
-        _signupButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                signup();
-            }
-        });
-
-        _loginLink.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Finish the registration screen and return to the Login activity
-                finish();
-
-                Intent intent = new Intent(getApplicationContext(),LoginActivity.class);
-                startActivity(intent);
-            }
-        });
+        _loginLink.setOnClickListener(this);
 
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -77,8 +62,7 @@ public class SignupActivity extends AppCompatActivity {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
                 if (user != null) {
                     // User is signed in
-                    Intent intent = new Intent(getApplicationContext(),SnapActivity.class);
-                    startActivity(intent);
+
                     Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
                 } else {
                     // User is signed out
@@ -104,15 +88,30 @@ public class SignupActivity extends AppCompatActivity {
         }
     }
 
+
+
     @Override
     public void onDestroy(){
         super.onDestroy();
-        signOut();
+        //signOut();
     }
 
-    private void createAccount(final String email,final String name, String password) {
+    @Override
+    public void onClick(View v) {
+        if (v.getId() == R.id.btn_signup){
+            signup();
+        }
+        if(v.getId() == R.id.link_login){
+            finish();
+            Intent intent = new Intent(this,MainActivity.class);
+            startActivity(intent);
+        }
+    }
+
+    private void createAccount(final String email, final String name, String password) {
         Log.d(TAG, "createAccount:" + email);
         if (!validate()) {
+            Log.d(TAG, "createAccount:" + "FAILED VALIDATION");
             return;
         }
 
@@ -123,11 +122,7 @@ public class SignupActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         Log.d(TAG, "createUserWithEmail:onComplete:" + task.isSuccessful());
 
-                        FirebaseDatabase database = FirebaseDatabase.getInstance();
-                        DatabaseReference thisRef = database.getReference("Users");
-                        DatabaseReference db = thisRef.child(mAuth.getCurrentUser().getUid());
-                        db.child("username").setValue(name);
-                        db.child("email").setValue(email);
+
 
                         // If sign in fails, display a message to the user. If sign in succeeds
                         // the auth state listener will be notified and logic to handle the
@@ -136,8 +131,19 @@ public class SignupActivity extends AppCompatActivity {
                             Toast.makeText(SignupActivity.this, R.string.register_failed,
                                     Toast.LENGTH_SHORT).show();
                         }
+                        else {
+                            isValid = true;
+                            FirebaseDatabase database = FirebaseDatabase.getInstance();
+                            DatabaseReference thisRef = database.getReference("Users");
+                            DatabaseReference db = thisRef.child(mAuth.getCurrentUser().getUid());
+                            //myBitmap = QRCode.from(id).bitmap();
+                            db.child("username").setValue(name);
+                            db.child("email").setValue(email);
+                            createUser(email,name);
 
-                        isValid = true;
+                        }
+
+
                     }
                 });
         // [END create_user_with_email]
@@ -153,18 +159,18 @@ public class SignupActivity extends AppCompatActivity {
 
         _signupButton.setEnabled(false);
 
+
         final ProgressDialog progressDialog = new ProgressDialog(SignupActivity.this,
                 R.style.AppTheme);
         progressDialog.setIndeterminate(true);
-        progressDialog.setMessage("Creating Account...");
+        progressDialog.setMessage("Authenticating...");
         progressDialog.show();
 
-        String name = _nameText.getText().toString();
-        String email = _emailText.getText().toString();
-        String password = _passwordText.getText().toString();
+        String name = _nameText.getText().toString().trim();
+        String email = _emailText.getText().toString().trim();
+        String password = _passwordText.getText().toString().trim();
 
         createAccount(email,name,password);
-        createUser(email,name,password);
 
         new android.os.Handler().postDelayed(
                 new Runnable() {
@@ -172,21 +178,32 @@ public class SignupActivity extends AppCompatActivity {
                         // On complete call either onSignupSuccess or onSignupFailed
                         // depending on success
                         onSignupSuccess();
+
                         // onSignupFailed();
-                        progressDialog.dismiss();
+                        if(progressDialog != null){
+                        progressDialog.dismiss();}
+
+                        if(isValid){
+                            finish();
+                            Intent intent = new Intent(SignupActivity.this,SnapActivity.class);
+                            startActivity(intent);
+                        }
                     }
                 }, 3000);
+
+
     }
 
-    private void createUser(String email, String name, String password) {
+    private void createUser(String email, String name) {
 
         if (isValid) {
             User currentUser = new User() {
             };
             currentUser.setEmail(email);
             currentUser.setUserName(name);
+            //currentUser.setQRcode(myBitmap);
             snapChatDB.saveUser(currentUser);
-
+            //db.child("qrcode").setValue(myBitmap);
         }
 
 
@@ -238,6 +255,7 @@ public class SignupActivity extends AppCompatActivity {
 
         return valid;
     }
+
 
 
 }

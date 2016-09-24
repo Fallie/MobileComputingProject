@@ -29,11 +29,12 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private static final String TAG = "MainActivity";
     private static final int REQUEST_SIGNUP = 0;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
+    private boolean isValid = false;
 
     @Bind(R.id.input_email) EditText _emailText;
     @Bind(R.id.input_password)EditText _passwordText;
@@ -49,23 +50,9 @@ public class MainActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
 
 
-        _loginButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                login();
-            }
-        });
+        _loginButton.setOnClickListener(this);
 
-        _signupLink.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Finish the registration screen and return to the Login activity
-                finish();
-
-                Intent intent = new Intent(getApplicationContext(),SignupActivity.class);
-                startActivity(intent);
-            }
-        });
+        _signupLink.setOnClickListener(this);
 
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -74,8 +61,7 @@ public class MainActivity extends AppCompatActivity {
                 if (user != null) {
                     // User is signed in
                     Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
-                    Intent intent = new Intent(getApplicationContext(),SnapActivity.class);
-                    startActivity(intent);
+
                 } else {
                     // User is signed out
                     Log.d(TAG, "onAuthStateChanged:signed_out");
@@ -88,12 +74,14 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onStart() {
         super.onStart();
+        Log.i(TAG,"%%%%Here it started%%%%%%%%");
         mAuth.addAuthStateListener(mAuthListener);
     }
 
     @Override
     public void onStop() {
         super.onStop();
+        Log.i(TAG,"%%%%Here it stopped%%%%%%%%");
         if (mAuthListener != null) {
             mAuth.removeAuthStateListener(mAuthListener);
         }
@@ -102,9 +90,21 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onDestroy(){
         super.onDestroy();
-        signOut();
+        Log.i(TAG,"%%%%Here it destroyed%%%%%%%%");
     }
 
+    @Override
+    public void onClick(View v)
+    {
+        if (v.getId() == R.id.btn_login){
+            login();
+        }
+        if(v.getId() == R.id.link_signup){
+            finish();
+            Intent intent = new Intent(this,SignupActivity.class);
+            startActivity(intent);
+        }
+    }
     private void login() {
         Log.d(TAG,"Login");
 
@@ -121,8 +121,8 @@ public class MainActivity extends AppCompatActivity {
         progressDialog.setMessage("Authenticating...");
         progressDialog.show();
 
-        String email = _emailText.getText().toString();
-        String password = _passwordText.getText().toString();
+        String email = _emailText.getText().toString().trim();
+        String password = _passwordText.getText().toString().trim();
 
 
         // TODO: Implement your own authentication logic here.
@@ -143,13 +143,15 @@ public class MainActivity extends AppCompatActivity {
                                     Toast.LENGTH_SHORT).show();
                         }
 
-                        Intent intent = new Intent(getApplicationContext(),SnapActivity.class);
-                        startActivity(intent);
+
 
                         // [START_EXCLUDE]
                         if (!task.isSuccessful()) {
                             onLoginFailed();
+                        }else {
+                            isValid = true;
                         }
+
                         // [END_EXCLUDE]
                     }
                 });
@@ -160,9 +162,16 @@ public class MainActivity extends AppCompatActivity {
                         // On complete call either onLoginSuccess or onLoginFailed
                         onLoginSuccess();
                         // onLoginFailed();
-                        progressDialog.dismiss();
+                        if(progressDialog != null){
+                        progressDialog.dismiss();}
+                        if(isValid){
+                            finish();
+                            Intent intent = new Intent(MainActivity.this,SnapActivity.class);
+                            startActivity(intent);
+                        }
                     }
                 }, 3000);
+
     }
 
 

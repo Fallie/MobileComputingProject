@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "47870103392-cl3d1mkv3gmg50ikfj20j4iace5ijn4j.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.wyyz.snapchat",
+            "certificate_hash": "F0B3FE118B04FDEEC55FAED00237A6D7E891AD79"
+          }
+        },
+        {
           "client_id": "47870103392-7imgda3f8tm0tugfrt5cksdn4ripttp4.apps.googleusercontent.com",
           "client_type": 3
         }

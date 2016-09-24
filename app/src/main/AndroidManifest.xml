@@ -24,7 +24,7 @@
             android:name=".activity.SignupActivity"
             android:label="@string/_SignUp"
             android:theme="@style/AppTheme"
-            android:parentActivityName=".activity.MainActivity"/>
+            />
         <activity
             android:name=".activity.SnapActivity"
             android:label="@string/_Snap"

@@ -5,7 +5,6 @@ package com.example.wyyz.snapchat.activity;
  */
 
 
-
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -19,6 +18,7 @@ import android.widget.TextView;
 import com.example.wyyz.snapchat.R;
 import com.example.wyyz.snapchat.db.SnapChatDB;
 import com.example.wyyz.snapchat.model.User;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
 
@@ -34,17 +34,14 @@ public class SnapActivity extends FragmentActivity implements View.OnClickListen
     private ArrayList<Fragment> fragments;
     private PagerAdapter adapter;
     private TextView tv_tab0, tv_tab1, tv_tab2,tv_tab3;
-
+    private FirebaseAuth firebaseAuth;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         snapChatDB = SnapChatDB.getInstance(this);
-
+        firebaseAuth = FirebaseAuth.getInstance();
         feedData();
-
-
-
         initView();
     }
 
@@ -117,8 +114,10 @@ public class SnapActivity extends FragmentActivity implements View.OnClickListen
                 pager.setCurrentItem(2);
                 break;
             case R.id.tv_tab3:
-                Intent signUpIntent = new Intent(this,SignupActivity.class);
-                startActivity(signUpIntent);
+                firebaseAuth.getInstance().signOut();
+                finish();
+                Intent intent = new Intent(this,MainActivity.class);
+                startActivity(intent);
                 break;
             default:
                 break;
