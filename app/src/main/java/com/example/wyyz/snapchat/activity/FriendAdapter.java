@@ -9,7 +9,6 @@ import android.widget.TextView;
 
 import com.example.wyyz.snapchat.R;
 import com.example.wyyz.snapchat.model.Friend;
-import com.example.wyyz.snapchat.model.Friend;
 
 import java.util.List;
 
