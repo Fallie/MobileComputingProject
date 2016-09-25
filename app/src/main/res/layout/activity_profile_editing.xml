@@ -35,32 +35,70 @@
         android:id="@+id/editing_layout"
         android:layout_below="@+id/title_layout"
         android:layout_marginTop="50dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Current Password"
+            android:textColor="#088A29"
+            android:textSize="30px"
+            android:layout_marginLeft="20dp"
+            android:layout_marginBottom="10dp"
+            android:visibility="gone"
+            android:id="@+id/tv_currentpwd"/>
         <EditText
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:textColor="#000"
             android:textSize="30px"
-            android:background="@drawable/me_border"/>
+            android:background="@drawable/me_border"
+            android:id="@+id/edit_text1"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="New Password"
+            android:textColor="#088A29"
+            android:textSize="30px"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginBottom="10dp"
+            android:visibility="gone"
+            android:id="@+id/tv_newpwd"/>
         <EditText
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:textColor="#000"
             android:textSize="30px"
-            android:background="@drawable/me_border"/>
+            android:background="@drawable/me_border"
+            android:visibility="gone"
+            android:id="@+id/et_newpwd"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Confirm Password"
+            android:textColor="#088A29"
+            android:textSize="30px"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginBottom="10dp"
+            android:visibility="gone"
+            android:id="@+id/tv_confirmpwd"/>
         <EditText
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:textColor="#000"
             android:textSize="30px"
-            android:background="@drawable/me_border"/>
+            android:background="@drawable/me_border"
+            android:visibility="gone"
+            android:id="@+id/et_confirmpwd"/>
         <Button
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:textColor="#fff"
             android:text="Save"
-            android:textSize="30px"
+            android:textSize="50px"
             android:layout_marginTop="40dp"
-            android:background="#088A29"/>
+            android:background="#088A29"
+            android:id="@+id/btn_save"/>
         </LinearLayout>
 
 </RelativeLayout>
