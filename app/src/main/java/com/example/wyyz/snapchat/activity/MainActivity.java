@@ -166,7 +166,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         progressDialog.dismiss();}
                         if(isValid){
                             finish();
-                            Intent intent = new Intent(MainActivity.this,SnapActivity.class);
+                            //Intent intent = new Intent(MainActivity.this,SnapActivity.class);
+                            Intent intent = new Intent(MainActivity.this,CameraActivity.class);
                             startActivity(intent);
                         }
                     }

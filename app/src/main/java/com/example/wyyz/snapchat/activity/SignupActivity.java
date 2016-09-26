@@ -199,7 +199,8 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
 
                         if(isValid){
                             finish();
-                            Intent intent = new Intent(SignupActivity.this,SnapActivity.class);
+                            //Intent intent = new Intent(SignupActivity.this,SnapActivity.class);
+                            Intent intent = new Intent(SignupActivity.this,CameraActivity.class);
                             startActivity(intent);
                         }
                     }
