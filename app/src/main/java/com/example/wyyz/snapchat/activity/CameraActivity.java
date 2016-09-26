@@ -44,16 +44,10 @@ import java.util.List;
 public class CameraActivity extends AppCompatActivity implements SurfaceHolder.Callback {
 
     private static final String TAG = "CameraActivity";
-    Button btnTakePhoto;
-    Button btnSwapCamera;
-    Button btnSavePhoto;
-    Button btnOpenSnap;
-    SurfaceView surfaceView;
-    SurfaceHolder surfaceHolder;
-    Camera camera;
-    Camera.Parameters parameters;
-    Bitmap photo;
-    int currentCameraId;
+    private Camera camera;
+    private Camera.Parameters parameters;
+    private Bitmap photo;
+    private int currentCameraId;
     private Uri imageUri;
     private String imageUrl;
     private FirebaseAuth mAuth;
@@ -61,6 +55,12 @@ public class CameraActivity extends AppCompatActivity implements SurfaceHolder.C
     private static final int PICTURE_RESULT = 9000;
     private boolean safeToTakePicture = false;
     private static final int chosenSize = 0;
+    Button btnTakePhoto;
+    Button btnSwapCamera;
+    Button btnSavePhoto;
+    Button btnOpenSnap;
+    SurfaceView surfaceView;
+    SurfaceHolder surfaceHolder;
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -227,7 +227,7 @@ public class CameraActivity extends AppCompatActivity implements SurfaceHolder.C
 
     private void uploadImage(Uri imageUri) {
         // Get a reference to store file at photos/<FILENAME>.jpg
-        StorageReference photoRef = mStorage.getInstance().getReference("Photos").child(mAuth.getCurrentUser().getUid())
+        StorageReference photoRef = mStorage.getInstance().getReference("Photos").child(mAuth.getInstance().getCurrentUser().getUid())
                 .child(imageUri.getLastPathSegment());
         // [END get_child_ref]
 
