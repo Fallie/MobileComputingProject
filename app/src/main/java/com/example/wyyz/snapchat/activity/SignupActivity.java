@@ -152,8 +152,7 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
                             db.child("username").setValue(name);
                             db.child("email").setValue(email);
 
-
-                            createUser(email,name,myBitmap);
+                            createUser(email,name,base64Image);
 
                         }
 
@@ -208,14 +207,14 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
 
     }
 
-    private void createUser(String email, String name,Bitmap code) {
+    private void createUser(String email, String name,String code) {
 
         if (isValid) {
             User currentUser = new User() {
             };
             currentUser.setEmail(email);
             currentUser.setUsername(name);
-            currentUser.setQRcode(myBitmap.toString());
+            currentUser.setQRcode(code);
             snapChatDB.saveUser(currentUser);
 
         }

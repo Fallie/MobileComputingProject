@@ -66,7 +66,7 @@ public class SnapChatDB {
             }
             values.put("mobile", user.getMobile());
             values.put("avatar", user.getAvatar());
-            values.put("QRcode", user.getQRcode().toString());
+            values.put("QRcode", user.getQRcode());
             db.insert("User", null, values);
         }
     }
@@ -74,11 +74,11 @@ public class SnapChatDB {
     /**
      * Find user by user name
      */
-    public User findUserByUsername(String username){
+    public User findUserByEmail(String email){
         User user=null;
         String QUERY_FRIENDS="select * from User " +
-                "where userName=?";
-        Cursor cursor = db.rawQuery(QUERY_FRIENDS, new String[]{String.valueOf(username)});
+                "where email=?";
+        Cursor cursor = db.rawQuery(QUERY_FRIENDS, new String[]{String.valueOf(email)});
         if(cursor.moveToFirst()){
             user=new User();
             user.setAvatar(cursor.getString(cursor.getColumnIndex("avatar")));
@@ -89,6 +89,23 @@ public class SnapChatDB {
             user.setQRcode(cursor.getString(cursor.getColumnIndex("QRcode")));
         }
         return user;
+    }
+    public void updateUsername(String email, String username){
+        ContentValues values = new ContentValues();
+        values.put("username", username);
+        db.update("User", values, "email=?",new String[]{email});
+    }
+
+    public void updateUserMobile(String email, String mobile){
+        ContentValues values = new ContentValues();
+        values.put("mobile", mobile);
+        db.update("User", values, "email=?",new String[]{email});
+    }
+
+    public void updateUserBirthday(String email,String birthday){
+        ContentValues values = new ContentValues();
+        values.put("birthday", birthday);
+        db.update("User", values, "email=?",new String[]{email});
     }
 
     /**
@@ -202,47 +219,52 @@ public class SnapChatDB {
     /**
      * Seed testing data
      */
-    public void seedData(){
+   public void seedData(){
         User user1=new User();
         user1.setUsername("Ziyuan");
+        user1.setEmail("ziyuan@gmail.com");
         saveUser(user1);
         User user2=new User();
         user2.setUsername("Linda");
+        user2.setEmail("linda@gmail.com");
         saveUser(user2);
         User user3=new User();
         user3.setUsername("Alice");
+        user3.setEmail("alice@gmail.com");
         saveUser(user3);
         User user4=new User();
         user4.setUsername("John");
+        user4.setEmail("john@gmail.com");
         saveUser(user4);
         User user5=new User();
         user5.setUsername("Bob");
+        user5.setEmail("bob@gmail.com");
         saveUser(user5);
 
         Friend friend1=new Friend();
-        friend1.setOwnerId(findUserByUsername("ziyuan_w").getId());
-        friend1.setFriendId(findUserByUsername("linda_a").getId());
+        friend1.setOwnerId(findUserByEmail("ziyuan@gmail.com").getId());
+        friend1.setFriendId(findUserByEmail("linda@gmail.com").getId());
         friend1.setCreateTime(new Date("Aug 21 2014 16:40:14"));
         friend1.setLastChatTimeStamp(new Date("Aug 21 2016 16:40:14"));
         saveFriendRelationship(friend1);
 
         Friend friend2=new Friend();
-        friend2.setOwnerId(findUserByUsername("ziyuan_w").getId());
-        friend2.setFriendId(findUserByUsername("alice_b").getId());
+        friend2.setOwnerId(findUserByEmail("ziyuan@gmail.com").getId());
+        friend2.setFriendId(findUserByEmail("alice@gmail.com").getId());
         friend2.setCreateTime(new Date("Aug 21 2015 16:40:14"));
         friend2.setLastChatTimeStamp(new Date("Aug 10 2016 16:40:14"));
         saveFriendRelationship(friend2);
 
         Friend friend3=new Friend();
-        friend3.setOwnerId(findUserByUsername("ziyuan_w").getId());
-        friend3.setFriendId(findUserByUsername("john_c").getId());
+        friend3.setOwnerId(findUserByEmail("ziyuan@gmail.com").getId());
+        friend3.setFriendId(findUserByEmail("john@gmail.com").getId());
         friend3.setCreateTime(new Date("Sep 21 2014 16:40:14"));
         friend3.setLastChatTimeStamp(new Date("Aug 01 2016 16:40:14"));
         saveFriendRelationship(friend3);
 
         Friend friend4=new Friend();
-        friend4.setOwnerId(findUserByUsername("ziyuan_w").getId());
-        friend4.setFriendId(findUserByUsername("bob_d").getId());
+        friend4.setOwnerId(findUserByEmail("ziyuan@gmail.com").getId());
+        friend4.setFriendId(findUserByEmail("bob@gmail.com").getId());
         friend4.setCreateTime(new Date("Jan 21 2016 16:40:14"));
         friend4.setLastChatTimeStamp(new Date("Oct 21 2016 16:40:14"));
         saveFriendRelationship(friend4);

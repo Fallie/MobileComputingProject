@@ -36,7 +36,7 @@ public class ChatlistFragment extends Fragment {
         // Inflate the layout for this fragment
         View chatlistView=inflater.inflate(R.layout.fragment_chatlist, container, false);
         final SnapActivity snapActivity = (SnapActivity) getActivity();
-        User user=snapActivity.getDbInstance().findUserByUsername("ziyuan_w");
+        User user=snapActivity.getDbInstance().findUserByEmail("ziyuan@gmail.com");
         friends= snapActivity.getDbInstance().getFriends(user.getId());
         listView=(ListView) chatlistView.findViewById(R.id.list_view);
         adapter=new FriendAdapter(snapActivity,R.layout.single_friend_item,friends);

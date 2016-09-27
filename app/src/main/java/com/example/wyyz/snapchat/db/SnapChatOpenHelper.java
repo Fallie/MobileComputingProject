@@ -17,12 +17,11 @@ public class SnapChatOpenHelper extends SQLiteOpenHelper{
     public static final String CREATE_USER = "create table User ( " +
             "id integer primary key autoincrement, " +
             "email text, " +
-            "userName text, " +
+            "username text, " +
             "birthday integer, " +
             "mobile text, " +
             "avatar text, " +
-            "QRcode text, " +
-            "nickName text)";
+            "QRcode text)";
 
     /**
      * Friends table creating statement

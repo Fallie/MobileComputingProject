@@ -129,7 +129,7 @@ public class SnapActivity extends FragmentActivity implements View.OnClickListen
     }
 
     private void feedData(){
-        User user=snapChatDB.findUserByUsername("ziyuan_w");
+        User user=snapChatDB.findUserByEmail("ziyuan@gmail.com");
         if(user==null){
             snapChatDB.seedData();
         }

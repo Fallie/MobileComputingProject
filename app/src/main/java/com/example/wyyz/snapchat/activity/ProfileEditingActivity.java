@@ -14,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.wyyz.snapchat.R;
+import com.example.wyyz.snapchat.db.SnapChatDB;
 import com.example.wyyz.snapchat.model.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -84,6 +85,7 @@ public class ProfileEditingActivity extends AppCompatActivity {
                 FirebaseUser currentUser= FirebaseAuth.getInstance().getCurrentUser();
                 DatabaseReference userRef= FirebaseDatabase.getInstance().getReference().child("Users").child(currentUser.getUid());
                 userRef.child("username").setValue(editText.getText().toString());
+                updateProfileinLocalDB(currentUser,USERNAME,editText.getText().toString());
                 ProfileEditingActivity.this.finish();
             }
         });
@@ -115,6 +117,7 @@ public class ProfileEditingActivity extends AppCompatActivity {
                 FirebaseUser currentUser= FirebaseAuth.getInstance().getCurrentUser();
                 DatabaseReference userRef= FirebaseDatabase.getInstance().getReference().child("Users").child(currentUser.getUid());
                 userRef.child("birthday").setValue(editText.getText().toString());
+                updateProfileinLocalDB(currentUser,BIRTHDAY,editText.getText().toString());
                 ProfileEditingActivity.this.finish();
             }
         });
@@ -127,6 +130,7 @@ public class ProfileEditingActivity extends AppCompatActivity {
                 FirebaseUser currentUser= FirebaseAuth.getInstance().getCurrentUser();
                 DatabaseReference userRef= FirebaseDatabase.getInstance().getReference().child("Users").child(currentUser.getUid());
                 userRef.child("mobile").setValue(editText.getText().toString());
+                updateProfileinLocalDB(currentUser,MOBILE,editText.getText().toString());
                 ProfileEditingActivity.this.finish();
             }
         });
@@ -228,6 +232,23 @@ public class ProfileEditingActivity extends AppCompatActivity {
             validate=false;
         }
         return validate;
+    }
+    private void updateProfileinLocalDB(FirebaseUser user,int item, String content){
+        String email=user.getEmail();
+        SnapChatDB db=SnapChatDB.getInstance(ProfileEditingActivity.this);
+        switch (item){
+            case USERNAME:
+                db.updateUsername(email,content);
+                break;
+            case MOBILE:
+                db.updateUserMobile(email,content);
+                break;
+            case BIRTHDAY:
+                db.updateUserBirthday(email,content);
+                break;
+            default:
+                break;
+        }
     }
     }
 
