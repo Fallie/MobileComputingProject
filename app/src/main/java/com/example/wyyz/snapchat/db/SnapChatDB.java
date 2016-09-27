@@ -143,13 +143,12 @@ public class SnapChatDB {
                 friend.setCreateTime(new Date(cursor.getLong(cursor.getColumnIndex("createTime"))));
                 friend.setEditedName(cursor.getString(cursor.getColumnIndex("editedName")));
                 friend.setLastChatTimeStamp(new Date(cursor.getLong(cursor.getColumnIndex("lastChatTimeStamp"))));
-                Cursor sub_cursor = db.rawQuery("select userName, avatar, QRcode, nickName" +
+                Cursor sub_cursor = db.rawQuery("select userName, avatar,QRcode" +
                         " from User where id=?", new String[]{String.valueOf(friend.getFriendId())});
                 if(sub_cursor.moveToFirst()){
                     friend.setUserName(sub_cursor.getString(sub_cursor.getColumnIndex("userName")));
                     friend.setAvatar(sub_cursor.getString(sub_cursor.getColumnIndex("avatar")));
                     friend.setQRcode(sub_cursor.getString(sub_cursor.getColumnIndex("QRcode")));
-                    friend.setNickName(sub_cursor.getString(sub_cursor.getColumnIndex("nickName")));
                 }
                 friends.add(friend);
                 sub_cursor.close();
