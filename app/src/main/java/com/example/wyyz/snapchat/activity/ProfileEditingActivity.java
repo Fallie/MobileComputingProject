@@ -3,14 +3,27 @@ package com.example.wyyz.snapchat.activity;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.text.InputType;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.wyyz.snapchat.R;
+import com.example.wyyz.snapchat.model.User;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.Calendar;
 
@@ -40,14 +53,18 @@ public class ProfileEditingActivity extends AppCompatActivity {
         switch (item){
             case USERNAME:
                 title.setText("Email");
+                setText(USERNAME);
                 saveUsername();
                 break;
             case BIRTHDAY:
                 title.setText("Birthday");
+                setText(BIRTHDAY);
                 saveBirthday();
                 break;
             case MOBILE:
                 title.setText("Mobile Number");
+                setText(MOBILE);
+                editText.setInputType(InputType.TYPE_CLASS_NUMBER);
                 saveMobile();
                 break;
             case PASSWORD:
@@ -64,7 +81,10 @@ public class ProfileEditingActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //update database
-                editText.setText("UserNameSAVED!!!!!");//used for testing
+                FirebaseUser currentUser= FirebaseAuth.getInstance().getCurrentUser();
+                DatabaseReference userRef= FirebaseDatabase.getInstance().getReference().child("Users").child(currentUser.getUid());
+                userRef.child("username").setValue(editText.getText().toString());
+                ProfileEditingActivity.this.finish();
             }
         });
 
@@ -92,7 +112,10 @@ public class ProfileEditingActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //update database
-                editText.setText("UserNameSAVED!!!!!");
+                FirebaseUser currentUser= FirebaseAuth.getInstance().getCurrentUser();
+                DatabaseReference userRef= FirebaseDatabase.getInstance().getReference().child("Users").child(currentUser.getUid());
+                userRef.child("birthday").setValue(editText.getText().toString());
+                ProfileEditingActivity.this.finish();
             }
         });
     }
@@ -101,7 +124,10 @@ public class ProfileEditingActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //update database
-                editText.setText("MobileSAVED!!!!!");
+                FirebaseUser currentUser= FirebaseAuth.getInstance().getCurrentUser();
+                DatabaseReference userRef= FirebaseDatabase.getInstance().getReference().child("Users").child(currentUser.getUid());
+                userRef.child("mobile").setValue(editText.getText().toString());
+                ProfileEditingActivity.this.finish();
             }
         });
     }
@@ -116,15 +142,92 @@ public class ProfileEditingActivity extends AppCompatActivity {
         tvConfirmPwd.setVisibility(View.VISIBLE);
         confirmPwd=(EditText)findViewById(R.id.et_confirmpwd);
         confirmPwd.setVisibility(View.VISIBLE);
+        editText.setInputType(129);
+        newPwd.setInputType(129);
+        confirmPwd.setInputType(129);
 
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //check password
+                //check passwordLayout
                 //update database
-                editText.setText("PasswordSAVED!!!!!");
+                String oldPassword=editText.getText().toString();
+                String newPassword=newPwd.getText().toString();
+                String confirmPassword=confirmPwd.getText().toString();
+                if(validate(oldPassword,newPassword,confirmPassword)){
+                    FirebaseUser currentUser= FirebaseAuth.getInstance().getCurrentUser();
+                    currentUser.updatePassword(newPassword).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                Toast.makeText(ProfileEditingActivity.this, "User password successfully updated.",
+                                        Toast.LENGTH_LONG).show();
+                                ProfileEditingActivity.this.finish();
+                            }else{
+                                Toast.makeText(ProfileEditingActivity.this, "Task failed.",
+                                        Toast.LENGTH_LONG).show();
+                                ProfileEditingActivity.this.finish();
+                            }
+                        }
+                    });
+                }
             }
         });
+    }
+    private void setText(final int item){
+        FirebaseUser currentUser= FirebaseAuth.getInstance().getCurrentUser();
+        DatabaseReference userRef= FirebaseDatabase.getInstance().getReference().child("Users").child(currentUser.getUid());
+        userRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                User user =dataSnapshot.getValue(User.class);
+               switch (item){
+                   case USERNAME:
+                       editText.setText(user.getUsername());
+                       break;
+                   case MOBILE:
+                       if(dataSnapshot.hasChild("mobile")){
+                           editText.setText(user.getMobile());
+                       }else{
+                           editText.setText("");
+                       }
+                       break;
+                   case BIRTHDAY:
+                       if(dataSnapshot.hasChild("birthday")){
+                           editText.setText(user.getBirthday());
+                       }else{
+                           editText.setText("");
+                       }
+                       break;
+                   default:
+                       break;
+               }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+    }
+    private boolean validate(String oldPassword, String newPassword,String confirmPassword){
+        boolean validate=true;
+        if(oldPassword.isEmpty()){
+            editText.setError("Cannot be empty.");
+            validate=false;
+        }
+        if(newPassword.isEmpty()){
+            newPwd.setError("Cannot be empty.");
+            validate=false;
+        }
+        if(confirmPassword.isEmpty()){
+            confirmPwd.setError("Cannot be empty.");
+            validate=false;
+        }
+        if(!newPassword.equals(confirmPassword)){
+            confirmPwd.setError("Not equal.");
+            validate=false;
+        }
+        return validate;
     }
     }
 

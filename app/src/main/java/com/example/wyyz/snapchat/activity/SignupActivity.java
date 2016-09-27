@@ -214,8 +214,8 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
             User currentUser = new User() {
             };
             currentUser.setEmail(email);
-            currentUser.setUserName(name);
-            currentUser.setQRcode(myBitmap);
+            currentUser.setUsername(name);
+            currentUser.setQRcode(myBitmap.toString());
             snapChatDB.saveUser(currentUser);
 
         }

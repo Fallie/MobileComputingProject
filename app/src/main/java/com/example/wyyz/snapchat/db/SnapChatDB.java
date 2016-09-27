@@ -60,14 +60,13 @@ public class SnapChatDB {
         if(user!=null){
             ContentValues values=new ContentValues();
             values.put("email",user.getEmail());
-            values.put("userName",user.getUserName());
+            values.put("userName",user.getUsername());
             if(user.getBirthday()!=null) {
-                values.put("birthday", user.getBirthday().getTime());
+                values.put("birthday", user.getBirthday());
             }
             values.put("mobile", user.getMobile());
             values.put("avatar", user.getAvatar());
-            values.put("QRcode", user.getQRcode());
-            values.put("nickName",user.getNickName());
+            values.put("QRcode", user.getQRcode().toString());
             db.insert("User", null, values);
         }
     }
@@ -82,10 +81,8 @@ public class SnapChatDB {
         Cursor cursor = db.rawQuery(QUERY_FRIENDS, new String[]{String.valueOf(username)});
         if(cursor.moveToFirst()){
             user=new User();
-            user.setNickName(cursor.getString(cursor.getColumnIndex("nickName")));
-            user.setUserName(cursor.getString(cursor.getColumnIndex("userName")));
             user.setAvatar(cursor.getString(cursor.getColumnIndex("avatar")));
-            user.setBirthday(new Date(cursor.getInt(cursor.getColumnIndex("birthday"))));
+            user.setBirthday(cursor.getString(cursor.getColumnIndex("birthday")));
             user.setEmail(cursor.getString(cursor.getColumnIndex("email")));
             user.setId(cursor.getInt(cursor.getColumnIndex("id")));
             user.setMobile(cursor.getString(cursor.getColumnIndex("mobile")));
@@ -207,24 +204,19 @@ public class SnapChatDB {
      */
     public void seedData(){
         User user1=new User();
-        user1.setUserName("ziyuan_w");
-        user1.setNickName("Ziyuan Wang");
+        user1.setUsername("Ziyuan");
         saveUser(user1);
         User user2=new User();
-        user2.setUserName("linda_a");
-        user2.setNickName("Linda");
+        user2.setUsername("Linda");
         saveUser(user2);
         User user3=new User();
-        user3.setUserName("alice_b");
-        user3.setNickName("Alice");
+        user3.setUsername("Alice");
         saveUser(user3);
         User user4=new User();
-        user4.setUserName("john_c");
-        user4.setNickName("John");
+        user4.setUsername("John");
         saveUser(user4);
         User user5=new User();
-        user5.setUserName("bob_d");
-        user5.setNickName("Bob");
+        user5.setUsername("Bob");
         saveUser(user5);
 
         Friend friend1=new Friend();

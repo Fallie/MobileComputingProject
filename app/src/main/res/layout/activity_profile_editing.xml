@@ -47,6 +47,7 @@
             android:id="@+id/tv_currentpwd"/>
         <EditText
             android:layout_width="match_parent"
+            android:paddingLeft="10dp"
             android:layout_height="50dp"
             android:textColor="#000"
             android:textSize="30px"
@@ -65,6 +66,7 @@
             android:id="@+id/tv_newpwd"/>
         <EditText
             android:layout_width="match_parent"
+            android:paddingLeft="10dp"
             android:layout_height="50dp"
             android:textColor="#000"
             android:textSize="30px"
@@ -84,6 +86,7 @@
             android:id="@+id/tv_confirmpwd"/>
         <EditText
             android:layout_width="match_parent"
+            android:paddingLeft="10dp"
             android:layout_height="50dp"
             android:textColor="#000"
             android:textSize="30px"

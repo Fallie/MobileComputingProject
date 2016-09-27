@@ -19,25 +19,17 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:text="NickName"
+        android:text=""
         android:textSize="20sp"
         android:textColor="#fff"
         android:id="@+id/tv_nickname"
         android:layout_below="@+id/imgv_avatar" />
 
-    <TextView
-        android:textColor="#fff"
-        android:text="UserName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/tv_nickname"
-        android:layout_centerHorizontal="true"
-        android:id="@+id/tv_username" />
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
-        android:layout_below="@+id/tv_username"
+        android:layout_below="@+id/tv_nickname"
         android:layout_marginTop="35dp"
         android:clickable="true"
         android:orientation="horizontal"

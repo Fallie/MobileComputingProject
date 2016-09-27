@@ -1,22 +1,27 @@
 package com.example.wyyz.snapchat.model;
 
-import android.graphics.Bitmap;
-
-import java.util.Date;
-
 /**
  * Created by ZIYUAN on 3/09/2016.
  */
 public class User {
     private int id;
     private String email;
-    private String userName;
-    private Date birthday;
+    private String username;
+    private String birthday;
     private String mobile;
     private String avatar;
     private String QRcode;
-    private String nickName;
 
+    public User() {
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
     public int getId() {
         return id;
     }
@@ -33,19 +38,11 @@ public class User {
         this.email = email;
     }
 
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
-    public Date getBirthday() {
+    public String getBirthday() {
         return birthday;
     }
 
-    public void setBirthday(Date birthday) {
+    public void setBirthday(String birthday) {
         this.birthday = birthday;
     }
 
@@ -65,22 +62,21 @@ public class User {
         this.avatar = avatar;
     }
 
-    public String getQRcode() {
+    /*public Bitmap getQRcode() {
         return QRcode;
     }
 
-    public void setQRcode(String QRcode) {
-        this.QRcode = QRcode;
-    }
-
-    public String getNickName() {
-        return nickName;
-    }
-
-    public void setNickName(String nickName) {
-        this.nickName = nickName;
-    }
-
     public void setQRcode(Bitmap myBitmap) {
+        this.QRcode=myBitmap;
+    }*/
+    public String getQRcode(){
+        return QRcode;
+    }
+    public void setQRcode(String myBitmap){
+        if(myBitmap==null){
+            this.QRcode=null;
+        }else {
+            this.QRcode = myBitmap.toString();
+        }
     }
 }
