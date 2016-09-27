@@ -15,16 +15,12 @@ import android.widget.Toast;
 
 import com.example.wyyz.snapchat.R;
 import com.example.wyyz.snapchat.db.SnapChatDB;
-import com.example.wyyz.snapchat.model.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import java.util.Calendar;
 
@@ -54,17 +50,17 @@ public class ProfileEditingActivity extends AppCompatActivity {
         switch (item){
             case USERNAME:
                 title.setText("Email");
-                setText(USERNAME);
+                setText(intent);
                 saveUsername();
                 break;
             case BIRTHDAY:
                 title.setText("Birthday");
-                setText(BIRTHDAY);
+                setText(intent);
                 saveBirthday();
                 break;
             case MOBILE:
                 title.setText("Mobile Number");
-                setText(MOBILE);
+                setText(intent);
                 editText.setInputType(InputType.TYPE_CLASS_NUMBER);
                 saveMobile();
                 break;
@@ -178,41 +174,11 @@ public class ProfileEditingActivity extends AppCompatActivity {
             }
         });
     }
-    private void setText(final int item){
-        FirebaseUser currentUser= FirebaseAuth.getInstance().getCurrentUser();
-        DatabaseReference userRef= FirebaseDatabase.getInstance().getReference().child("Users").child(currentUser.getUid());
-        userRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                User user =dataSnapshot.getValue(User.class);
-               switch (item){
-                   case USERNAME:
-                       editText.setText(user.getUsername());
-                       break;
-                   case MOBILE:
-                       if(dataSnapshot.hasChild("mobile")){
-                           editText.setText(user.getMobile());
-                       }else{
-                           editText.setText("");
-                       }
-                       break;
-                   case BIRTHDAY:
-                       if(dataSnapshot.hasChild("birthday")){
-                           editText.setText(user.getBirthday());
-                       }else{
-                           editText.setText("");
-                       }
-                       break;
-                   default:
-                       break;
-               }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        });
+    private void setText(Intent intent){
+        String content=intent.getStringExtra("content");
+        editText.setText(content);
     }
+
     private boolean validate(String oldPassword, String newPassword,String confirmPassword){
         boolean validate=true;
         if(oldPassword.isEmpty()){

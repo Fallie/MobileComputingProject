@@ -87,6 +87,7 @@ public class SnapChatDB {
             user.setId(cursor.getInt(cursor.getColumnIndex("id")));
             user.setMobile(cursor.getString(cursor.getColumnIndex("mobile")));
             user.setQRcode(cursor.getString(cursor.getColumnIndex("QRcode")));
+            user.setUsername(cursor.getString(cursor.getColumnIndex("userName")));
         }
         return user;
     }

@@ -9,51 +9,34 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.wyyz.snapchat.R;
+import com.example.wyyz.snapchat.db.SnapChatDB;
 import com.example.wyyz.snapchat.model.User;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 public class ProfileActivity extends AppCompatActivity implements View.OnClickListener{
     TextView _nickName;
     ImageView settings;
+    FirebaseUser user;
+    User currentUser;
+    SnapChatDB db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
+        user= FirebaseAuth.getInstance().getCurrentUser();
+        db=SnapChatDB.getInstance(ProfileActivity.this);
         _nickName=(TextView)findViewById(R.id.tv_nickname);
-
-        FirebaseUser currentUser=FirebaseAuth.getInstance().getCurrentUser();
-        DatabaseReference userRef= FirebaseDatabase.getInstance().getReference().child("Users").child(currentUser.getUid());
-        userRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                User user =dataSnapshot.getValue(User.class);
-                _nickName.setText(user.getUsername());
-               /* if(dataSnapshot.hasChild("usernameLayout")){
-                    Log.d("HEY!!!","TRUE!");
-                }
-                if(dataSnapshot.hasChild("mobileLayout")){
-                    Log.d("YEAH?!","aaa");
-                }else{
-                    Log.d("NO mobileLayout yet","bbb");
-                }*/
-                //Log.d("mobileLayout???",user.getMobile());
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        });
         settings=(ImageView)findViewById(R.id.imgv_settings);
         settings.setOnClickListener(this);
-       
+    }
+
+    protected void onResume(){
+        super.onResume();
+        currentUser=db.findUserByEmail(user.getEmail());
+        _nickName.setText(currentUser.getUsername());
     }
 
     @Override

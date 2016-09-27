@@ -17,7 +17,7 @@ public class SnapChatOpenHelper extends SQLiteOpenHelper{
     public static final String CREATE_USER = "create table User ( " +
             "id integer primary key autoincrement, " +
             "email text, " +
-            "username text, " +
+            "userName text, " +
             "birthday integer, " +
             "mobile text, " +
             "avatar text, " +
