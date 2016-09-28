@@ -13,9 +13,11 @@
     <string name="_SignUp">SignUp</string>
     <string name="_Snap">Snap</string>
     <string name="camera">Camera</string>
+    <string name="preview">EditOnPreview</string>
     <string name="takePicture">Take Picture</string>
     <string name="swapCamera">Swap Camera</string>
     <string name="savePic">Save to Snap</string>
     <string name="openSnap">Open Snap</string>
+    <string name="timer">3</string>
 
 </resources>
