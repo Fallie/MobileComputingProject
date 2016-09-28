@@ -3,7 +3,7 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/editView"
+        android:id="@+id/mainCameraView"
         tools:context="com.example.wyyz.snapchat.activity.CameraActivity">
         <SurfaceView
             android:layout_width="match_parent"

@@ -42,25 +42,34 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-/**
+/** This class is for take picture and pass the temporary picture to preview activity for further
+ *  edition. This class first check the permission of accessing camera is on in settings and request
+ *  if is not. The switch of camera facing is also supported.
  * Created by Fallie on 25/09/2016.
  */
 
 public class CameraActivity extends AppCompatActivity implements SurfaceHolder.Callback {
 
     private static final String TAG = "CameraActivity";
+    //The code used for switch on the camera in settings.
     private static final int REQUEST_CAMERA = 0;
     private Camera camera;
     private Camera.Parameters parameters;
+    //The temporary photo taken by this time.
     private Bitmap photo;
+    //The current facing of the camera.
     private int currentCameraId;
     private Uri imageUri;
     private String imageUrl;
     private FirebaseAuth mAuth;
     private FirebaseStorage mStorage;
     private boolean safeToTakePicture = false;
+    //The chosen size list index of the pic taken by camera.
     private static final int chosenSize = 0;
+    //If the permission of accessing camera is set to true or false.
     private boolean permission = false;
+
+    /*Buttons and views used in the corresponding layout.*/
     Button btnTakePhoto;
     Button btnSwapCamera;
     Button btnSavePhoto;
@@ -78,7 +87,8 @@ public class CameraActivity extends AppCompatActivity implements SurfaceHolder.C
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.camera_main);
-        mLayout = findViewById(R.id.editView);
+        mLayout = findViewById(R.id.mainCameraView);
+        //Check if the permission of accessing camera is on or off.
         checkPermission();
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -86,7 +96,7 @@ public class CameraActivity extends AppCompatActivity implements SurfaceHolder.C
         Log.i(TAG, "Activity created!");
     }
 
-
+    // Actions need to be done if permission is granted.
     public void actOnGranted(){
         surfaceView = (SurfaceView) findViewById(R.id.cameraSurface);
         surfaceView.setOnLongClickListener(new View.OnLongClickListener() {
@@ -95,7 +105,8 @@ public class CameraActivity extends AppCompatActivity implements SurfaceHolder.C
                 parameters = camera.getParameters();
                 if (parameters.getMaxNumDetectedFaces() > 0) {
                     camera.startFaceDetection();
-                    Toast.makeText(getApplicationContext(), "Face detection started", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "Face detection started",
+                            Toast.LENGTH_LONG).show();
                 }
                 return false;
             }
@@ -106,16 +117,15 @@ public class CameraActivity extends AppCompatActivity implements SurfaceHolder.C
 
     }
 
+    //Check if the permission is granted.
     public void checkPermission() {
         Log.i(TAG, "Checking permission of camera usage.");
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
                 != PackageManager.PERMISSION_GRANTED) {
             // Camera permission has not been granted.
-
+            // Promote info to request for the permission.
             requestCameraPermission();
-
         } else {
-
             // Camera permissions is already available, show the camera preview.
             Log.i(TAG,
                     "CAMERA permission has already been granted. Displaying camera preview.");
@@ -126,9 +136,9 @@ public class CameraActivity extends AppCompatActivity implements SurfaceHolder.C
 
     }
 
+    //Promote info to request permission.
     private void requestCameraPermission() {
         Log.i(TAG, "CAMERA permission has NOT been granted. Requesting permission.");
-
         // BEGIN_INCLUDE(camera_permission_request)
         if (ActivityCompat.shouldShowRequestPermissionRationale(this,
                 Manifest.permission.CAMERA)) {
@@ -157,6 +167,7 @@ public class CameraActivity extends AppCompatActivity implements SurfaceHolder.C
         // END_INCLUDE(camera_permission_request)
     }
 
+    //Listen to the request when user clicks "allow" to grant the permission.
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
@@ -165,14 +176,13 @@ public class CameraActivity extends AppCompatActivity implements SurfaceHolder.C
             // BEGIN_INCLUDE(permission_result)
             // Received permission result for camera permission.
             Log.i(TAG, "Received response for Camera permission request.");
-
             // Check if the only required permission has been granted
             if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 // Camera permission has been granted, preview can be displayed
                 permission = true;
                 Log.i(TAG, "CAMERA permission has now been granted. Showing preview.");
                 actOnGranted();
-                Snackbar.make(mLayout, "Camera Permission has been granted. Preview can now be opened.",
+                Snackbar.make(mLayout, "Camera Permission has been granted.",
                         Snackbar.LENGTH_SHORT).show();
             } else {
                 Log.i(TAG, "CAMERA permission was NOT granted.");
@@ -199,8 +209,6 @@ public class CameraActivity extends AppCompatActivity implements SurfaceHolder.C
                 } else Log.i(TAG, "fail to take photos.");
             }
         });
-
-
         btnSwapCamera = (Button) findViewById(R.id.btnFront);
         btnSwapCamera.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -208,7 +216,6 @@ public class CameraActivity extends AppCompatActivity implements SurfaceHolder.C
                 switchCamera();
             }
         });
-
         btnSavePhoto = (Button) findViewById(R.id.btnSave);
         btnSavePhoto.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -226,8 +233,6 @@ public class CameraActivity extends AppCompatActivity implements SurfaceHolder.C
                 startActivity(intent);
             }
         });
-
-
     }
 
     public void takePhoto() {
@@ -252,7 +257,8 @@ public class CameraActivity extends AppCompatActivity implements SurfaceHolder.C
                 if(currentCameraId == Camera.CameraInfo.CAMERA_FACING_BACK)
                     matrix.postRotate(90);
                 else matrix.postRotate(270);
-                Bitmap tmpPhoto = Bitmap.createBitmap(photo, 0, 0, photo.getWidth(), photo.getHeight(), matrix, true);
+                Bitmap tmpPhoto = Bitmap.createBitmap(photo, 0, 0, photo.getWidth(),
+                        photo.getHeight(), matrix, true);
                 TmpPhotoView.photo = tmpPhoto;
                 //finish();
                 startActivity(intent);
@@ -289,7 +295,8 @@ public class CameraActivity extends AppCompatActivity implements SurfaceHolder.C
     }
 
     public void downloadImagePublic() {
-        File dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "MyCameraApp");
+        File dir = new File(Environment.getExternalStoragePublicDirectory
+                (Environment.DIRECTORY_PICTURES), "MyCameraApp");
         if (!dir.exists()) {
             dir.mkdir();
         }
@@ -333,7 +340,8 @@ public class CameraActivity extends AppCompatActivity implements SurfaceHolder.C
 
     private void uploadImage(Uri imageUri) {
         // Get a reference to store file at photos/<FILENAME>.jpg
-        StorageReference photoRef = mStorage.getInstance().getReference("Photos").child(mAuth.getInstance().getCurrentUser().getUid())
+        StorageReference photoRef = mStorage.getInstance().getReference("Photos")
+                .child(mAuth.getInstance().getCurrentUser().getUid())
                 .child(imageUri.getLastPathSegment());
         // [END get_child_ref]
 
@@ -386,13 +394,15 @@ public class CameraActivity extends AppCompatActivity implements SurfaceHolder.C
                 @Override
                 public void onFaceDetection(Camera.Face[] faces, Camera camera) {
                     if (faces.length > 0) {
-                        System.out.println("@ Location X " + faces[0].rect.centerX() + "Location Y: " + faces[0].rect.centerY());
+                        System.out.println("@ Location X " + faces[0].rect.centerX()
+                                + "Location Y: " + faces[0].rect.centerY());
                     }
                 }
             });
             parameters = camera.getParameters();
             List<Camera.Size> sizeList = parameters.getSupportedPictureSizes();
-            parameters.setPictureSize(sizeList.get(chosenSize).width, sizeList.get(chosenSize).height);
+            parameters.setPictureSize(sizeList.get(chosenSize).width,
+                    sizeList.get(chosenSize).height);
             camera.setParameters(parameters);
             camera.setDisplayOrientation(90);
             try {
@@ -415,7 +425,8 @@ public class CameraActivity extends AppCompatActivity implements SurfaceHolder.C
             @Override
             public void onFaceDetection(Camera.Face[] faces, Camera camera) {
                 if (faces.length > 0) {
-                    System.out.println("@ Location X " + faces[0].rect.centerX() + "Location Y: " + faces[0].rect.centerY());
+                    System.out.println("@ Location X " + faces[0].rect.centerX()
+                            + "Location Y: " + faces[0].rect.centerY());
                 }
             }
         });
