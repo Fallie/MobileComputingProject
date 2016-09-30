@@ -29,35 +29,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
-        android:layout_below="@+id/tv_nickname"
-        android:layout_marginTop="35dp"
-        android:clickable="true"
-        android:orientation="horizontal"
-        android:id="@+id/addedme">
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/smile_face" />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="#fff"
-            android:textSize="20sp"
-            android:fontFamily="serif"
-            android:layout_marginLeft="5dp"
-            android:clickable="true"
-            android:text="Added me"/>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
         android:layout_below="@+id/addfriend"
         android:layout_marginTop="35dp"
         android:clickable="true"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:id="@+id/layout_myfriends">
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -83,35 +59,6 @@
         android:layout_marginBottom="19dp"
         android:id="@+id/imageView3" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        android:layout_marginTop="35dp"
-        android:clickable="true"
-        android:orientation="horizontal"
-        android:id="@+id/addfriend"
-        android:layout_below="@+id/addedme"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginLeft="15dp"
-        android:layout_marginStart="15dp">
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/add_friend" />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="#fff"
-            android:textSize="20sp"
-            android:fontFamily="serif"
-            android:layout_marginLeft="5dp"
-            android:clickable="true"
-            android:text="Add Friends"/>
-
-    </LinearLayout>
-
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -124,4 +71,59 @@
         android:layout_marginTop="25dp"
         android:clickable="true"
         android:id="@+id/imgv_settings" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:layout_marginTop="33dp"
+        android:clickable="true"
+        android:orientation="horizontal"
+        android:id="@+id/addedme"
+        android:layout_below="@+id/tv_nickname"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/smile_face" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#fff"
+            android:textSize="20sp"
+            android:fontFamily="serif"
+            android:layout_marginLeft="5dp"
+            android:clickable="true"
+            android:text="Added me"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:layout_marginTop="35dp"
+        android:clickable="true"
+        android:orientation="horizontal"
+        android:id="@+id/addfriend"
+        android:layout_below="@+id/addedme"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/add_friend" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#fff"
+            android:textSize="20sp"
+            android:fontFamily="serif"
+            android:layout_marginLeft="5dp"
+            android:clickable="true"
+            android:text="Add Friends"
+            android:id="@+id/tv_addfriend"/>
+
+    </LinearLayout>
 </RelativeLayout>

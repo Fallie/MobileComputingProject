@@ -31,7 +31,8 @@
         <activity android:name=".activity.ChatActivity" />
         <activity android:name=".activity.ProfileActivity" />
         <activity android:name=".activity.SettingsActivity" />
-        <activity android:name=".activity.ProfileEditingActivity"></activity>
+        <activity android:name=".activity.ProfileEditingActivity" />
+        <activity android:name=".activity.AddFriendsActivity"></activity>
     </application>
 
 </manifest>
