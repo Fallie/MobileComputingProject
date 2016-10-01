@@ -156,6 +156,25 @@ public class LoginActivity extends AppCompatActivity {
 
     public void onLoginSuccess() {
         _loginButton.setEnabled(true);
+      /*  snapChatDB=SnapChatDB.getInstance(LoginActivity.this);
+        User user=snapChatDB.findUserByEmail(_emailText.getText().toString());
+        Log.d("Can I get text??", _emailText.getText().toString());
+        if(user==null){
+            FirebaseUser currentUser=FirebaseAuth.getInstance().getCurrentUser();
+            DatabaseReference userRef= FirebaseDatabase.getInstance().getReference().child("Users").child(currentUser.getUid());
+            userRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    User remoteUser=dataSnapshot.getValue(User.class);
+                    snapChatDB.saveUser(remoteUser);
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+        }*/
         finish();
     }
 

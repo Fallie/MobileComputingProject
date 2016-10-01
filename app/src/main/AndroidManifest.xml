@@ -32,7 +32,9 @@
         <activity android:name=".activity.ProfileActivity" />
         <activity android:name=".activity.SettingsActivity" />
         <activity android:name=".activity.ProfileEditingActivity" />
-        <activity android:name=".activity.AddFriendsActivity"></activity>
+        <activity android:name=".activity.AddFriendsActivity" />
+        <activity android:name=".activity.AddFriendByUsernameActivity" />
+        <activity android:name=".activity.AddedmeActivity"></activity>
     </application>
 
 </manifest>

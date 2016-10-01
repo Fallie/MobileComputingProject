@@ -8,7 +8,8 @@ import java.util.Date;
  * its fields involve all the information that can be seen by user(ownerId).
  * Created by ZIYUAN on 3/09/2016.
  */
-public class Friend {
+public class
+Friend {
     private int ownerId;
     private int friendId;
     private Date createTime;
