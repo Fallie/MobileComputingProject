@@ -175,4 +175,6 @@ class UserAdapter extends ArrayAdapter<User>{
 class ViewHolder{
     TextView username;
     TextView email;
+    TextView accept;
+    TextView ignore;
 }

@@ -40,7 +40,8 @@
         android:paddingRight="5dp"
         android:paddingBottom="2dp"
         android:paddingTop="2dp"
-        android:background="@drawable/request_border"/>
+        android:background="@drawable/request_border"
+        android:id="@+id/tv_accept"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -56,7 +57,8 @@
         android:paddingRight="5dp"
         android:paddingBottom="2dp"
         android:paddingTop="2dp"
-        android:background="@drawable/request_border"/>
+        android:background="@drawable/request_border"
+        android:id="@+id/tv_ignore"/>
 
 
 </RelativeLayout>

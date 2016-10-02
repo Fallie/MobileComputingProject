@@ -18,6 +18,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     TextView _nickName;
     ImageView settings;
     TextView addfriends;
+    TextView addedme;
     FirebaseUser user;
     User currentUser;
     SnapChatDB db;
@@ -34,6 +35,8 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         settings.setOnClickListener(this);
         addfriends=(TextView)findViewById(R.id.tv_addfriend);
         addfriends.setOnClickListener(this);
+        addedme=(TextView) findViewById(R.id.tv_addedme);
+        addedme.setOnClickListener(this);
     }
 
     protected void onResume(){
@@ -52,6 +55,10 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             case R.id.tv_addfriend:
                 Intent intent1=new Intent(ProfileActivity.this, AddFriendsActivity.class);
                 startActivity(intent1);
+                break;
+            case R.id.tv_addedme:
+                Intent intent2=new Intent(ProfileActivity.this, AddedmeActivity.class);
+                startActivity(intent2);
                 break;
             default:
                 break;

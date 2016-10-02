@@ -95,7 +95,8 @@
             android:fontFamily="serif"
             android:layout_marginLeft="5dp"
             android:clickable="true"
-            android:text="Added me"/>
+            android:text="Added me"
+            android:id="@+id/tv_addedme"/>
 
     </LinearLayout>
 
