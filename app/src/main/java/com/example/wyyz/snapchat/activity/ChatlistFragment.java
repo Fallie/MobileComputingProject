@@ -1,17 +1,19 @@
 package com.example.wyyz.snapchat.activity;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
-import com.example.wyyz.snapchat.R;
 import com.example.wyyz.snapchat.model.Friend;
 import com.example.wyyz.snapchat.model.User;
-
+import com.google.gson.Gson;
+import com.example.wyyz.snapchat.R;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,7 +25,6 @@ public class ChatlistFragment extends Fragment {
     ListView listView;
     FriendAdapter adapter;
     List<Friend> friends=new ArrayList<>();
-    private MainActivity mainActivity;
 
     public ChatlistFragment() {
         // Required empty public constructor
@@ -33,13 +34,23 @@ public class ChatlistFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-         View chatlistView=inflater.inflate(R.layout.fragment_chatlist, container, false);
-        mainActivity =(MainActivity) getActivity();
-        User user=mainActivity.getDbInstance().findUserByUsername("ziyuan_w");
-        friends= mainActivity.getDbInstance().getFriends(user.getId());
+        View chatlistView=inflater.inflate(R.layout.fragment_chatlist, container, false);
+        final SnapActivity snapActivity = (SnapActivity) getActivity();
+        User user=snapActivity.getDbInstance().findUserByEmail("ziyuan@gmail.com");
+        friends= snapActivity.getDbInstance().getFriends(user.getId());
         listView=(ListView) chatlistView.findViewById(R.id.list_view);
-        adapter=new FriendAdapter(mainActivity,R.layout.single_friend_item,friends);
+        adapter=new FriendAdapter(snapActivity,R.layout.single_friend_item,friends);
         listView.setAdapter(adapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent=new Intent(snapActivity,ChatActivity.class);
+                Gson gson=new Gson();
+                String jsonFriend=gson.toJson(friends.get(position));
+                intent.putExtra("friend", jsonFriend);
+                startActivity(intent);
+            }
+        });
         return chatlistView;
     }
 

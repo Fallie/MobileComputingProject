@@ -14,6 +14,9 @@ public class ChatRecord {
     private int storyId;
     private String content;
     private Date timestamp;
+    private int type;
+    public static final int TYPE_RECEIVED = 0;
+    public static final int TYPE_SENT = 1;
 
     public int getId() {
         return id;
@@ -69,6 +72,14 @@ public class ChatRecord {
 
     public void setTimestamp(Date timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
     }
 
 }

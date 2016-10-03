@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    tools:context="com.example.wyyz.snapchat.activity.PreviewActivity">
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@color/previewBackground"
+        android:id="@+id/previewImage"
+        />
+
+    <Button
+        android:layout_width="30dp"
+        android:layout_gravity="left|top"
+        android:background="@drawable/close"
+        android:id="@+id/btnReturnCamera"
+        android:layout_height="30dp"
+        android:layout_margin="5dp" />
+
+    <Button
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:background="@drawable/next"
+        android:layout_gravity="right|bottom"
+        android:id="@+id/btnNextStep"
+        android:layout_margin="10dp" />
+
+    <Button
+        android:background="@drawable/savetomemory"
+        android:layout_gravity="bottom"
+        android:id="@+id/btnSaveToMemory"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="69dp" />
+
+    <Button
+        android:background="@drawable/timer"
+        android:layout_gravity="bottom"
+        android:id="@+id/btnTimer"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="20dp" />
+
+    <Button
+        android:background="@drawable/addstory"
+        android:layout_gravity="bottom"
+        android:id="@+id/btnAddToStory"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="120dp" />
+
+    <Button
+        android:background="@drawable/happiness"
+        android:layout_gravity="top"
+        android:id="@+id/btnAddPicto"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginLeft="220dp"
+        android:layout_marginTop="5dp" />
+
+    <Button
+        android:background="@drawable/penandpaper"
+        android:layout_gravity="top"
+        android:id="@+id/btnAddNote"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginLeft="275dp"
+        android:layout_marginTop="5dp"/>
+
+    <Button
+        android:background="@drawable/pencil"
+        android:layout_gravity="top"
+        android:id="@+id/btnDraw"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginLeft="325dp"
+        android:layout_marginTop="5dp"/>
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/secondNumber"
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="15dp"
+        android:layout_marginLeft="31dp"
+        android:text="@string/timer"
+        android:textColor="@color/timerColor" />
+
+
+</FrameLayout>
