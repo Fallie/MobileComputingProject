@@ -29,6 +29,7 @@ public class PreviewActivity extends AppCompatActivity implements View.OnClickLi
     private FirebaseAuth mAuth;
     private FirebaseStorage mStorage;
     private static final int chosenSize = 0;
+    private int secondNumber = 3;
 
     Button returnCamera;
     Button nextStep;
@@ -125,5 +126,6 @@ public class PreviewActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void setTimer() {
+
     }
 }
