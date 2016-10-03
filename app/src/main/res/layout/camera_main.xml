@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/mainCameraView"
+        tools:context="com.example.wyyz.snapchat.activity.CameraActivity">
+        <SurfaceView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/cameraSurface"
+            />
+
+        <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/savePic"
+                android:layout_gravity="right|bottom"
+                android:id="@+id/btnSave"
+                android:textSize="10dp"
+                android:visibility="gone"
+                />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left|top"
+            android:text="@string/openSnap"
+            android:id="@+id/btnOpenSnap"
+            android:textSize="10dp"
+            />
+
+    <Button
+        android:layout_width="41dp"
+        android:layout_height="38dp"
+        android:layout_gravity="right|top"
+        android:id="@+id/btnFront"
+        android:background="@drawable/rotatecamera"
+
+        />
+
+        <Button
+            android:layout_gravity="center|bottom"
+            android:background="@drawable/oval"
+            android:id="@+id/btnButton"
+            android:layout_width="45dp"
+            android:layout_height="45dp" />
+    </FrameLayout>

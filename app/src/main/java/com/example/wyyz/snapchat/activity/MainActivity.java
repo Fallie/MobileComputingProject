@@ -18,11 +18,18 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.wyyz.snapchat.R;
+import com.example.wyyz.snapchat.db.SnapChatDB;
+import com.example.wyyz.snapchat.model.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -34,6 +41,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
     private boolean isValid = false;
+    private SnapChatDB snapChatDB;
 
     @Bind(R.id.input_email) EditText _emailText;
     @Bind(R.id.input_password)EditText _passwordText;
@@ -164,8 +172,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         if(progressDialog != null){
                         progressDialog.dismiss();}
                         if(isValid){
+                            syncUser();
+                            //Intent intent = new Intent(MainActivity.this,SnapActivity.class);
+                            Intent intent = new Intent(MainActivity.this,CameraActivity.class);
                             finish();
-                            Intent intent = new Intent(MainActivity.this,SnapActivity.class);
                             startActivity(intent);
                         }
                     }
@@ -228,5 +238,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public void signOut(){
         mAuth.getInstance().signOut();
+    }
+
+    private void syncUser(){
+        snapChatDB=SnapChatDB.getInstance(MainActivity.this);
+        User user=snapChatDB.findUserByEmail(_emailText.getText().toString());
+        Log.d("Can I get text??", _emailText.getText().toString());
+        if(user==null){
+            FirebaseUser currentUser=FirebaseAuth.getInstance().getCurrentUser();
+            DatabaseReference userRef= FirebaseDatabase.getInstance().getReference().child("Users").child(currentUser.getUid());
+            userRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    User remoteUser=dataSnapshot.getValue(User.class);
+                    snapChatDB.saveUser(remoteUser);
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+        }
     }
 }
