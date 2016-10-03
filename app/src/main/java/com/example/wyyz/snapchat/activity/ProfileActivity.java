@@ -17,6 +17,7 @@ import com.google.firebase.auth.FirebaseUser;
 public class ProfileActivity extends AppCompatActivity implements View.OnClickListener{
     TextView _nickName;
     ImageView settings;
+    ImageView cameraOpening;
     TextView addfriends;
     TextView addedme;
     FirebaseUser user;
@@ -33,6 +34,8 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         _nickName=(TextView)findViewById(R.id.tv_nickname);
         settings=(ImageView)findViewById(R.id.imgv_settings);
         settings.setOnClickListener(this);
+        cameraOpening=(ImageView)findViewById(R.id.imageView3);
+        cameraOpening.setOnClickListener(this);
         addfriends=(TextView)findViewById(R.id.tv_addfriend);
         addfriends.setOnClickListener(this);
         addedme=(TextView) findViewById(R.id.tv_addedme);
@@ -59,6 +62,10 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             case R.id.tv_addedme:
                 Intent intent2=new Intent(ProfileActivity.this, AddedmeActivity.class);
                 startActivity(intent2);
+                break;
+            case R.id.imageView3:
+                Intent intent3=new Intent(ProfileActivity.this, CameraActivity.class);
+                startActivity(intent3);
                 break;
             default:
                 break;

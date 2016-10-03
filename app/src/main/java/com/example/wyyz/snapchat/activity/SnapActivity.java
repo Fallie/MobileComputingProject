@@ -13,6 +13,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.wyyz.snapchat.R;
@@ -35,12 +36,21 @@ public class SnapActivity extends FragmentActivity implements View.OnClickListen
     private PagerAdapter adapter;
     private TextView tv_tab0, tv_tab1, tv_tab2,tv_tab3;
     private FirebaseAuth firebaseAuth;
+    Button btnCamera;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         snapChatDB = SnapChatDB.getInstance(this);
         firebaseAuth = FirebaseAuth.getInstance();
+        btnCamera = (Button) findViewById(R.id.btnButton);
+        btnCamera.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(SnapActivity.this, CameraActivity.class);
+                startActivity(intent);
+            }
+        });
         feedData();
         initView();
     }

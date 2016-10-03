@@ -74,6 +74,7 @@ public class CameraActivity extends AppCompatActivity implements SurfaceHolder.C
     Button btnSwapCamera;
     Button btnSavePhoto;
     Button btnOpenSnap;
+    Button btnProfile;
     SurfaceView surfaceView;
     SurfaceHolder surfaceHolder;
     View mLayout;
@@ -224,6 +225,15 @@ public class CameraActivity extends AppCompatActivity implements SurfaceHolder.C
             }
         });
 
+        btnProfile = (Button) findViewById(R.id.btnProfile);
+        btnProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+                Intent intent = new Intent(CameraActivity.this, ProfileActivity.class);
+                startActivity(intent);
+            }
+        });
         btnOpenSnap = (Button) findViewById(R.id.btnOpenSnap);
         btnOpenSnap.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -22,27 +22,56 @@
                 />
 
         <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="left|top"
-            android:text="@string/openSnap"
+            android:layout_gravity="center|bottom"
             android:id="@+id/btnOpenSnap"
-            android:textSize="10dp"
+            android:background="@drawable/share"
+            android:backgroundTint="@color/timerColor"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_marginBottom="8dp" />
+
+        <Button
+            android:layout_width="41dp"
+            android:layout_height="38dp"
+            android:layout_gravity="right|top"
+            android:id="@+id/btnFront"
+            android:background="@drawable/rotatecamera"
+
             />
-
-    <Button
-        android:layout_width="41dp"
-        android:layout_height="38dp"
-        android:layout_gravity="right|top"
-        android:id="@+id/btnFront"
-        android:background="@drawable/rotatecamera"
-
-        />
 
         <Button
             android:layout_gravity="center|bottom"
             android:background="@drawable/oval"
             android:id="@+id/btnButton"
             android:layout_width="45dp"
-            android:layout_height="45dp" />
+            android:layout_height="45dp"
+            android:layout_marginBottom="45dp" />
+
+        <Button
+            android:layout_gravity="center|top"
+            android:id="@+id/btnProfile"
+            android:background="@drawable/snapchat"
+            android:layout_marginTop="6dp"
+            android:layout_width="26dp"
+            android:layout_height="26dp"
+            android:backgroundTint="@color/timerColor" />
+
+        <Button
+            android:layout_gravity="left|bottom"
+            android:id="@+id/btnMsg"
+            android:background="@drawable/msg"
+            android:layout_width="26dp"
+            android:layout_height="26dp"
+            android:backgroundTint="@color/timerColor"
+            android:layout_margin="15dp" />
+
+        <Button
+            android:layout_gravity="right|bottom"
+            android:id="@+id/btnDiscover"
+            android:background="@drawable/discover"
+            android:layout_width="26dp"
+            android:layout_height="26dp"
+            android:backgroundTint="@color/timerColor"
+            android:layout_margin="15dp" />
+
     </FrameLayout>
