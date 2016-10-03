@@ -19,13 +19,13 @@ import com.example.wyyz.snapchat.R;
 import com.example.wyyz.snapchat.model.User;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ServerValue;
+import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 
 import java.text.DateFormat;
@@ -33,6 +33,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -74,44 +75,42 @@ public class AddFriendByUsernameActivity extends AppCompatActivity implements Vi
     private void searchUsersByUsername(String username){
         DatabaseReference usersRef= FirebaseDatabase.getInstance().getReference().child("Users");
         Query queryRef=usersRef.orderByChild("username").equalTo(username);
-        queryRef.addChildEventListener(new ChildEventListener() {
-
+        queryRef.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Log.d("dataSnapshot",dataSnapshot.toString());
                 noFriend=false;
-               Map<String, Object> objectMap=(HashMap<String, Object>) dataSnapshot.getValue();
+                Map<String, Object> objectMap=(HashMap<String, Object>) dataSnapshot.getValue();
                 Log.d("objectMap is a user?", objectMap.toString());
-                Gson gson=new Gson();
-                String userJson=gson.toJson(objectMap);
-                User user=gson.fromJson(userJson,User.class);
-                users.add(user);
+                User user = null;
+                String uid=null;
+                Iterator<Map.Entry<String, Object>> entries = objectMap.entrySet().iterator();
+                while (entries.hasNext()) {
+                    Map.Entry<String, Object> entry = entries.next();
+                   // System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());
+                    uid=entry.getKey();
+                    Log.d("frienduid",uid);
+                    Map<String, Object> userMap=(HashMap<String,Object>)entry.getValue();
+                    Gson gson=new Gson();
+                    String userJson=gson.toJson(userMap);
+                    user=gson.fromJson(userJson,User.class);
+                    Log.d("friendjson",userJson);
+                    users.add(user);
+                }
+
                 if(!users.isEmpty()){
                     noUser.setVisibility(View.GONE);
                     userListView.setVisibility(View.VISIBLE);
                     adapter=new UserAdapter(AddFriendByUsernameActivity.this,R.layout.user_item,users);
                     userListView.setAdapter(adapter);
+                    final String finalUid = uid;
                     userListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                         @Override
                         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                            sendFriendRequest(users.get(position));
+                            sendFriendRequest(finalUid,users.get(position));
                         }
                     });
                 }
-            }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
             }
 
             @Override
@@ -119,26 +118,25 @@ public class AddFriendByUsernameActivity extends AppCompatActivity implements Vi
 
             }
         });
+
         if(noFriend){
             userListView.setVisibility(View.VISIBLE);
             noUser.setVisibility(View.VISIBLE);
         }
     }
-    private void sendFriendRequest(User user){
+    private void sendFriendRequest(String uid,User user){
         FirebaseUser currentUser= FirebaseAuth.getInstance().getCurrentUser();
-        String email=currentUser.getEmail();
         Date time=new Date();
         DateFormat df = new SimpleDateFormat("MMddyyyyHH:mm:ss");
         String timeString=df.format(time);
-        String uid=currentUser.getUid()+timeString;
-        Log.d("Mystring", uid);
-        DatabaseReference db = FirebaseDatabase.getInstance().getReference().child("FriendRequests").child(uid);
-        //DatabaseReference thisRef = database.getReference("FriendRequests");
-        //DatabaseReference db=thisRef.child(uid);
-        Log.d("fromEmail",email);
-        Log.d("toEmail",user.getEmail());
-        db.child("fromemail").setValue(email.toString());
-        db.child("toemail").setValue(user.getEmail().toString());
+        String id=currentUser.getUid()+timeString;
+        Log.d("Mystring", id);
+        DatabaseReference db = FirebaseDatabase.getInstance().getReference().child("FriendRequests").child(id);
+
+        db.child("fromUid").setValue(currentUser.getUid());
+        db.child("fromEmail").setValue(currentUser.getEmail());
+        db.child("toUid").setValue(uid.toString());
+        db.child("toEmail").setValue(user.getEmail());
         db.child("timestamp").setValue(ServerValue.TIMESTAMP);
         users.remove(user);
         adapter.notifyDataSetChanged();
