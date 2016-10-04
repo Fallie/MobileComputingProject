@@ -13,7 +13,7 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="110dp"
-        android:id="@+id/imgv_avatar" />
+        android:id="@+id/imgv_snapcode" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -23,7 +23,7 @@
         android:textSize="20sp"
         android:textColor="#fff"
         android:id="@+id/tv_nickname"
-        android:layout_below="@+id/imgv_avatar" />
+        android:layout_below="@+id/imgv_snapcode" />
 
     <LinearLayout
         android:layout_width="match_parent"
