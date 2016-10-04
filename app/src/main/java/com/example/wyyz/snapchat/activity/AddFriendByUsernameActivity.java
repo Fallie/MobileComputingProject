@@ -11,6 +11,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Filter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -43,7 +44,6 @@ public class AddFriendByUsernameActivity extends AppCompatActivity implements Vi
     private Button search;
     private TextView noUser;
     private UserAdapter adapter;
-    private boolean noFriend=true;
     List<User> users=new ArrayList<User>();
 
     @Override
@@ -64,7 +64,6 @@ public class AddFriendByUsernameActivity extends AppCompatActivity implements Vi
                 if(!users.isEmpty()){
                     users.clear();
                 }
-                noFriend=true;
                 String name=inputText.getText().toString();
                 searchUsersByUsername(name);
                 break;
@@ -78,38 +77,41 @@ public class AddFriendByUsernameActivity extends AppCompatActivity implements Vi
         queryRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Log.d("dataSnapshot",dataSnapshot.toString());
-                noFriend=false;
-                Map<String, Object> objectMap=(HashMap<String, Object>) dataSnapshot.getValue();
-                Log.d("objectMap is a user?", objectMap.toString());
-                User user = null;
-                String uid=null;
-                Iterator<Map.Entry<String, Object>> entries = objectMap.entrySet().iterator();
-                while (entries.hasNext()) {
-                    Map.Entry<String, Object> entry = entries.next();
-                   // System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());
-                    uid=entry.getKey();
-                    Log.d("frienduid",uid);
-                    Map<String, Object> userMap=(HashMap<String,Object>)entry.getValue();
-                    Gson gson=new Gson();
-                    String userJson=gson.toJson(userMap);
-                    user=gson.fromJson(userJson,User.class);
-                    Log.d("friendjson",userJson);
-                    users.add(user);
-                }
+                if(dataSnapshot.getValue()!=null) {
+                    Log.d("dataSnapshot", dataSnapshot.toString());
+                    Map<String, Object> objectMap = (HashMap<String, Object>) dataSnapshot.getValue();
+                    Log.d("objectMap is a user?", objectMap.toString());
+                    User user = null;
+                    String uid = null;
+                    Iterator<Map.Entry<String, Object>> entries = objectMap.entrySet().iterator();
+                    while (entries.hasNext()) {
+                        Map.Entry<String, Object> entry = entries.next();
+                        // System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());
+                        uid = entry.getKey();
+                        Log.d("frienduid", uid);
+                        Map<String, Object> userMap = (HashMap<String, Object>) entry.getValue();
+                        Gson gson = new Gson();
+                        String userJson = gson.toJson(userMap);
+                        user = gson.fromJson(userJson, User.class);
+                        Log.d("friendjson", userJson);
+                        users.add(user);
+                    }
 
-                if(!users.isEmpty()){
-                    noUser.setVisibility(View.GONE);
+                    if (!users.isEmpty()) {
+                        noUser.setVisibility(View.GONE);
+                        userListView.setVisibility(View.VISIBLE);
+                        adapter = new UserAdapter(AddFriendByUsernameActivity.this, R.layout.user_item, users);
+                        userListView.setAdapter(adapter);
+                        userListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                            @Override
+                            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                sendFriendRequest(users.get(position));
+                            }
+                        });
+                    }
+                }else{
                     userListView.setVisibility(View.VISIBLE);
-                    adapter=new UserAdapter(AddFriendByUsernameActivity.this,R.layout.user_item,users);
-                    userListView.setAdapter(adapter);
-                    final String finalUid = uid;
-                    userListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                        @Override
-                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                            sendFriendRequest(finalUid,users.get(position));
-                        }
-                    });
+                    noUser.setVisibility(View.VISIBLE);
                 }
             }
 
@@ -119,12 +121,8 @@ public class AddFriendByUsernameActivity extends AppCompatActivity implements Vi
             }
         });
 
-        if(noFriend){
-            userListView.setVisibility(View.VISIBLE);
-            noUser.setVisibility(View.VISIBLE);
-        }
     }
-    private void sendFriendRequest(String uid,User user){
+    private void sendFriendRequest(User user){
         FirebaseUser currentUser= FirebaseAuth.getInstance().getCurrentUser();
         Date time=new Date();
         DateFormat df = new SimpleDateFormat("MMddyyyyHH:mm:ss");
@@ -135,7 +133,7 @@ public class AddFriendByUsernameActivity extends AppCompatActivity implements Vi
 
         db.child("fromUid").setValue(currentUser.getUid());
         db.child("fromEmail").setValue(currentUser.getEmail());
-        db.child("toUid").setValue(uid.toString());
+        //db.child("toUid").setValue(uid.toString());
         db.child("toEmail").setValue(user.getEmail());
         db.child("timestamp").setValue(ServerValue.TIMESTAMP);
         users.remove(user);
@@ -147,6 +145,8 @@ public class AddFriendByUsernameActivity extends AppCompatActivity implements Vi
 
 class UserAdapter extends ArrayAdapter<User>{
     private int resourceId;
+    List<String> arrayList;
+    List<String> mOriginalValues;
     public UserAdapter(Context context, int textViewResourceId, List<User> objects){
         super(context,textViewResourceId,objects);
         resourceId=textViewResourceId;
@@ -168,6 +168,55 @@ class UserAdapter extends ArrayAdapter<User>{
         viewHolder.username.setText(user.getUsername());
         viewHolder.email.setText(user.getEmail());
         return view;
+    }
+    @Override
+    public Filter getFilter() {
+        Filter filter = new Filter() {
+
+            @SuppressWarnings("unchecked")
+            @Override
+            protected void publishResults(CharSequence constraint,FilterResults results) {
+
+                arrayList = (List<String>) results.values; // has the filtered values
+                notifyDataSetChanged();  // notifies the data with new filtered values
+            }
+
+            @Override
+            protected FilterResults performFiltering(CharSequence constraint) {
+                FilterResults results = new FilterResults();        // Holds the results of a filtering operation in values
+                List<String> FilteredArrList = new ArrayList<String>();
+
+                if (mOriginalValues == null) {
+                    mOriginalValues = new ArrayList<String>(arrayList); // saves the original data in mOriginalValues
+                }
+
+                /********
+                 *
+                 *  If constraint(CharSequence that is received) is null returns the mOriginalValues(Original) values
+                 *  else does the Filtering and returns FilteredArrList(Filtered)
+                 *
+                 ********/
+                if (constraint == null || constraint.length() == 0) {
+
+                    // set the Original result to return
+                    results.count = mOriginalValues.size();
+                    results.values = mOriginalValues;
+                } else {
+                    constraint = constraint.toString().toLowerCase();
+                    for (int i = 0; i < mOriginalValues.size(); i++) {
+                        String data = mOriginalValues.get(i);
+                        if (data.toLowerCase().startsWith(constraint.toString())) {
+                            FilteredArrList.add(data);
+                        }
+                    }
+                    // set the Filtered result to return
+                    results.count = FilteredArrList.size();
+                    results.values = FilteredArrList;
+                }
+                return results;
+            }
+        };
+        return filter;
     }
 }
 class ViewHolder{

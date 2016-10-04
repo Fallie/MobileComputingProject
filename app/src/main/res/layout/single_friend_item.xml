@@ -8,13 +8,13 @@
         android:orientation="vertical"
         android:layout_margin="5dp">
         <TextView
-            android:id="@+id/tv_friendname"
+            android:id="@+id/tv_username"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="loading..."
             android:textSize="20dp"/>
         <TextView
-            android:id="@+id/tv_chattime"
+            android:id="@+id/tv_email"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="loading..."

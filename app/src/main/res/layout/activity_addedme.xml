@@ -36,7 +36,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="15dp"
         android:id="@+id/tv_noNewFriend"
-        android:visibility="visible"/>
+        android:visibility="gone"/>
     <ListView
         android:id="@+id/request_list_view"
         android:layout_width="match_parent"

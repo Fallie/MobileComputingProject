@@ -46,7 +46,8 @@
             android:fontFamily="serif"
             android:layout_marginLeft="5dp"
             android:clickable="true"
-            android:text="My Friends"/>
+            android:text="My Friends"
+            android:id="@+id/tv_myfriends"/>
 
     </LinearLayout>
 
