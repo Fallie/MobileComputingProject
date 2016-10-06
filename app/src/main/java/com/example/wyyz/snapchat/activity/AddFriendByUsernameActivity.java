@@ -122,24 +122,12 @@ public class AddFriendByUsernameActivity extends AppCompatActivity implements Vi
         });
 
     }
-    private void sendFriendRequest(User user){
-        FirebaseUser currentUser= FirebaseAuth.getInstance().getCurrentUser();
-        Date time=new Date();
-        DateFormat df = new SimpleDateFormat("MMddyyyyHH:mm:ss");
-        String timeString=df.format(time);
-        String id=currentUser.getUid()+timeString;
-        Log.d("Mystring", id);
-        DatabaseReference db = FirebaseDatabase.getInstance().getReference().child("FriendRequests").child(id);
-
-        db.child("fromUid").setValue(currentUser.getUid());
-        db.child("fromEmail").setValue(currentUser.getEmail());
-        //db.child("toUid").setValue(uid.toString());
-        db.child("toEmail").setValue(user.getEmail());
-        db.child("timestamp").setValue(ServerValue.TIMESTAMP);
-        users.remove(user);
-        adapter.notifyDataSetChanged();
+    public void sendFriendRequest(User user){
+        FriendRequestHelper.sendRequest(user);
         Toast.makeText(AddFriendByUsernameActivity.this, "Request successfully sent, please wait for response.",
                 Toast.LENGTH_LONG).show();
+        users.remove(user);
+        adapter.notifyDataSetChanged();
     }
 }
 
@@ -224,4 +212,21 @@ class ViewHolder{
     TextView email;
     TextView accept;
     TextView ignore;
+}
+class FriendRequestHelper{
+    public static void sendRequest(User user){
+        FirebaseUser currentUser= FirebaseAuth.getInstance().getCurrentUser();
+        Date time=new Date();
+        DateFormat df = new SimpleDateFormat("MMddyyyyHH:mm:ss");
+        String timeString=df.format(time);
+        String id=currentUser.getUid()+timeString;
+        Log.d("Mystring", id);
+        DatabaseReference db = FirebaseDatabase.getInstance().getReference().child("FriendRequests").child(id);
+
+        db.child("fromUid").setValue(currentUser.getUid());
+        db.child("fromEmail").setValue(currentUser.getEmail());
+        //db.child("toUid").setValue(uid.toString());
+        db.child("toEmail").setValue(user.getEmail());
+        db.child("timestamp").setValue(ServerValue.TIMESTAMP);
+    }
 }

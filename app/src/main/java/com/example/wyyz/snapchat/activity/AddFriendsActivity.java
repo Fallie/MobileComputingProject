@@ -53,6 +53,8 @@ public class AddFriendsActivity extends AppCompatActivity implements View.OnClic
                 shareUsername();
                 break;
             case R.id.layout_by_qrcode:
+                Intent itent1=new Intent(AddFriendsActivity.this,ScanqrcodeActivity.class);
+                startActivity(itent1);
                 break;
             default:
                 break;

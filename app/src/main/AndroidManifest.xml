@@ -59,7 +59,8 @@
             android:name=".activity.PreviewActivity"
             android:label="@string/preview"
             android:theme="@style/AppTheme" />
-        <activity android:name=".activity.MyfriendsActivity"></activity>
+        <activity android:name=".activity.MyfriendsActivity" />
+        <activity android:name=".activity.ScanqrcodeActivity"></activity>
     </application>
 
 </manifest>
