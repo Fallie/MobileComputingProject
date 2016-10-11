@@ -42,7 +42,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-/** This class is for take picture and pass the temporary picture to preview activity for further
+/** This class is for taking picture and pass the temporary picture to preview activity for further
  *  edition. This class first check the permission of accessing camera is on in settings and request
  *  if is not. The switch of camera facing is also supported.
  * Created by Fallie on 25/09/2016.
@@ -283,8 +283,9 @@ public class CameraActivity extends AppCompatActivity implements SurfaceHolder.C
 
 
     public void switchCamera() {
-        camera.stopPreview();
+
         if (camera != null) {
+            camera.stopPreview();
             camera.release();
             camera = null;
         }

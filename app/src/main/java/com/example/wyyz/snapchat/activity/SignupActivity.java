@@ -1,5 +1,9 @@
 package com.example.wyyz.snapchat.activity;
 
+/**
+ * Created by Fallie on 21/09/2016.
+ */
+
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
