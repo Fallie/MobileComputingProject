@@ -15,6 +15,10 @@ import java.util.List;
 /**
  * Created by ZIYUAN on 6/09/2016.
  */
+
+/**
+ * Is currently used in ChatlistFragment
+ */
 public class FriendAdapter extends ArrayAdapter<Friend>{
     private int resourceId;
 
@@ -29,8 +33,8 @@ public class FriendAdapter extends ArrayAdapter<Friend>{
         if(convertView==null){
             viewHolder=new ViewHolder();
             view = LayoutInflater.from(getContext()).inflate(resourceId,null);
-            viewHolder.tvFriendName=(TextView) view.findViewById(R.id.tv_friendname);
-            viewHolder.tvChatTime=(TextView) view.findViewById(R.id.tv_chattime);
+            viewHolder.tvFriendName=(TextView) view.findViewById(R.id.tv_username);
+            viewHolder.tvChatTime=(TextView) view.findViewById(R.id.tv_email);
             view.setTag(viewHolder);
         }else{
             view=convertView;
