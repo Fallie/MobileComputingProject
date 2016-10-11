@@ -15,6 +15,10 @@ import java.util.List;
 /**
  * Created by ZIYUAN on 6/09/2016.
  */
+
+/**
+ * Is currently used in ChatlistFragment
+ */
 public class FriendAdapter extends ArrayAdapter<Friend>{
     private int resourceId;
 

@@ -1,6 +1,7 @@
 package com.example.wyyz.snapchat.activity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -107,12 +108,14 @@ class RequestAdapter extends ArrayAdapter<User> {
     private int resourceId;
     private List<User> users;
     private RequestAdapter adapter;
+    private Context mContext;
 
     public RequestAdapter(Context context, int textViewResourceId, List<User> objects) {
         super(context, textViewResourceId, objects);
         resourceId = textViewResourceId;
         users=objects;
         adapter=this;
+        mContext=context;
     }
 
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -137,6 +140,13 @@ class RequestAdapter extends ArrayAdapter<User> {
             @Override
             public void onClick(View v) {
                 acceptRequest(user);
+               // ((AddedmeActivity)mContext).recreate();
+                users.clear();
+                AddedmeActivity thisActivity=(AddedmeActivity)mContext;
+                Intent intent=thisActivity.getIntent();
+                thisActivity.users.clear();
+                thisActivity.finish();
+                thisActivity.startActivity(intent);
             }
         });
         viewHolder.ignore.setOnClickListener(new View.OnClickListener() {

@@ -2,10 +2,8 @@ package com.example.wyyz.snapchat.activity;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.text.TextUtils;
 import android.util.Log;
 import android.widget.ListView;
-import android.widget.SearchView;
 
 import com.example.wyyz.snapchat.R;
 import com.example.wyyz.snapchat.model.User;
@@ -25,9 +23,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class MyfriendsActivity extends AppCompatActivity implements SearchView.OnQueryTextListener {
+public class MyfriendsActivity extends AppCompatActivity {
     private ListView userListView;
-    private SearchView searchView;
     private UserAdapter adapter;
     List<User> users=new ArrayList<User>();
 
@@ -35,32 +32,16 @@ public class MyfriendsActivity extends AppCompatActivity implements SearchView.O
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_myfriends);
-        searchView = (SearchView)findViewById(R.id.searchView_id);
         userListView = (ListView)findViewById(R.id.listView_id);
         getFriendsFromRemote();
         adapter = new UserAdapter(MyfriendsActivity.this, R.layout.single_friend_item, users);
         userListView.setAdapter(adapter);
-        userListView.setTextFilterEnabled(true);
-
-        searchView.setIconified(true);
-        searchView.setOnQueryTextListener(this);
-        searchView.setSubmitButtonEnabled(false);
-        searchView.setQueryHint("Search");
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                return false;
-            }
-        });
     }
 
     private void getFriendsFromRemote(){
+        //current user
         FirebaseUser currentUser= FirebaseAuth.getInstance().getCurrentUser();
+        //get friends uid
         DatabaseReference db = FirebaseDatabase.getInstance().getReference()
                 .child("Users").child(currentUser.getUid()).child("friends");
         db.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -75,7 +56,10 @@ public class MyfriendsActivity extends AppCompatActivity implements SearchView.O
                         Map.Entry<String, Object> entry = entries.next();
                         set.add(entry.getKey());
                     }
+
+                    //get user instance of friend
                     for(String uid:set){
+                        Log.d("Set",uid);
                         DatabaseReference userRef = FirebaseDatabase.getInstance().getReference()
                                 .child("Users").child(uid);
                         userRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -83,6 +67,8 @@ public class MyfriendsActivity extends AppCompatActivity implements SearchView.O
                             public void onDataChange(DataSnapshot dataSnapshot) {
                                 User user=dataSnapshot.getValue(User.class);
                                 users.add(user);
+                                Log.d("Friend",user.toString());
+                                adapter.notifyDataSetChanged();
                             }
 
                             @Override
@@ -101,25 +87,6 @@ public class MyfriendsActivity extends AppCompatActivity implements SearchView.O
         });
     }
 
-    @Override
-    public boolean onQueryTextSubmit(String query) {
-        // TODO
-       return false;
-    }
-
-    @Override
-    public boolean onQueryTextChange(String newText) {
-        // TODO
-        if(TextUtils.isEmpty(newText)) {
-            //clear the filter of listview
-            userListView.clearTextFilter();
-        }
-        else {
-            //set filter to listview based on query
-            adapter.getFilter().filter(newText);
-        }
-        return true;
-    }
 }
 
 
