@@ -1,7 +1,6 @@
 package com.example.wyyz.snapchat.activity;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -49,7 +48,7 @@ public class AddedmeActivity extends AppCompatActivity {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         String myEmail = currentUser.getEmail();
         DatabaseReference requestRef = FirebaseDatabase.getInstance().getReference().child("FriendRequests");
-        Query queryRef = requestRef.orderByChild("toEmail").equalTo(myEmail);
+        final Query queryRef = requestRef.orderByChild("toEmail").equalTo(myEmail);
         queryRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -60,7 +59,7 @@ public class AddedmeActivity extends AppCompatActivity {
                         Map.Entry<String, Object> entry = entries.next();
                         Map<String, Object> objectMap=(HashMap<String, Object>)entry.getValue();
                         final String fromUid = (String) objectMap.get("fromUid");
-                        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("Users").child(fromUid);
+                        final DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("Users").child(fromUid);
                         userRef.addValueEventListener(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -81,6 +80,8 @@ public class AddedmeActivity extends AppCompatActivity {
                                     adapter = new RequestAdapter(AddedmeActivity.this, R.layout.request_item, users);
                                     requestListView.setAdapter(adapter);
                                 }
+                                userRef.removeEventListener(this);
+                                queryRef.removeEventListener(this);
                             }
 
                             @Override
@@ -108,14 +109,12 @@ class RequestAdapter extends ArrayAdapter<User> {
     private int resourceId;
     private List<User> users;
     private RequestAdapter adapter;
-    private Context mContext;
 
     public RequestAdapter(Context context, int textViewResourceId, List<User> objects) {
         super(context, textViewResourceId, objects);
         resourceId = textViewResourceId;
         users=objects;
         adapter=this;
-        mContext=context;
     }
 
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -140,13 +139,6 @@ class RequestAdapter extends ArrayAdapter<User> {
             @Override
             public void onClick(View v) {
                 acceptRequest(user);
-               // ((AddedmeActivity)mContext).recreate();
-                users.clear();
-                AddedmeActivity thisActivity=(AddedmeActivity)mContext;
-                Intent intent=thisActivity.getIntent();
-                thisActivity.users.clear();
-                thisActivity.finish();
-                thisActivity.startActivity(intent);
             }
         });
         viewHolder.ignore.setOnClickListener(new View.OnClickListener() {
@@ -192,15 +184,17 @@ class RequestAdapter extends ArrayAdapter<User> {
 
             }
         });
-
+        //delete from listview
         users.remove(user);
         adapter.notifyDataSetChanged();
     }
 
     private void acceptRequest(User user){
         String fromEmail=user.getEmail();
+        //delete from listview
         users.remove(user);
         adapter.notifyDataSetChanged();
+        //add friendship
         DatabaseReference usersRef= FirebaseDatabase.getInstance().getReference().child("Users");
         Query queryRef=usersRef.orderByChild("email").equalTo(fromEmail);
         queryRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -223,7 +217,7 @@ class RequestAdapter extends ArrayAdapter<User> {
                         DatabaseReference user2Ref= FirebaseDatabase.getInstance().getReference().child("Users").child(toUid);
                         user2Ref.child("friends").child(fromUid).setValue(ServerValue.TIMESTAMP);
                     }
-                    //delete request and item in listview
+                    //delete request in firebase
                     DatabaseReference requestRef= FirebaseDatabase.getInstance().getReference().child("FriendRequests");
                     Query queryRef=requestRef.orderByChild("fromUid").equalTo(fromUid);
                     queryRef.addListenerForSingleValueEvent(new ValueEventListener() {
