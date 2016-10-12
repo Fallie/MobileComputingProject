@@ -36,7 +36,6 @@
             android:name=".activity.SnapActivity"
             android:label="@string/_Snap"
             android:theme="@style/AppTheme" />
-        <activity android:name=".activity.ChatActivity" />
         <activity android:name=".activity.ProfileActivity" />
         <activity android:name=".activity.SettingsActivity" />
         <activity android:name=".activity.ProfileEditingActivity" />

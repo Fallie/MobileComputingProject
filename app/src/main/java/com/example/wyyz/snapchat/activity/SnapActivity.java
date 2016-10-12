@@ -6,7 +6,6 @@ package com.example.wyyz.snapchat.activity;
 
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -18,7 +17,6 @@ import android.widget.TextView;
 
 import com.example.wyyz.snapchat.R;
 import com.example.wyyz.snapchat.db.SnapChatDB;
-import com.example.wyyz.snapchat.model.User;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
@@ -34,13 +32,13 @@ public class SnapActivity extends FragmentActivity implements View.OnClickListen
     private ViewPager pager ;
     private ArrayList<Fragment> fragments;
     private PagerAdapter adapter;
-    private TextView tv_tab0, tv_tab1, tv_tab2,tv_tab3;
+    private TextView tv_tab0, tv_tab1, tv_tab2;
     private FirebaseAuth firebaseAuth;
     Button btnCamera;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_snap);
         snapChatDB = SnapChatDB.getInstance(this);
         firebaseAuth = FirebaseAuth.getInstance();
         btnCamera = (Button) findViewById(R.id.btnButton);
@@ -51,14 +49,13 @@ public class SnapActivity extends FragmentActivity implements View.OnClickListen
                 startActivity(intent);
             }
         });
-        feedData();
         initView();
     }
 
     private void initView(){
         fragments=new ArrayList<Fragment>();
-        fragments.add(new ChatlistFragment());
-        fragments.add(new CameraFragment());
+        fragments.add(new SnapsFragment());
+        fragments.add(new CameraRollFragment());
         fragments.add(new DiscoverFragment());
         adapter = new MyPagerAdapter(getSupportFragmentManager(), fragments);
         pager=(ViewPager) findViewById(R.id.pager);
@@ -67,43 +64,36 @@ public class SnapActivity extends FragmentActivity implements View.OnClickListen
         tv_tab0=(TextView) findViewById(R.id.tv_tab0);
         tv_tab1=(TextView) findViewById(R.id.tv_tab1);
         tv_tab2=(TextView) findViewById(R.id.tv_tab2);
-        tv_tab3=(TextView) findViewById(R.id.tv_tab3);
 
         pager.setCurrentItem(1);
-        tv_tab0.setTextColor(Color.BLACK);
-        tv_tab1.setTextColor(Color.RED);
-        tv_tab2.setTextColor(Color.BLACK);
-        tv_tab3.setTextColor(Color.BLACK);
+        tv_tab0.setTextColor(getResources().getColor(R.color.previewBackground));
+        tv_tab1.setTextColor(getResources().getColor(R.color.colorAccent));
+        tv_tab2.setTextColor(getResources().getColor(R.color.previewBackground));
         tv_tab0.setOnClickListener(this);
         tv_tab1.setOnClickListener(this);
         tv_tab2.setOnClickListener(this);
-        tv_tab3.setOnClickListener(this);
         pager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener(){
             public void onPageSelected(int position){
                 switch (position){
                     case 0:
-                        tv_tab0.setTextColor(Color.RED);
-                        tv_tab1.setTextColor(Color.BLACK);
-                        tv_tab2.setTextColor(Color.BLACK);
-                        tv_tab3.setTextColor(Color.BLACK);
+                        tv_tab0.setTextColor(getResources().getColor(R.color.colorAccent));
+                        tv_tab1.setTextColor(getResources().getColor(R.color.previewBackground));
+                        tv_tab2.setTextColor(getResources().getColor(R.color.previewBackground));
                         break;
                     case 1:
-                        tv_tab0.setTextColor(Color.BLACK);
-                        tv_tab1.setTextColor(Color.RED);
-                        tv_tab2.setTextColor(Color.BLACK);
-                        tv_tab3.setTextColor(Color.BLACK);
+                        tv_tab0.setTextColor(getResources().getColor(R.color.previewBackground));
+                        tv_tab1.setTextColor(getResources().getColor(R.color.colorAccent));
+                        tv_tab2.setTextColor(getResources().getColor(R.color.previewBackground));
                         break;
                     case 2:
-                        tv_tab0.setTextColor(Color.BLACK);
-                        tv_tab1.setTextColor(Color.BLACK);
-                        tv_tab2.setTextColor(Color.RED);
-                        tv_tab3.setTextColor(Color.BLACK);
+                        tv_tab0.setTextColor(getResources().getColor(R.color.previewBackground));
+                        tv_tab1.setTextColor(getResources().getColor(R.color.previewBackground));
+                        tv_tab2.setTextColor(getResources().getColor(R.color.colorAccent));
                         break;
                     case 3:
-                        tv_tab0.setTextColor(Color.BLACK);
-                        tv_tab1.setTextColor(Color.BLACK);
-                        tv_tab2.setTextColor(Color.BLACK);
-                        tv_tab3.setTextColor(Color.RED);
+                        tv_tab0.setTextColor(getResources().getColor(R.color.previewBackground));
+                        tv_tab1.setTextColor(getResources().getColor(R.color.previewBackground));
+                        tv_tab2.setTextColor(getResources().getColor(R.color.previewBackground));
                         break;
                     default:
                         break;
@@ -123,12 +113,6 @@ public class SnapActivity extends FragmentActivity implements View.OnClickListen
             case R.id.tv_tab2:
                 pager.setCurrentItem(2);
                 break;
-            case R.id.tv_tab3:
-                firebaseAuth.getInstance().signOut();
-                finish();
-                Intent intent = new Intent(this,MainActivity.class);
-                startActivity(intent);
-                break;
             default:
                 break;
         }
@@ -138,11 +122,10 @@ public class SnapActivity extends FragmentActivity implements View.OnClickListen
         return snapChatDB;
     }
 
-    private void feedData(){
-        User user=snapChatDB.findUserByEmail("ziyuan@gmail.com");
-        if(user==null){
-            snapChatDB.seedData();
-        }
+    public void signOut(){
+        firebaseAuth.getInstance().signOut();
+        finish();
+        Intent intent = new Intent(this,MainActivity.class);
+        startActivity(intent);
     }
-
 }
