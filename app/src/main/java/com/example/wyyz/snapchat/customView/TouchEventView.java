@@ -212,10 +212,8 @@ public class TouchEventView extends View {
     float getCurrentY()       { return mCurrentY; }
     void setCurrentY(float y) { mCurrentY = y; }
 
-    float getActionDownX()       { return mActionDownX; }
     void setActionDownX(float x) { mActionDownX = x; }
 
-    float getActionDownY()       { return mActionDownY; }
     void setActionDownY(float y) { mActionDownY = y; }
 
     private void restoreInitialPosition() {

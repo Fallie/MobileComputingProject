@@ -42,6 +42,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private FirebaseAuth.AuthStateListener mAuthListener;
     private boolean isValid = false;
     private SnapChatDB snapChatDB;
+    private boolean autoLogin;
+    private ProgressDialog progressDialog;
 
     @Bind(R.id.input_email) EditText _emailText;
     @Bind(R.id.input_password)EditText _passwordText;
@@ -55,7 +57,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
         mAuth = FirebaseAuth.getInstance();
+        autoLogin = false;
 
+        progressDialog = new ProgressDialog(MainActivity.this,
+                R.style.AppTheme);
 
         _loginButton.setOnClickListener(this);
 
@@ -67,8 +72,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 FirebaseUser user = firebaseAuth.getCurrentUser();
                 if (user != null) {
                     // User is signed in
+                    autoLogin = true;
                     Intent intent = new Intent(MainActivity.this,CameraActivity.class);
                     startActivity(intent);
+                    mAuth.removeAuthStateListener(mAuthListener);
+                    finish();
                     Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
 
                 } else {
@@ -96,11 +104,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+
     @Override
-    public void onDestroy(){
-        super.onDestroy();
-        Log.i(TAG,"%%%%Here it destroyed%%%%%%%%");
+    public void onPause(){
+        super.onPause();
+        progressDialog.dismiss();
+        Log.i(TAG,"%%%%Here it paused%%%%%%%%");
     }
+
 
     @Override
     public void onClick(View v)
@@ -124,8 +135,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         _loginButton.setEnabled(false);
 
-        final ProgressDialog progressDialog = new ProgressDialog(MainActivity.this,
-                R.style.AppTheme);
+
         progressDialog.setIndeterminate(true);
         progressDialog.setMessage("Authenticating...");
         progressDialog.show();
@@ -175,10 +185,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         progressDialog.dismiss();}
                         if(isValid){
                             syncUser();
-                            //Intent intent = new Intent(MainActivity.this,SnapActivity.class);
+                            if(autoLogin == false){
                             Intent intent = new Intent(MainActivity.this,CameraActivity.class);
                             finish();
                             startActivity(intent);
+                            }
                         }
                     }
                 }, 3000);
@@ -197,6 +208,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         }
     }
+
 
     @Override
     public void onBackPressed() {
@@ -238,9 +250,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return valid;
     }
 
-    public void signOut(){
-        mAuth.getInstance().signOut();
-    }
 
     private void syncUser(){
         snapChatDB=SnapChatDB.getInstance(MainActivity.this);

@@ -1,7 +1,9 @@
 package com.example.wyyz.snapchat.activity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.RelativeLayout;
@@ -19,6 +21,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     RelativeLayout birthdayLayout;
     RelativeLayout mobileLayout;
     RelativeLayout passwordLayout;
+    RelativeLayout signoutLayout;
     TextView email;
     TextView username;
     TextView birthday;
@@ -44,11 +47,13 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         birthdayLayout =(RelativeLayout)findViewById(R.id.layout_birthday);
         mobileLayout =(RelativeLayout)findViewById(R.id.layout_mobile);
         passwordLayout =(RelativeLayout)findViewById(R.id.layout_password);
+        signoutLayout = (RelativeLayout)findViewById(R.id.layout_signout);
         emailLayout.setOnClickListener(this);
         usernameLayout.setOnClickListener(this);
         birthdayLayout.setOnClickListener(this);
         mobileLayout.setOnClickListener(this);
         passwordLayout.setOnClickListener(this);
+        signoutLayout.setOnClickListener(this);
     }
     protected void onResume() {
         super.onResume();
@@ -85,8 +90,32 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
                 intent5.putExtra("item",ProfileEditingActivity.PASSWORD);
                 startActivity(intent5);
                 break;
+            case R.id.layout_signout:
+                doSignout();
             default:
                 break;
         }
     }
+
+    private void doSignout(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(SettingsActivity.this);
+        builder.setTitle("Wanna sign out?");
+        // Set up the buttons
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                FirebaseAuth.getInstance().signOut();
+                Intent intent = new Intent(SettingsActivity.this,MainActivity.class);
+                startActivity(intent);
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();    }
 }

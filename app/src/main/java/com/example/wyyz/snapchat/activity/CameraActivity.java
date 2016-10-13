@@ -230,7 +230,6 @@ public class CameraActivity extends AppCompatActivity implements SurfaceHolder.C
         btnProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                finish();
                 Intent intent = new Intent(CameraActivity.this, ProfileActivity.class);
                 startActivity(intent);
             }
