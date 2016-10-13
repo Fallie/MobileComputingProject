@@ -29,5 +29,9 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">match_parent</item>
     </style>
+<<<<<<< HEAD
 .
+=======
+
+>>>>>>> 166ab7adf49722534ae741634efcd0f4d613286d
 </resources>
