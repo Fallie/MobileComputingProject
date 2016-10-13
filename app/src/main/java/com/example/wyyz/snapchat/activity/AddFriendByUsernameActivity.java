@@ -1,14 +1,10 @@
 package com.example.wyyz.snapchat.activity;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -43,7 +39,6 @@ public class AddFriendByUsernameActivity extends AppCompatActivity implements Vi
     private Button search;
     private TextView noUser;
     private UserAdapter adapter;
-    private boolean noFriend=true;
     List<User> users=new ArrayList<User>();
 
     @Override
@@ -64,7 +59,6 @@ public class AddFriendByUsernameActivity extends AppCompatActivity implements Vi
                 if(!users.isEmpty()){
                     users.clear();
                 }
-                noFriend=true;
                 String name=inputText.getText().toString();
                 searchUsersByUsername(name);
                 break;
@@ -78,38 +72,41 @@ public class AddFriendByUsernameActivity extends AppCompatActivity implements Vi
         queryRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Log.d("dataSnapshot",dataSnapshot.toString());
-                noFriend=false;
-                Map<String, Object> objectMap=(HashMap<String, Object>) dataSnapshot.getValue();
-                Log.d("objectMap is a user?", objectMap.toString());
-                User user = null;
-                String uid=null;
-                Iterator<Map.Entry<String, Object>> entries = objectMap.entrySet().iterator();
-                while (entries.hasNext()) {
-                    Map.Entry<String, Object> entry = entries.next();
-                   // System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());
-                    uid=entry.getKey();
-                    Log.d("frienduid",uid);
-                    Map<String, Object> userMap=(HashMap<String,Object>)entry.getValue();
-                    Gson gson=new Gson();
-                    String userJson=gson.toJson(userMap);
-                    user=gson.fromJson(userJson,User.class);
-                    Log.d("friendjson",userJson);
-                    users.add(user);
-                }
+                if(dataSnapshot.getValue()!=null) {
+                    Log.d("dataSnapshot", dataSnapshot.toString());
+                    Map<String, Object> objectMap = (HashMap<String, Object>) dataSnapshot.getValue();
+                    Log.d("objectMap is a user?", objectMap.toString());
+                    User user = null;
+                    String uid = null;
+                    Iterator<Map.Entry<String, Object>> entries = objectMap.entrySet().iterator();
+                    while (entries.hasNext()) {
+                        Map.Entry<String, Object> entry = entries.next();
+                        // System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());
+                        uid = entry.getKey();
+                        Log.d("frienduid", uid);
+                        Map<String, Object> userMap = (HashMap<String, Object>) entry.getValue();
+                        Gson gson = new Gson();
+                        String userJson = gson.toJson(userMap);
+                        user = gson.fromJson(userJson, User.class);
+                        Log.d("friendjson", userJson);
+                        users.add(user);
+                    }
 
-                if(!users.isEmpty()){
-                    noUser.setVisibility(View.GONE);
+                    if (!users.isEmpty()) {
+                        noUser.setVisibility(View.GONE);
+                        userListView.setVisibility(View.VISIBLE);
+                        adapter = new UserAdapter(AddFriendByUsernameActivity.this, R.layout.user_item, users);
+                        userListView.setAdapter(adapter);
+                        userListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                            @Override
+                            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                sendFriendRequest(users.get(position));
+                            }
+                        });
+                    }
+                }else{
                     userListView.setVisibility(View.VISIBLE);
-                    adapter=new UserAdapter(AddFriendByUsernameActivity.this,R.layout.user_item,users);
-                    userListView.setAdapter(adapter);
-                    final String finalUid = uid;
-                    userListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                        @Override
-                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                            sendFriendRequest(finalUid,users.get(position));
-                        }
-                    });
+                    noUser.setVisibility(View.VISIBLE);
                 }
             }
 
@@ -119,12 +116,18 @@ public class AddFriendByUsernameActivity extends AppCompatActivity implements Vi
             }
         });
 
-        if(noFriend){
-            userListView.setVisibility(View.VISIBLE);
-            noUser.setVisibility(View.VISIBLE);
-        }
     }
-    private void sendFriendRequest(String uid,User user){
+    public void sendFriendRequest(User user){
+        FriendRequestHelper.sendRequest(user);
+        Toast.makeText(AddFriendByUsernameActivity.this, "Request successfully sent, please wait for response.",
+                Toast.LENGTH_LONG).show();
+        users.remove(user);
+        adapter.notifyDataSetChanged();
+    }
+}
+
+class FriendRequestHelper{
+    public static void sendRequest(User user){
         FirebaseUser currentUser= FirebaseAuth.getInstance().getCurrentUser();
         Date time=new Date();
         DateFormat df = new SimpleDateFormat("MMddyyyyHH:mm:ss");
@@ -135,44 +138,8 @@ public class AddFriendByUsernameActivity extends AppCompatActivity implements Vi
 
         db.child("fromUid").setValue(currentUser.getUid());
         db.child("fromEmail").setValue(currentUser.getEmail());
-        db.child("toUid").setValue(uid.toString());
+        //db.child("toUid").setValue(uid.toString());
         db.child("toEmail").setValue(user.getEmail());
         db.child("timestamp").setValue(ServerValue.TIMESTAMP);
-        users.remove(user);
-        adapter.notifyDataSetChanged();
-        Toast.makeText(AddFriendByUsernameActivity.this, "Request successfully sent, please wait for response.",
-                Toast.LENGTH_LONG).show();
     }
-}
-
-class UserAdapter extends ArrayAdapter<User>{
-    private int resourceId;
-    public UserAdapter(Context context, int textViewResourceId, List<User> objects){
-        super(context,textViewResourceId,objects);
-        resourceId=textViewResourceId;
-    }
-    public View getView(int position, View convertView, ViewGroup parent){
-        User user=getItem(position);
-        View view;
-        ViewHolder viewHolder;
-        if(convertView==null){
-            view = LayoutInflater.from(getContext()).inflate(resourceId,null);
-            viewHolder=new ViewHolder();
-            viewHolder.username=(TextView)view.findViewById(R.id.tv_username);
-            viewHolder.email=(TextView)view.findViewById(R.id.tv_email);
-            view.setTag(viewHolder);
-        }else{
-            view=convertView;
-            viewHolder=(ViewHolder)view.getTag();
-        }
-        viewHolder.username.setText(user.getUsername());
-        viewHolder.email.setText(user.getEmail());
-        return view;
-    }
-}
-class ViewHolder{
-    TextView username;
-    TextView email;
-    TextView accept;
-    TextView ignore;
 }
