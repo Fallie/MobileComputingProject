@@ -1,15 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    tools:context="com.example.wyyz.snapchat.activity.PreviewActivity">
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@color/previewBackground"
-        android:id="@+id/previewImage"
-        />
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    tools:context="com.example.wyyz.snapchat.activity.PreviewActivity"
+    android:id="@+id/text">
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:id="@+id/previewLayout">
+        <com.example.wyyz.snapchat.customView.TouchEventView
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:scaleType="fitXY"
+            android:background="@color/previewBackground"
+            android:id="@+id/previewImage"
+            />
+    </RelativeLayout>
 
     <Button
         android:layout_width="30dp"
@@ -18,14 +25,6 @@
         android:id="@+id/btnReturnCamera"
         android:layout_height="30dp"
         android:layout_margin="5dp" />
-
-    <Button
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:background="@drawable/next"
-        android:layout_gravity="right|bottom"
-        android:id="@+id/btnNextStep"
-        android:layout_margin="10dp" />
 
     <Button
         android:background="@drawable/savetomemory"
@@ -91,6 +90,26 @@
         android:layout_marginLeft="31dp"
         android:text="@string/timer"
         android:textColor="@color/timerColor" />
+
+
+    <Button
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:background="@drawable/next"
+        android:layout_margin="10dp"
+        android:id="@+id/btnNextStep"
+        android:layout_gravity="bottom|right" />
+
+    <NumberPicker
+        android:id="@+id/numberPicker"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_margin="25dp"
+        android:theme="@style/AppTheme.Picker"
+        android:layout_gravity="bottom|left"
+        android:backgroundTint="@color/timerColor"
+        android:visibility="invisible"/>
 
 
 </FrameLayout>

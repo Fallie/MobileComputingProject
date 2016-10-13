@@ -17,4 +17,12 @@
         <item name="android:windowContentOverlay">@null</item>
     </style>
 
+    <style name="AppTheme.Picker" parent="Theme.AppCompat.Light.NoActionBar" >
+        <item name="android:textColorPrimary">@android:color/white</item>
+    </style>
+
+    <declare-styleable name="addTextToView">
+        <attr name="tag" format="string" />
+    </declare-styleable>
+
 </resources>

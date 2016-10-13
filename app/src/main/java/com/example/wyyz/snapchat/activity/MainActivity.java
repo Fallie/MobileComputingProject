@@ -67,6 +67,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 FirebaseUser user = firebaseAuth.getCurrentUser();
                 if (user != null) {
                     // User is signed in
+                    Intent intent = new Intent(MainActivity.this,CameraActivity.class);
+                    startActivity(intent);
                     Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
 
                 } else {

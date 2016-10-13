@@ -3,8 +3,6 @@ package com.example.wyyz.snapchat.model;
 
 import android.graphics.Bitmap;
 
-import java.util.Date;
-
 /**
  * A snap is a picture.
  * Created by ZIYUAN on 3/09/2016.
@@ -16,8 +14,8 @@ public class Snap {
     private Bitmap photo;
     private String path;
     private int timingOut = 3;
-    private Date timestamp;
-    private String location;
+    private String timestamp;
+    //private String location;
 
     public int getId() {
         return id;
@@ -59,20 +57,20 @@ public class Snap {
         this.timingOut = timingOut;
     }
 
-    public Date getTimestamp() {
+    public String getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(Date timestamp) {
+    public void setTimestamp(String timestamp) {
         this.timestamp = timestamp;
     }
 
-    public String getLocation() {
+    /*public String getLocation() {
         return location;
     }
     public void setLocation(String location) {
         this.location = location;
-    }
+    }*/
 
     public void setPhoto(Bitmap photo) {
         this.photo = photo;

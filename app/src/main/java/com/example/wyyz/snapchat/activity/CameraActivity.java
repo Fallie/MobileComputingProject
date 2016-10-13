@@ -91,6 +91,7 @@ public class CameraActivity extends AppCompatActivity implements SurfaceHolder.C
         mLayout = findViewById(R.id.mainCameraView);
         //Check if the permission of accessing camera is on or off.
         checkPermission();
+        TmpPhotoView.photo = null;
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
