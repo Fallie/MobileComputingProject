@@ -5,4 +5,5 @@
     <color name="colorAccent">#FF4081</color>
     <color name="timerColor">#ffffff</color>
     <color name="previewBackground">#B3B3B3</color>
+    <color name="subscription_background_color">#a13f02</color>
 </resources>
