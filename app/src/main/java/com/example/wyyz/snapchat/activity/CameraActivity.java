@@ -15,6 +15,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
@@ -22,6 +23,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.wyyz.snapchat.R;
+import com.example.wyyz.snapchat.util.OnSwipeTouchListener;
 import com.example.wyyz.snapchat.util.TmpPhotoView;
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
@@ -68,6 +70,8 @@ public class CameraActivity extends AppCompatActivity implements SurfaceHolder.C
     private static final int chosenSize = 0;
     //If the permission of accessing camera is set to true or false.
     private boolean permission = false;
+    //Gesture implementation
+    private GestureDetector gestureDetector;
 
     /*Buttons and views used in the corresponding layout.*/
     Button btnTakePhoto;
@@ -101,6 +105,8 @@ public class CameraActivity extends AppCompatActivity implements SurfaceHolder.C
     // Actions need to be done if permission is granted.
     public void actOnGranted(){
         surfaceView = (SurfaceView) findViewById(R.id.cameraSurface);
+        surfaceView.setOnTouchListener(new OnSwipeTouchListener(this.getBaseContext(),CameraActivity.this){
+        });
         surfaceView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
@@ -515,13 +521,6 @@ public class CameraActivity extends AppCompatActivity implements SurfaceHolder.C
         AppIndex.AppIndexApi.end(client, getIndexApiAction());
         client.disconnect();
         Log.i(TAG,"Activity stopped!");
-    }
-
-    @Override
-    public void onDestroy(){
-        super.onDestroy();
-
-        Log.i(TAG,"Activity destroyed!");
     }
 
 }

@@ -20,8 +20,7 @@
         android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen">
         <activity
             android:name=".activity.MainActivity"
-            android:label="@string/app_name"
-            android:theme="@style/AppTheme">
+            android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -30,12 +29,10 @@
         </activity>
         <activity
             android:name=".activity.SignupActivity"
-            android:label="@string/_SignUp"
-            android:theme="@style/AppTheme" />
+            android:label="@string/_SignUp" />
         <activity
             android:name=".activity.SnapActivity"
-            android:label="@string/_Snap"
-            android:theme="@style/AppTheme" />
+            android:label="@string/_Snap" />
         <activity android:name=".activity.ProfileActivity" />
         <activity android:name=".activity.SettingsActivity" />
         <activity android:name=".activity.ProfileEditingActivity" />
@@ -44,8 +41,7 @@
         <activity android:name=".activity.AddedmeActivity" />
         <activity
             android:name=".activity.CameraActivity"
-            android:label="@string/camera"
-            android:theme="@style/AppTheme" />
+            android:label="@string/camera" />
         <!--
  ATTENTION: This was auto-generated to add Google Play services to your project for
      App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -56,8 +52,7 @@
 
         <activity
             android:name=".activity.PreviewActivity"
-            android:label="@string/preview"
-            android:theme="@style/AppTheme" />
+            android:label="@string/preview"/>
         <activity android:name=".activity.MyfriendsActivity" />
         <activity android:name=".activity.ScanqrcodeActivity"></activity>
     </application>
