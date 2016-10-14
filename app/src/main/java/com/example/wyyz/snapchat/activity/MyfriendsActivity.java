@@ -7,6 +7,7 @@ import android.widget.ListView;
 
 import com.example.wyyz.snapchat.R;
 import com.example.wyyz.snapchat.model.User;
+import com.example.wyyz.snapchat.util.OnSwipeTouchListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -24,6 +25,7 @@ import java.util.Map;
 import java.util.Set;
 
 public class MyfriendsActivity extends AppCompatActivity {
+    public static final String TAG = "MyfriendsActivity";
     private ListView userListView;
     private UserAdapter adapter;
     List<User> users=new ArrayList<User>();
@@ -33,6 +35,7 @@ public class MyfriendsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_myfriends);
         userListView = (ListView)findViewById(R.id.listView_id);
+        userListView.setOnTouchListener(new OnSwipeTouchListener(this.getBaseContext(),MyfriendsActivity.this));
         getFriendsFromRemote();
         adapter = new UserAdapter(MyfriendsActivity.this, R.layout.single_friend_item, users);
         userListView.setAdapter(adapter);

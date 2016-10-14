@@ -8,6 +8,8 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.example.wyyz.snapchat.R;
+import com.example.wyyz.snapchat.activity.CameraActivity;
+import com.example.wyyz.snapchat.activity.DiscoverActivity;
 import com.example.wyyz.snapchat.activity.MyfriendsActivity;
 import com.example.wyyz.snapchat.activity.ProfileActivity;
 import com.example.wyyz.snapchat.activity.SnapActivity;
@@ -19,10 +21,18 @@ import com.example.wyyz.snapchat.activity.SnapActivity;
 public class OnSwipeTouchListener implements View.OnTouchListener {
     private final GestureDetector gestureDetector;
     private Activity activity;
+    private String tag;
 
-    public OnSwipeTouchListener(Context ctx,Activity activity) {
+    public OnSwipeTouchListener(Context ctx,CameraActivity activity) {
         gestureDetector = new GestureDetector(ctx, new GestureListener());
         this.activity = activity;
+        this.tag = activity.TAG;
+    }
+
+    public OnSwipeTouchListener(Context ctx,MyfriendsActivity activity) {
+        gestureDetector = new GestureDetector(ctx, new GestureListener());
+        this.activity = activity;
+        this.tag = activity.TAG;
     }
 
     public boolean onTouch(final View view, final MotionEvent motionEvent) {
@@ -77,10 +87,20 @@ public class OnSwipeTouchListener implements View.OnTouchListener {
     }
 
     public void onSwipeLeft() {
-        Intent intent = new Intent();
-        intent.setClass(this.activity, ProfileActivity.class);
-        this.activity.startActivity(intent);
-        this.activity.overridePendingTransition(R.anim.in_from_right, R.anim.out_to_left);
+        if(tag == "CameraActivity"){
+            Intent intent = new Intent();
+            intent.setClass(this.activity, DiscoverActivity.class);
+            this.activity.startActivity(intent);
+            this.activity.overridePendingTransition(R.anim.in_from_right, R.anim.out_to_left);
+        }
+        if(tag == "MyfriendsActivity"){
+            Intent intent = new Intent();
+            intent.setClass(this.activity, CameraActivity.class);
+            this.activity.startActivity(intent);
+            this.activity.overridePendingTransition(R.anim.in_from_right, R.anim.out_to_left);
+        }
+
+
     }
 
     public void onSwipeTop() {

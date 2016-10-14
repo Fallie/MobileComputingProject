@@ -52,7 +52,7 @@ import java.util.List;
 
 public class CameraActivity extends AppCompatActivity implements SurfaceHolder.Callback {
 
-    private static final String TAG = "CameraActivity";
+    public static final String TAG = "CameraActivity";
     //The code used for switch on the camera in settings.
     private static final int REQUEST_CAMERA = 0;
     private Camera camera;
@@ -254,8 +254,7 @@ public class CameraActivity extends AppCompatActivity implements SurfaceHolder.C
         btnDiscovery.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.e("click action","turn to discover");
-//                finish();
+                Log.i("click action","turn to discover");
                 Intent intent = new Intent(CameraActivity.this, DiscoverActivity.class);
                 startActivity(intent);
             }
@@ -448,6 +447,11 @@ public class CameraActivity extends AppCompatActivity implements SurfaceHolder.C
     @Override
     public void surfaceCreated(SurfaceHolder surfaceHolder) {
         if (camera != null) {
+            try {
+                camera.reconnect();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             camera.stopPreview();
             camera.release();
             camera = null;

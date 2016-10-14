@@ -15,7 +15,6 @@ public class Snap {
     private String path;
     private int timingOut = 3;
     private String timestamp;
-    //private String location;
 
     public int getId() {
         return id;
@@ -64,13 +63,6 @@ public class Snap {
     public void setTimestamp(String timestamp) {
         this.timestamp = timestamp;
     }
-
-    /*public String getLocation() {
-        return location;
-    }
-    public void setLocation(String location) {
-        this.location = location;
-    }*/
 
     public void setPhoto(Bitmap photo) {
         this.photo = photo;
