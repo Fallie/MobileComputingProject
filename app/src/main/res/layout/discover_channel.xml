@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical" 
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+	>
+	<!--<TextView android:layout_width="fill_parent"-->
+		<!--android:layout_height="wrap_content"  android:text="仿淘宝聚划算"/>-->
+<RelativeLayout
+	android:id="@+id/myView"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent" 
+	>
+	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+		android:orientation="vertical"
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+		>
+<com.example.wyyz.snapchat.customView.ScrollLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:id="@+id/ScrollLayoutTest"
+  android:layout_width="fill_parent"
+  android:layout_height="fill_parent"
+	android:layout_weight="1"
+	android:background="#ffffff" >
+</com.example.wyyz.snapchat.customView.ScrollLayout>
+
+	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+		android:layout_width="fill_parent"
+		android:layout_height="280px"
+		android:layout_weight="1"
+		android:background="@color/subscription_background_color"
+
+		android:orientation="horizontal" >
+		<TextView
+			android:id="@+id/subscribeText"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:text="subscribe channel"
+			android:textColor="#FF000000"/>
+
+		<Button
+			android:id="@+id/subscribeButton"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:text="subscribe" />
+
+
+	</LinearLayout>
+		<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+			android:layout_width="fill_parent"
+			android:layout_height="10dp"
+			android:background="@color/subscription_background_color"/>
+	</LinearLayout>
+
+
+<com.example.wyyz.snapchat.customView.PageControlView
+				android:id="@+id/pageControl"
+				android:layout_width="fill_parent" 
+				android:layout_height="40px"
+				android:background="#8f949494"
+				android:layout_alignParentBottom="true"
+				android:gravity="center"/>
+
+</RelativeLayout>
+
+
+</LinearLayout>

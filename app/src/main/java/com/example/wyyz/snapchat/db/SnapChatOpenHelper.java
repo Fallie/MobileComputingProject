@@ -96,6 +96,18 @@ public class SnapChatOpenHelper extends SQLiteOpenHelper{
             "snapNum integer," +
             "FOREIGN KEY(userId) REFERENCES User(id))";
 
+    private static final String CREATE_DiscoveryChannel = "CREATE TABLE IF NOT EXISTS \"Channel\" (" +
+            "  \"channelId\" int PRIMARY KEY NOT NULL," +
+            "  \"name\" text NOT NULL," +
+            "  \"visitNum\" int NOT NULL," +
+            "  \"subscriptionState\" int NOT NULL," +
+            "  \"profile\" blob NOT NULL);";
+
+    private static final String CREATE_DiscoveryContent = "CREATE TABLE IF NOT EXISTS \"Content\" (" +
+            "  \"channelId\" int NOT NULL," +
+            "  \"content\" text NOT NULL" +
+            ");";
+
     public SnapChatOpenHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version){
         super(context, name, factory, version);
     }
@@ -109,6 +121,8 @@ public class SnapChatOpenHelper extends SQLiteOpenHelper{
         db.execSQL(CREATE_STORY);
         db.execSQL(CREATE_STORYSNAP);
         db.execSQL(CREATE_MYSTORY);
+        db.execSQL(CREATE_DiscoveryChannel);
+        db.execSQL(CREATE_DiscoveryContent);
     }
 
     @Override
