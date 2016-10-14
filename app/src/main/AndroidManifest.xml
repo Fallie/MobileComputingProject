@@ -15,6 +15,7 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
     <application
+        android:name=".activity.MyApplication"
         android:allowBackup="true"
         android:hardwareAccelerated="false"
         android:icon="@mipmap/ic_launcher"
@@ -42,6 +43,7 @@
         <activity android:name=".activity.ProfileEditingActivity" />
         <activity android:name=".activity.AddFriendsActivity" />
         <activity android:name=".activity.AddFriendByUsernameActivity" />
+        <activity android:name=".activity.ChatActivity"/>
         <activity android:name=".activity.AddedmeActivity" />
         <activity
             android:name=".activity.CameraActivity"

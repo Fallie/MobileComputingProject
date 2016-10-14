@@ -20,4 +20,21 @@
     <string name="openSnap">Open Snap</string>
     <string name="timer">3</string>
 
+    <!--Preferences-->
+    <string name="app_preferences">app_preferences</string>
+    <string name="pref_is_user_logged_in">pref_is_user_logged_in</string>
+    <string name="pref_remember">pref_remember</string>
+    <string name="pref_introduction">pref_introduction</string>
+    <string name="pref_mail">pref_mail</string>
+    <string name="pref_password">pref_password</string>
+    <string name="pref_user_info">pref_user_info</string>
+    <string name="pref_theme_light">pref_theme_light</string>
+    <!--Preferences-->
+
+    <string name="text_no_conversations">No Conversations</string>
+    <string name="enter_chat_message">Please enter some message</string>
+    <string name="select_picture_title">Get Photo From</string>
+    <string name="progress_loading_message">Loading...</string>
+
+
 </resources>
