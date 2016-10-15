@@ -15,6 +15,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
@@ -22,6 +23,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.wyyz.snapchat.R;
+import com.example.wyyz.snapchat.util.OnSwipeTouchListener;
 import com.example.wyyz.snapchat.util.TmpPhotoView;
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
@@ -50,7 +52,7 @@ import java.util.List;
 
 public class CameraActivity extends AppCompatActivity implements SurfaceHolder.Callback {
 
-    private static final String TAG = "CameraActivity";
+    public static final String TAG = "CameraActivity";
     //The code used for switch on the camera in settings.
     private static final int REQUEST_CAMERA = 0;
     private Camera camera;
@@ -68,6 +70,8 @@ public class CameraActivity extends AppCompatActivity implements SurfaceHolder.C
     private static final int chosenSize = 0;
     //If the permission of accessing camera is set to true or false.
     private boolean permission = false;
+    //Gesture implementation
+    private GestureDetector gestureDetector;
 
     /*Buttons and views used in the corresponding layout.*/
     Button btnTakePhoto;
@@ -75,6 +79,8 @@ public class CameraActivity extends AppCompatActivity implements SurfaceHolder.C
     Button btnSavePhoto;
     Button btnOpenSnap;
     Button btnProfile;
+    Button btnDiscovery;
+    Button btnMsg;
     SurfaceView surfaceView;
     SurfaceHolder surfaceHolder;
     View mLayout;
@@ -101,6 +107,8 @@ public class CameraActivity extends AppCompatActivity implements SurfaceHolder.C
     // Actions need to be done if permission is granted.
     public void actOnGranted(){
         surfaceView = (SurfaceView) findViewById(R.id.cameraSurface);
+        surfaceView.setOnTouchListener(new OnSwipeTouchListener(this.getBaseContext(),CameraActivity.this){
+        });
         surfaceView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
@@ -240,6 +248,23 @@ public class CameraActivity extends AppCompatActivity implements SurfaceHolder.C
             public void onClick(View view) {
                 finish();
                 Intent intent = new Intent(CameraActivity.this, SnapActivity.class);
+                startActivity(intent);
+            }
+        });
+        btnMsg = (Button) findViewById(R.id.btnMsg);
+        btnMsg.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(CameraActivity.this, MyfriendsActivity.class);
+                startActivity(intent);
+            }
+        });
+        btnDiscovery= (Button) findViewById(R.id.btnDiscover);
+        btnDiscovery.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.i("click action","turn to discover");
+                Intent intent = new Intent(CameraActivity.this, DiscoverActivity.class);
                 startActivity(intent);
             }
         });
@@ -431,6 +456,11 @@ public class CameraActivity extends AppCompatActivity implements SurfaceHolder.C
     @Override
     public void surfaceCreated(SurfaceHolder surfaceHolder) {
         if (camera != null) {
+            try {
+                camera.reconnect();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             camera.stopPreview();
             camera.release();
             camera = null;
@@ -515,13 +545,6 @@ public class CameraActivity extends AppCompatActivity implements SurfaceHolder.C
         AppIndex.AppIndexApi.end(client, getIndexApiAction());
         client.disconnect();
         Log.i(TAG,"Activity stopped!");
-    }
-
-    @Override
-    public void onDestroy(){
-        super.onDestroy();
-
-        Log.i(TAG,"Activity destroyed!");
     }
 
 }

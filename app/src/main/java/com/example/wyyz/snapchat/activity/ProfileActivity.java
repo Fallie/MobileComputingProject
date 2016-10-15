@@ -6,6 +6,8 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.widget.ImageView;
@@ -17,7 +19,7 @@ import com.example.wyyz.snapchat.model.User;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-public class ProfileActivity extends AppCompatActivity implements View.OnClickListener{
+public class ProfileActivity extends AppCompatActivity implements View.OnClickListener,GestureDetector.OnGestureListener {
     TextView _nickName;
     ImageView settings;
     ImageView cameraOpening;
@@ -28,12 +30,14 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     FirebaseUser user;
     User currentUser;
     SnapChatDB db;
+    GestureDetector gestureDetector;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
+        gestureDetector = new GestureDetector(this,this);
         user= FirebaseAuth.getInstance().getCurrentUser();
         db=SnapChatDB.getInstance(ProfileActivity.this);
         _nickName=(TextView)findViewById(R.id.tv_nickname);
@@ -90,4 +94,52 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         }
     }
 
+
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        // TODO Auto-generated method stub
+        return gestureDetector.onTouchEvent(event);
+    }
+
+
+    @Override
+    public boolean onDown(MotionEvent e) {
+        return false;
+    }
+
+    @Override
+    public void onShowPress(MotionEvent e) {
+
+    }
+
+    @Override
+    public boolean onSingleTapUp(MotionEvent e) {
+        return false;
+    }
+
+    @Override
+    public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+        return false;
+    }
+
+    @Override
+    public void onLongPress(MotionEvent e) {
+
+    }
+
+    @Override
+    public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+        // This is for swiping up
+        if ((e1.getY() - e2.getY()) > 50) {
+            Intent intent = new Intent();
+            intent.setClass(this, CameraActivity.class);
+            startActivity(intent);
+            overridePendingTransition(R.anim.in_from_bottom, R.anim.out_to_top);
+            return true;
+        } else
+            return false;
+    }
+
 }
+

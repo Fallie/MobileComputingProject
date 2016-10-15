@@ -187,7 +187,6 @@ public class SnapChatDB {
             values.put("photo",snap.getPhotoStr());
             values.put("timingOut", snap.getTimingOut());
             values.put("timeStamp", snap.getTimestamp());
-            //values.put("location",snap.getLocation());
             db.insert("Snap", null, values);
         }
     }

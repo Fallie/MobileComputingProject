@@ -35,6 +35,9 @@ import static com.example.wyyz.snapchat.R.drawable.winking;
 
 public class TouchEventView extends View {
     private static final String TAG = "TouchEventView";
+    private static final int freehanddraw = 100;
+    private static final int addtext = 200;
+    private static final int addemoticon = 300;
     private Paint paint;
     private Path path = new Path();
     int type;
@@ -74,53 +77,51 @@ public class TouchEventView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
 
-        if(this.type == 100){
-            paint = new Paint();
-            paint.setColor(Color.WHITE);
-            paint.setStyle(Paint.Style.STROKE);
-            paint.setStrokeWidth(10);
-            canvas.drawPath(path, paint);
-            paint = null;
-        }
-        if(this.type == 200) {
-            String testString = TmpText.textContent;
-            paint = new Paint();
-            paint.setStrokeWidth(5);
-            paint.setTextSize(50);
-            paint.setColor(Color.WHITE);
-            paint.setTextAlign(Paint.Align.LEFT);
-            Rect bounds = new Rect();
-            paint.getTextBounds(testString, 0, testString.length(), bounds);
-            Paint.FontMetricsInt fontMetrics = paint.getFontMetricsInt();
-            int baseline = (getMeasuredHeight() - fontMetrics.bottom + fontMetrics.top) / 2 - fontMetrics.top;
-            canvas.drawText(testString,getMeasuredWidth() / 2 - bounds.width() / 2, baseline+400, paint);
-            paint = null;
-            TmpPhotoView.photo = getBitmapFromView(this);
-        }
-        if(this.type == 300){
-            if(isFirstDraw){
-                //canvas.drawBitmap(mBitmap, mStartX, mStartY, null);
-                invalidate();
-            }
-            else{
-                if ( mCurrentX < 0f ) mCurrentX = mStartX;
-
-                if ( (mCurrentX + mBitmap.getWidth()) >= 960f) {
-                    mCurrentX = 960f;
+        switch (this.type){
+            case freehanddraw:
+                paint = new Paint();
+                paint.setColor(Color.WHITE);
+                paint.setStyle(Paint.Style.STROKE);
+                paint.setStrokeWidth(10);
+                canvas.drawPath(path, paint);
+                paint = null;
+                break;
+            case addtext:
+                String testString = TmpText.textContent;
+                paint = new Paint();
+                paint.setStrokeWidth(5);
+                paint.setTextSize(50);
+                paint.setColor(Color.WHITE);
+                paint.setTextAlign(Paint.Align.LEFT);
+                Rect bounds = new Rect();
+                paint.getTextBounds(testString, 0, testString.length(), bounds);
+                Paint.FontMetricsInt fontMetrics = paint.getFontMetricsInt();
+                int baseline = (getMeasuredHeight() - fontMetrics.bottom + fontMetrics.top) / 2 - fontMetrics.top;
+                canvas.drawText(testString,getMeasuredWidth() / 2 - bounds.width() / 2, baseline+400, paint);
+                paint = null;
+                TmpPhotoView.photo = getBitmapFromView(this);
+                break;
+            case addemoticon:
+                if(isFirstDraw){
+                    invalidate();
                 }
+                else{
+                    if ( mCurrentX < 0f ) mCurrentX = mStartX;
 
-                if ( mCurrentY < 0f ) mCurrentY = mStartY;
+                    if ( (mCurrentX + mBitmap.getWidth()) >= 960f) {
+                        mCurrentX = 960f;
+                    }
 
-                if ( (mCurrentY + mBitmap.getHeight()) >= 1450f ) {
-                    mCurrentY = 1450f;
+                    if ( mCurrentY < 0f ) mCurrentY = mStartY;
+
+                    if ( (mCurrentY + mBitmap.getHeight()) >= 1450f ) {
+                        mCurrentY = 1450f;
+                    }
+
+                    if (mDrawingEnabled) {
+                        canvas.drawBitmap(mBitmap, mCurrentX, mCurrentY, null);
+                    }
                 }
-
-                if (mDrawingEnabled) {
-                    canvas.drawBitmap(mBitmap, mCurrentX, mCurrentY, null);
-                    //invalidate();
-                }
-            }
-
         }
     }
 

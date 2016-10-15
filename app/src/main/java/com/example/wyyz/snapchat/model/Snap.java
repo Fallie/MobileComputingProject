@@ -67,6 +67,7 @@ public class Snap {
         this.timestamp = timestamp;
     }
 
+<<<<<<< HEAD
     public String getPhotoStr() {
         return photoStr;
     }
@@ -82,6 +83,8 @@ public class Snap {
         this.location = location;
     }*/
 
+=======
+>>>>>>> master
     public void setPhoto(Bitmap photo) {
         this.photo = photo;
     }

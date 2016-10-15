@@ -38,6 +38,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -53,6 +54,7 @@ public class PreviewActivity extends AppCompatActivity implements View.OnClickLi
 
     private static final String TAG = "PreviewActivity";
     private Snap photo;
+    private SnapChatDB snapChatDB;
     private Uri imageUri;
     private String imageUrl;
     private FirebaseAuth mAuth;
@@ -159,6 +161,7 @@ public class PreviewActivity extends AppCompatActivity implements View.OnClickLi
                 break;
             case R.id.btnSaveToMemory:
                 //savePhotoToMemory();
+                finishSettingSnap();
                 downloadImagePublic();
                 break;
             case R.id.btnDraw:
@@ -200,38 +203,6 @@ public class PreviewActivity extends AppCompatActivity implements View.OnClickLi
     protected void resumeCanvas() {
 
         Toast.makeText(PreviewActivity.this, "The canvas is cleared!",Toast.LENGTH_SHORT).show();
-    }
-
-    private Bitmap addWatermark(Bitmap src, Bitmap watermark) {
-        if (src == null || watermark  == null) {
-            Log.d(TAG, "src is null");
-            return src;
-        }
-
-        int sWid = src.getWidth();
-        int sHei = src.getHeight();
-        int wWid = watermark.getWidth();
-        int wHei = watermark.getHeight();
-        if (sWid == 0 || sHei == 0) {
-            return null;
-        }
-
-        if (sWid < wWid || sHei < wHei) {
-            return src;
-        }
-
-        Bitmap bitmap = Bitmap.createBitmap(sWid, sHei, Bitmap.Config.ARGB_8888);
-        try {
-            Canvas cv = new Canvas(bitmap);
-            cv.drawBitmap(src, 0, 0, null);
-            cv.drawBitmap(watermark, wWid, wHei, null);
-            cv.save(Canvas.ALL_SAVE_FLAG);
-            cv.restore();
-        } catch (Exception e) {
-            bitmap = null;
-            e.getStackTrace();
-        }
-        return bitmap;
     }
 
     private void startDraw() {
@@ -326,7 +297,7 @@ public class PreviewActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void addPhotoToStory() {
-        finishSettingSnap();
+        //finishSettingSnap();
     }
 
     private void setTimer() {
@@ -346,18 +317,43 @@ public class PreviewActivity extends AppCompatActivity implements View.OnClickLi
     private void finishSettingSnap(){
         //set the timer of the snap
         photo.setTimingOut(secondNumber);
-        resetBase();
-        photo.setPhoto(base);
+        //set the timestamp of the snap
         String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         photo.setTimestamp(timestamp);
-        String email=mAuth.getInstance().getCurrentUser().getEmail();
-        User user=db.findUserByEmail(email);
-        photo.setUserId(user.getId());
+        //set the photo path of the snap
+        resetBase();
+        StorageReference photoRef = mStorage.getInstance().getReference("Photos")
+                .child(mAuth.getInstance().getCurrentUser().getUid())
+                .child(timestamp.toString());
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        base.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] data = baos.toByteArray();
+
+        UploadTask uploadTask = photoRef.putBytes(data);
+        uploadTask.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                // Handle unsuccessful uploads
+                Log.i(TAG,"upload failed!!!");
+            }
+        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
+                photo.setPath(taskSnapshot.getDownloadUrl().toString());
+                Log.i(TAG,"upload successful!!!");
+            }
+        });
+
+        //set the userid of the snap
+        photo.setUserId(mAuth.getInstance().getCurrentUser().getUid());
+
+        snapChatDB = SnapChatDB.getInstance(this);
+        snapChatDB.Snap(photo);
     }
 
     public void downloadImagePublic() {
-        finishSettingSnap();
-
         File dir = new File(Environment.getExternalStoragePublicDirectory
                 (Environment.DIRECTORY_PICTURES), "MyCameraApp");
         if (!dir.exists()) {
