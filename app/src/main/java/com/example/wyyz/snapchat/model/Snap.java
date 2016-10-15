@@ -9,12 +9,14 @@ import android.graphics.Bitmap;
  */
 public class Snap {
     private int id;
-    private String userId;
+    private int userId;
     private boolean inMemory = false;
     private Bitmap photo;
+    private String photoStr;
     private String path;
     private int timingOut = 3;
     private String timestamp;
+    private Boolean isChecked=false;
     //private String location;
 
     public int getId() {
@@ -25,11 +27,11 @@ public class Snap {
         this.id = id;
     }
 
-    public String getUserId() {
+    public int getUserId() {
         return userId;
     }
 
-    public void setUserId(String userId) {
+    public void setUserId(int userId) {
         this.userId = userId;
     }
 
@@ -65,6 +67,14 @@ public class Snap {
         this.timestamp = timestamp;
     }
 
+    public String getPhotoStr() {
+        return photoStr;
+    }
+
+    public void setPhotoStr(String photoStr) {
+        this.photoStr = photoStr;
+    }
+
     /*public String getLocation() {
         return location;
     }
@@ -79,5 +89,11 @@ public class Snap {
         return photo;
     }
 
+    public Boolean getChecked() {
+        return isChecked;
+    }
 
+    public void setChecked(Boolean checked) {
+        isChecked = checked;
+    }
 }

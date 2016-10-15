@@ -26,7 +26,9 @@ import android.widget.Toast;
 
 import com.example.wyyz.snapchat.R;
 import com.example.wyyz.snapchat.customView.TouchEventView;
+import com.example.wyyz.snapchat.db.SnapChatDB;
 import com.example.wyyz.snapchat.model.Snap;
+import com.example.wyyz.snapchat.model.User;
 import com.example.wyyz.snapchat.util.TmpPhotoView;
 import com.example.wyyz.snapchat.util.TmpText;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -71,6 +73,7 @@ public class PreviewActivity extends AppCompatActivity implements View.OnClickLi
     private TouchEventView imageView;
     private NumberPicker np;
     private int chosenEmoticonId;
+    private SnapChatDB db;
 
 
     @Override
@@ -81,9 +84,7 @@ public class PreviewActivity extends AppCompatActivity implements View.OnClickLi
         //photo.setPhoto(tmpPhotoView.photo);
 
         initialize();
-
-
-
+        db=SnapChatDB.getInstance(PreviewActivity.this);
 
         Log.i(TAG, "Activity created!");
     }
@@ -349,8 +350,9 @@ public class PreviewActivity extends AppCompatActivity implements View.OnClickLi
         photo.setPhoto(base);
         String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         photo.setTimestamp(timestamp);
-        photo.setUserId(mAuth.getInstance().getCurrentUser().getUid());
-
+        String email=mAuth.getInstance().getCurrentUser().getEmail();
+        User user=db.findUserByEmail(email);
+        photo.setUserId(user.getId());
     }
 
     public void downloadImagePublic() {
@@ -458,7 +460,6 @@ public class PreviewActivity extends AppCompatActivity implements View.OnClickLi
     private void resetBase(){
         base = TmpPhotoView.photo;
     }
-
 
 }
 

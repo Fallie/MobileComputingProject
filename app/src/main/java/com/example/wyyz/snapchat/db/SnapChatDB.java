@@ -178,17 +178,22 @@ public class SnapChatDB {
     /**
      * Save a Snap
      */
-    public void Snap(Snap snap){
+    public void saveSnap(Snap snap){
         if(snap!= null){
             ContentValues values=new ContentValues();
             values.put("userId", snap.getUserId());
             values.put("inMemory",snap.isInMemory());
             values.put("path", snap.getPath());
+            values.put("photo",snap.getPhotoStr());
             values.put("timingOut", snap.getTimingOut());
             values.put("timeStamp", snap.getTimestamp());
             //values.put("location",snap.getLocation());
             db.insert("Snap", null, values);
         }
+    }
+
+    public void addSnaptoUser(User user, Snap snap){
+        snap.setUserId(user.getId());
     }
 
     /**

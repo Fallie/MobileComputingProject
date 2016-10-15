@@ -5,29 +5,32 @@ package com.example.wyyz.snapchat.activity;
  */
 
 
+import android.app.FragmentManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.wyyz.snapchat.R;
-import com.example.wyyz.snapchat.db.SnapChatDB;
+import com.example.wyyz.snapchat.model.Snap;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
 
 
 public class SnapActivity extends FragmentActivity implements View.OnClickListener {
-
-    private SnapChatDB snapChatDB;
-
-    private String mUsername = "";
-    private String mPhotoUrl = "";
+    private FragmentManager fragmentManager = getFragmentManager();
+    CameraRollFragment cameraRollFragment;
+    SnapsFragment snapsFragment;
+    private ArrayList<Snap> selectedSnaps=new ArrayList<>();
 
     private ViewPager pager ;
     private ArrayList<Fragment> fragments;
@@ -35,11 +38,19 @@ public class SnapActivity extends FragmentActivity implements View.OnClickListen
     private TextView tv_tab0, tv_tab1, tv_tab2;
     private FirebaseAuth firebaseAuth;
     Button btnCamera;
+
+    private RelativeLayout titleLayout;
+    private RelativeLayout selectTopLayout;
+    private RelativeLayout selectBottomLayout;
+    private ImageView ivSelect;
+    private ImageView ivCancel;
+    private ImageView ivSend;
+    private ImageView ivDelete;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_snap);
-        snapChatDB = SnapChatDB.getInstance(this);
         firebaseAuth = FirebaseAuth.getInstance();
         btnCamera = (Button) findViewById(R.id.btnButton);
         btnCamera.setOnClickListener(new View.OnClickListener() {
@@ -50,9 +61,69 @@ public class SnapActivity extends FragmentActivity implements View.OnClickListen
             }
         });
         initView();
+        ivSelect.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("click","1");
+                titleLayout.setVisibility(View.INVISIBLE);
+                selectTopLayout.setVisibility(View.VISIBLE);
+                selectBottomLayout.setVisibility(View.VISIBLE);
+                btnCamera.setVisibility(View.GONE);
+                cameraRollFragment.getCameraRollImgAdapter().toggleOnSelect();
+            }
+        });
+        ivCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                titleLayout.setVisibility(View.VISIBLE);
+                selectTopLayout.setVisibility(View.GONE);
+                selectBottomLayout.setVisibility(View.GONE);
+                btnCamera.setVisibility(View.VISIBLE);
+                cameraRollFragment.getCameraRollImgAdapter().toggleOffSelect();
+            }
+        });
+        ivSend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ArrayList<Snap> snaps=new ArrayList<Snap>();
+                snaps=cameraRollFragment.getCameraRollImgAdapter().getImages();
+                for(Snap s:snaps){
+                    if(s.getChecked()){
+                        selectedSnaps.add(s);
+                        s.setChecked(false);
+                    }
+                }
+
+                Log.d("selected",String.valueOf(selectedSnaps.size()));
+                for(Snap s:selectedSnaps){
+                    Log.d("selected",s.getPath());
+                }
+                cameraRollFragment.getCameraRollImgAdapter().toggleOffSelect();
+            }
+        });
+    }
+
+    protected void onStart(){
+        super.onStart();
+
+        for (Fragment f:fragments) {
+            if(f instanceof CameraRollFragment){
+                cameraRollFragment=(CameraRollFragment) f;
+            }else if(f instanceof SnapsFragment){
+                snapsFragment=(SnapsFragment)f;
+            }
+        }
     }
 
     private void initView(){
+        titleLayout=(RelativeLayout)findViewById(R.id.title_layout);
+        selectTopLayout=(RelativeLayout)findViewById(R.id.select_top);
+        selectBottomLayout=(RelativeLayout)findViewById(R.id.select_bottom);
+        ivSelect=(ImageView)findViewById(R.id.imgv_select);
+        ivCancel=(ImageView)findViewById(R.id.imgv_cancel);
+        ivSend=(ImageView)findViewById(R.id.imgv_send);
+        ivDelete=(ImageView)findViewById(R.id.imgv_delete);
+
         fragments=new ArrayList<Fragment>();
         fragments.add(new SnapsFragment());
         fragments.add(new CameraRollFragment());
@@ -116,10 +187,6 @@ public class SnapActivity extends FragmentActivity implements View.OnClickListen
             default:
                 break;
         }
-    }
-
-    public SnapChatDB getDbInstance(){
-        return snapChatDB;
     }
 
     public void signOut(){

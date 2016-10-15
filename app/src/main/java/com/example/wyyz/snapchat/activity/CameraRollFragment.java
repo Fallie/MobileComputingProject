@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
@@ -14,7 +15,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.Toast;
 
 import com.example.wyyz.snapchat.R;
 import com.example.wyyz.snapchat.model.Snap;
@@ -27,10 +30,11 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class CameraRollFragment extends Fragment {
+public class CameraRollFragment extends Fragment{
     private GridView gridView;
-    private ImageAdapter imageAdapter;
+    private ImageAdapter cameraRollImgAdapter;
     private ArrayList<Snap> snaps=new ArrayList<Snap>();
+    private SnapActivity snapActivity;
 
     public CameraRollFragment() {
         // Required empty public constructor
@@ -42,11 +46,18 @@ public class CameraRollFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View camerarollView= inflater.inflate(R.layout.fragment_snaps, container, false);
-        final SnapActivity snapActivity = (SnapActivity) getActivity();
+        snapActivity = (SnapActivity) getActivity();
         gridView = (GridView) camerarollView.findViewById(R.id.gridView);
-        snaps=getSnapsFromSystemPhotos(snapActivity);
-        imageAdapter = new ImageAdapter(snapActivity, R.layout.image_item, snaps);
-        gridView.setAdapter(imageAdapter);
+        cameraRollImgAdapter = new ImageAdapter(snapActivity, R.layout.image_item, snaps);
+        gridView.setAdapter(cameraRollImgAdapter);
+        new GetSnapsFromSystem().execute();
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Toast.makeText(snapActivity, "Should Edit Photo!",
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
 
         return camerarollView;
     }
@@ -85,19 +96,86 @@ public class CameraRollFragment extends Fragment {
         //Read the scaled bitmap
         bitmap = BitmapFactory.decodeFile(path, options);
         // Use ThumbnailUtils to create thumbnails, here to specify the bitmap to zoom objects
-        bitmap = ThumbnailUtils.extractThumbnail(bitmap, 100, 100, ThumbnailUtils.OPTIONS_RECYCLE_INPUT);
+        bitmap = ThumbnailUtils.extractThumbnail(bitmap, h, w, ThumbnailUtils.OPTIONS_RECYCLE_INPUT);
+        return bitmap;
+    }
+    public static Bitmap getLocalBitmap(String path){
+        Bitmap bitmap=BitmapFactory.decodeFile(path);
         return bitmap;
     }
 
-    private ArrayList<Snap> getSnapsFromSystemPhotos(Context context){
-        ArrayList<Snap> snaps=new ArrayList<Snap>();
+    public static Bitmap centerSquareScaleBitmap(Bitmap bitmap, int edgeLength)
+    {
+        if(null == bitmap || edgeLength <= 0)
+        {
+            return  null;
+        }
+
+        Bitmap result = bitmap;
+        int widthOrg = bitmap.getWidth();
+        int heightOrg = bitmap.getHeight();
+
+        if(widthOrg > edgeLength && heightOrg > edgeLength)
+        {
+            //压缩到一个最小长度是edgeLength的bitmap
+            int longerEdge = (int)(edgeLength * Math.max(widthOrg, heightOrg) / Math.min(widthOrg, heightOrg));
+            int scaledWidth = widthOrg > heightOrg ? longerEdge : edgeLength;
+            int scaledHeight = widthOrg > heightOrg ? edgeLength : longerEdge;
+            Bitmap scaledBitmap;
+
+            try{
+                scaledBitmap = Bitmap.createScaledBitmap(bitmap, scaledWidth, scaledHeight, true);
+            }
+            catch(Exception e){
+                return null;
+            }
+
+            //从图中截取正中间的正方形部分。
+            int xTopLeft = (scaledWidth - edgeLength) / 2;
+            int yTopLeft = (scaledHeight - edgeLength) / 2;
+
+            try{
+                result = Bitmap.createBitmap(scaledBitmap, xTopLeft, yTopLeft, edgeLength, edgeLength);
+                scaledBitmap.recycle();
+            }
+            catch(Exception e){
+                return null;
+            }
+        }
+
+        return result;
+    }
+
+    private void getSnapsFromSystemPhotos(Context context){
+        //ArrayList<Snap> snaps=new ArrayList<Snap>();
         List<String> paths=getSystemPhotoList(context);
-        for(int i=0;i<paths.size();i++){
-            Bitmap photo=getBitmapFromImagePath(paths.get(i));
+        for(int i=paths.size()-1;i>=0;i--){
+            Bitmap photo=getLocalBitmap(paths.get(i));
+            Bitmap squarephoto=centerSquareScaleBitmap(photo,100);
             Snap snap=new Snap();
-            snap.setPhoto(photo);
+            snap.setPhoto(squarephoto);
+            snap.setPath(paths.get(i));
             snaps.add(snap);
         }
+    }
+
+    class GetSnapsFromSystem extends AsyncTask<Void, Integer, Boolean>{
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            getSnapsFromSystemPhotos(snapActivity);
+            return true;
+        }
+        @Override
+        protected void onPostExecute(Boolean result) {
+            cameraRollImgAdapter.notifyDataSetChanged();
+        }
+    }
+    public ImageAdapter getCameraRollImgAdapter() {
+        return cameraRollImgAdapter;
+    }
+
+    public ArrayList<Snap> getSnaps() {
         return snaps;
     }
 }
