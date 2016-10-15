@@ -12,12 +12,10 @@ public class Snap {
     private int userId;
     private boolean inMemory = false;
     private Bitmap photo;
-    private String photoStr;
     private String path;
     private int timingOut = 3;
     private String timestamp;
-    private Boolean isChecked=false;
-    //private String location;
+    private boolean isChecked;
 
     public int getId() {
         return id;
@@ -67,24 +65,6 @@ public class Snap {
         this.timestamp = timestamp;
     }
 
-<<<<<<< HEAD
-    public String getPhotoStr() {
-        return photoStr;
-    }
-
-    public void setPhotoStr(String photoStr) {
-        this.photoStr = photoStr;
-    }
-
-    /*public String getLocation() {
-        return location;
-    }
-    public void setLocation(String location) {
-        this.location = location;
-    }*/
-
-=======
->>>>>>> master
     public void setPhoto(Bitmap photo) {
         this.photo = photo;
     }
@@ -92,11 +72,12 @@ public class Snap {
         return photo;
     }
 
-    public Boolean getChecked() {
+    public boolean getChecked() {
         return isChecked;
     }
 
-    public void setChecked(Boolean checked) {
+    public void setChecked(boolean checked) {
         isChecked = checked;
     }
+
 }

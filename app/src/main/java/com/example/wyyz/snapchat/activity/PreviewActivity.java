@@ -320,6 +320,12 @@ public class PreviewActivity extends AppCompatActivity implements View.OnClickLi
         //set the timestamp of the snap
         String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         photo.setTimestamp(timestamp);
+        //set the userid of the snap
+        String email=mAuth.getInstance().getCurrentUser().getEmail();
+        User user=db.findUserByEmail(email);
+        photo.setUserId(user.getId());
+
+        snapChatDB = SnapChatDB.getInstance(this);
         //set the photo path of the snap
         resetBase();
         StorageReference photoRef = mStorage.getInstance().getReference("Photos")
@@ -342,15 +348,11 @@ public class PreviewActivity extends AppCompatActivity implements View.OnClickLi
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                 // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
                 photo.setPath(taskSnapshot.getDownloadUrl().toString());
+                Log.i(TAG,photo.getPath());
                 Log.i(TAG,"upload successful!!!");
+                snapChatDB.Snap(photo);
             }
         });
-
-        //set the userid of the snap
-        photo.setUserId(mAuth.getInstance().getCurrentUser().getUid());
-
-        snapChatDB = SnapChatDB.getInstance(this);
-        snapChatDB.Snap(photo);
     }
 
     public void downloadImagePublic() {
