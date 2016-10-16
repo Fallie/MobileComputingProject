@@ -58,6 +58,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import static com.example.wyyz.snapchat.util.AppConstants.FILE_URL;
+
 
 public class ChatActivity extends BaseActivity implements CustomOnItemClickListener, View.OnClickListener ,CustomClickImageListener{
 
@@ -69,6 +71,7 @@ public class ChatActivity extends BaseActivity implements CustomOnItemClickListe
     private ChatMessageAdapter chatMessageAdapter;
     private Toolbar toolbar;
     private String selectedUserID;
+    private String fileUrl;
     private File filePathImageCamera;
     private static final int IMAGE_GALLERY_REQUEST = 1;
     private static final int IMAGE_CAMERA_REQUEST = 2;
@@ -81,14 +84,22 @@ public class ChatActivity extends BaseActivity implements CustomOnItemClickListe
         setContentView(R.layout.activity_chat);
 
         getIntentExtras();
+        if (fileUrl!=null){
+
+        }else{
         initComponents();
         addListeners();
         setUpToolbar();
+        }
     }
 
     private void getIntentExtras() {
         selectedUserID = getIntent().getStringExtra(AppConstants.INTENT_GROUP_SELECTED_GROUP);
         Log.v(TAG,selectedUserID);
+        if(getIntent().getStringArrayExtra(FILE_URL)!= null){
+            fileUrl = getIntent().getStringExtra(FILE_URL);
+            Log.v(TAG, fileUrl);
+        }
     }
 
     @Override

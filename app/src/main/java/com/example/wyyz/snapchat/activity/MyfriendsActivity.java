@@ -103,6 +103,7 @@ public class MyfriendsActivity extends AppCompatActivity implements CustomOnItem
         startActivity(i);
     }
 
+
 }
 
 
