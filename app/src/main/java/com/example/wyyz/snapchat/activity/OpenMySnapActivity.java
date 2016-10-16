@@ -1,12 +1,8 @@
 package com.example.wyyz.snapchat.activity;
 
-import android.app.ActionBar;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.ColorDrawable;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -18,16 +14,16 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.RelativeLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.wyyz.snapchat.R;
-import com.example.wyyz.snapchat.customView.TouchEventView;
 import com.example.wyyz.snapchat.db.SnapChatDB;
-import com.example.wyyz.snapchat.model.Snap;
 import com.example.wyyz.snapchat.util.TmpPhotoView;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -38,38 +34,41 @@ import com.google.firebase.storage.StorageReference;
 public class OpenMySnapActivity extends AppCompatActivity implements View.OnClickListener{
 
     private static final String TAG = "OpenMySnapActivity";
-    private Snap photo;
     private FirebaseStorage mStorage;
     private SnapChatDB snapChatDB;
     private Uri uri;
-    private Bitmap base;
-    private RelativeLayout layout;
+    private FirebaseAuth mAuth;
     private Button deleteSnap;
     private Button nextStep;
     private Button editSnap;
     private Button shareSnap;
-    private TouchEventView imageView;
+    private ImageView imageView;
     private MenuInflater inflater;
-    ActionBar bar;
-
+    private String timeStamp;
+    private long size;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Intent intent = getIntent();
         uri = Uri.parse(intent.getStringExtra("SnapPath"));
+        timeStamp = intent.getStringExtra("TimeStamp");
+        size = intent.getLongExtra("Size",0);
         setContentView(R.layout.activity_openmysnap);
         initialize();
         Log.i(TAG, "Activity created!");
     }
 
     private void initialize() {
-        base = TmpPhotoView.photo;
-        layout = (RelativeLayout)findViewById(R.id.previewLayout);
-        final TextView secondNum = (TextView) findViewById(R.id.secondNumber);
-        imageView = (TouchEventView) findViewById(R.id.previewImage);
-        imageView.setBackgroundDrawable(new BitmapDrawable(base));
+        snapChatDB = SnapChatDB.getInstance(this);
 
+        final TextView secondNum = (TextView) findViewById(R.id.secondNumber);
+        imageView = (ImageView) findViewById(R.id.previewImage);
+        //imageView.setBackgroundDrawable(new BitmapDrawable(base));
+        Glide.with(getBaseContext())
+                .load(uri.toString())
+                //.crossFade()
+                .into(imageView);
         nextStep = (Button) findViewById(R.id.btnNextStep);
         nextStep.setOnClickListener(this);
         deleteSnap = (Button) findViewById(R.id.btnDelete);
@@ -79,8 +78,6 @@ public class OpenMySnapActivity extends AppCompatActivity implements View.OnClic
         shareSnap = (Button) findViewById(R.id.btnShareSnap);
         shareSnap.setOnClickListener(this);
 
-        bar = getActionBar();
-        bar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#0000ff")));
 
 
 
@@ -113,7 +110,7 @@ public class OpenMySnapActivity extends AppCompatActivity implements View.OnClic
     }
 
     private void lockSnap() {
-        snapChatDB = SnapChatDB.getInstance(this);
+
         snapChatDB.lockSnapByUri(uri.toString());
     }
 
@@ -130,9 +127,7 @@ public class OpenMySnapActivity extends AppCompatActivity implements View.OnClic
                 popDelete();
                 break;
             case R.id.btnEditSnap:
-                Intent intent = new Intent(OpenMySnapActivity.this,PreviewActivity.class);
-                intent.putExtra("SnapPath",uri);
-                startActivity(intent);
+                editSnap();
                 break;
             case R.id.btnShareSnap:
                 shareSnap("",uri);
@@ -141,6 +136,28 @@ public class OpenMySnapActivity extends AppCompatActivity implements View.OnClic
                 break;
 
         }
+    }
+
+    private void editSnap() {
+        StorageReference islandRef = mStorage.getInstance().getReferenceFromUrl(uri.toString());
+
+
+        islandRef.getBytes(size).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+            @Override
+            public void onSuccess(byte[] bytes) {
+                TmpPhotoView.photo = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                Intent intent = new Intent(OpenMySnapActivity.this,PreviewActivity.class);
+                intent.putExtra("SnapPath",uri);
+                intent.putExtra("TimeStamp",timeStamp);
+                startActivity(intent);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                // Handle any errors
+                Log.e(TAG,"Fail to download to tmp file");
+            }
+        });
     }
 
 
@@ -168,8 +185,13 @@ public class OpenMySnapActivity extends AppCompatActivity implements View.OnClic
     }
     private void deleteSnap() {
         //1.delete the photo on firebase
-        StorageReference storageRef = mStorage.getReferenceFromUrl(uri.toString());
-        storageRef.delete().addOnSuccessListener(new OnSuccessListener() {
+        StorageReference storageRef = mStorage.getInstance().getReferenceFromUrl("gs://mysnapchat-a20fe.appspot.com/");
+
+        // Create a reference to the file to delete
+        StorageReference desertRef = storageRef.child("Photos/").child(mAuth.getInstance().getCurrentUser().getUid())
+                .child(timeStamp);
+
+        desertRef.delete().addOnSuccessListener(new OnSuccessListener() {
             @Override
             public void onSuccess(Object o) {
                 Intent intent = new Intent(OpenMySnapActivity.this,SnapActivity.class);
@@ -186,6 +208,7 @@ public class OpenMySnapActivity extends AppCompatActivity implements View.OnClic
 
 
         //2.delete the snap locally
+        snapChatDB.deleteSnapByPath(uri.toString());
 
     }
 
@@ -202,13 +225,6 @@ public class OpenMySnapActivity extends AppCompatActivity implements View.OnClic
         startActivity(Intent.createChooser(shareIntent, "Share to"));
     }
 
-
-
-
-
-    private void resetBase(){
-        base = TmpPhotoView.photo;
-    }
 
 
 }

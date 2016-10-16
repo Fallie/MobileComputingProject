@@ -60,7 +60,7 @@ public class SnapChatOpenHelper extends SQLiteOpenHelper{
             "inMemory integer," +
             "isLocked integer," +
             "path text," +
-            "size long," +
+            "size integer," +
             "timingOut integer," +
             "timeStamp integer not null," +
             "location text," +

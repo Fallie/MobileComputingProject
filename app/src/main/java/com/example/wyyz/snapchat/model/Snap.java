@@ -9,8 +9,17 @@ import android.graphics.Bitmap;
  */
 public class Snap {
     private int id;
-    private String userId;
+    private int userId;
     private boolean inMemory = false;
+    // 0  means false, public to see
+    // 1 means true, is locked by the owner
+    private int isLocked = 0;
+    private Bitmap photo;
+    private String path;
+    private int timingOut = 3;
+    private String timestamp;
+    private boolean isChecked;
+
 
     public int getIsLocked() {
         return isLocked;
@@ -19,14 +28,6 @@ public class Snap {
     public void setIsLocked(int isLocked) {
         this.isLocked = isLocked;
     }
-
-    // 0  means false, public to see
-    // 1 means true, is locked by the owner
-    private int isLocked = 0;
-    private Bitmap photo;
-    private String path;
-    private int timingOut = 3;
-    private String timestamp;
 
     public long getSize() {
         return size;
@@ -46,11 +47,11 @@ public class Snap {
         this.id = id;
     }
 
-    public String getUserId() {
+    public int getUserId() {
         return userId;
     }
 
-    public void setUserId(String userId) {
+    public void setUserId(int userId) {
         this.userId = userId;
     }
 
@@ -93,5 +94,12 @@ public class Snap {
         return photo;
     }
 
+    public boolean getChecked() {
+        return isChecked;
+    }
+
+    public void setChecked(boolean checked) {
+        isChecked = checked;
+    }
 
 }

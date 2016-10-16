@@ -99,9 +99,8 @@ public class SnapChatDB {
     }
 
     public void deleteSnapByPath(String path){
-        ContentValues values = new ContentValues();
-        values.put("isLocked", 1);
-        db.delete
+
+        db.delete("Snap","path=?",new String[]{path});
     }
 
     public void updateUsername(String email, String username){
@@ -171,6 +170,29 @@ public class SnapChatDB {
         return friends;
     }
 
+    public ArrayList<Snap> getUserSnap(int userId){
+        ArrayList<Snap> snaps = new ArrayList<Snap>();
+        String QUERY_FRIENDS="select * from Snap " +
+                "where userId=?" +
+                "order by timeStamp desc";
+        Cursor cursor = db.rawQuery(QUERY_FRIENDS, new String[]{String.valueOf(userId)});
+        if(cursor.moveToFirst()){
+            do{
+                Snap snap=new Snap();
+                snap.setUserId(cursor.getInt(cursor.getColumnIndex("userId")));
+                snap.setChecked(false);
+                snap.setPath(cursor.getString(cursor.getColumnIndex("path")));
+                snap.setSize(cursor.getInt(cursor.getColumnIndex("size")));
+                snap.setInMemory(cursor.getInt(cursor.getColumnIndex("inMemory"))>0);
+                snap.setTimestamp(cursor.getString(cursor.getColumnIndex("timeStamp")));
+                snap.setTimingOut(cursor.getInt(cursor.getColumnIndex("timingOut")));
+                snaps.add(snap);
+            }while(cursor.moveToNext());
+        }
+        cursor.close();
+        return snaps;
+    }
+
     /**
      * Save a ChatRecord
      */
@@ -186,7 +208,6 @@ public class SnapChatDB {
             db.insert("ChatRecord", null, values);
         }
     }
-
 
     /**
      * Save a Snap

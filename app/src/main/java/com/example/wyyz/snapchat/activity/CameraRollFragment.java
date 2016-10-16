@@ -4,9 +4,8 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.media.ThumbnailUtils;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
@@ -14,7 +13,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.Toast;
 
 import com.example.wyyz.snapchat.R;
 import com.example.wyyz.snapchat.model.Snap;
@@ -27,10 +28,13 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class CameraRollFragment extends Fragment {
+public class CameraRollFragment extends Fragment{
     private GridView gridView;
-    private ImageAdapter imageAdapter;
+    private ImageAdapter cameraRollImgAdapter;
     private ArrayList<Snap> snaps=new ArrayList<Snap>();
+    private SnapActivity snapActivity;
+    Bitmap bitmap;
+    Bitmap squarephoto;
 
     public CameraRollFragment() {
         // Required empty public constructor
@@ -42,11 +46,18 @@ public class CameraRollFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View camerarollView= inflater.inflate(R.layout.fragment_snaps, container, false);
-        final SnapActivity snapActivity = (SnapActivity) getActivity();
+        snapActivity = (SnapActivity) getActivity();
         gridView = (GridView) camerarollView.findViewById(R.id.gridView);
-        snaps=getSnapsFromSystemPhotos(snapActivity);
-        imageAdapter = new ImageAdapter(snapActivity, R.layout.image_item, snaps);
-        gridView.setAdapter(imageAdapter);
+        cameraRollImgAdapter = new ImageAdapter(snapActivity, R.layout.image_item, snaps);
+        gridView.setAdapter(cameraRollImgAdapter);
+        new GetSnapsFromSystem().execute();
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Toast.makeText(snapActivity, "Should Edit Photo!",
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
 
         return camerarollView;
     }
@@ -74,30 +85,35 @@ public class CameraRollFragment extends Fragment {
         return result ;
     }
 
-    private Bitmap getBitmapFromImagePath(String path){
-        Bitmap bitmap = null;
-        //get height and width of image
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        bitmap = BitmapFactory.decodeFile(path, options);
-        options.inJustDecodeBounds = false;
-        int h = options.outHeight;
-        int w = options.outWidth;
-        //Read the scaled bitmap
-        bitmap = BitmapFactory.decodeFile(path, options);
-        // Use ThumbnailUtils to create thumbnails, here to specify the bitmap to zoom objects
-        bitmap = ThumbnailUtils.extractThumbnail(bitmap, 100, 100, ThumbnailUtils.OPTIONS_RECYCLE_INPUT);
-        return bitmap;
+    private void getSnapsFromSystemPhotos(Context context){
+        //ArrayList<Snap> snaps=new ArrayList<Snap>();
+        List<String> paths=getSystemPhotoList(context);
+        if(paths.size()>0) {
+            for (int i = paths.size() - 1; i >= 0; i--) {
+                Snap snap = new Snap();
+                snap.setPath(paths.get(i));
+                snaps.add(snap);
+            }
+        }
     }
 
-    private ArrayList<Snap> getSnapsFromSystemPhotos(Context context){
-        ArrayList<Snap> snaps=new ArrayList<Snap>();
-        List<String> paths=getSystemPhotoList(context);
-        for(int i=0;i<paths.size();i++){
-            Bitmap photo=getBitmapFromImagePath(paths.get(i));
-            Snap snap=new Snap();
-            snap.setPhoto(photo);
-            snaps.add(snap);
+    class GetSnapsFromSystem extends AsyncTask<Void, Integer, Boolean>{
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            getSnapsFromSystemPhotos(snapActivity);
+            return true;
         }
+        @Override
+        protected void onPostExecute(Boolean result) {
+            cameraRollImgAdapter.notifyDataSetChanged();
+        }
+    }
+    public ImageAdapter getCameraRollImgAdapter() {
+        return cameraRollImgAdapter;
+    }
+
+    public ArrayList<Snap> getSnaps() {
         return snaps;
     }
 }
