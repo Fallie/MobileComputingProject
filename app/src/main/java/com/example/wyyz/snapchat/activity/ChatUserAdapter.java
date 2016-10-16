@@ -45,6 +45,11 @@ public class ChatUserAdapter extends ArrayAdapter<User> {
                 listener.onItemClick(view, position, user);
             }
         });
+//        view.setOnClickListener(new View.OnClickListener(){
+//            public  void  onClick(View v){
+//                listener.clickImageChat(view,position,user.getUsername(),);
+//            }
+//        });
         viewHolder.username.setText(user.getUsername());
         viewHolder.email.setText(user.getEmail());
         return view;

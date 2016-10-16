@@ -103,13 +103,14 @@ public class MyfriendsActivity extends AppCompatActivity implements CustomOnItem
 
     @Override
     public void onItemClick(View v, int position, Object value) {
-        Log.d("Click",Integer.toString(((User)value).getId()));
+        Log.d("Click",((User)value).getEmail());
         Intent i = new Intent(MyfriendsActivity.this, ChatActivity.class);
-        i.putExtra(AppConstants.INTENT_GROUP_SELECTED_GROUP, ((User)value).getId());
+        i.putExtra(AppConstants.INTENT_GROUP_SELECTED_GROUP, ((User)value).getEmail());
         if(!contentUrl.equals(""))
             i.putExtra("file_url",contentUrl);
         startActivity(i);
     }
+
 
 }
 

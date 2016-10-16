@@ -1,7 +1,5 @@
-package com.example.wyyz.snapchat.activity.chat;
+package com.example.wyyz.snapchat.model;
 
-
-import com.example.wyyz.snapchat.model.FileModel;
 
 public class ChatMessage implements Comparable{
     private long currentTime;
