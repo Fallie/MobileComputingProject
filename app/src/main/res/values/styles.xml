@@ -37,5 +37,19 @@
     <style name="MyActionBar" parent="@android:style/Widget.Holo.Light.ActionBar">
         <item name="android:background">#D3D3D3</item>
     </style>
+    <style name="FullScreen.TextAppearance.Title" parent="TextAppearance.AppCompat.Title">
+        <item name="android:textColor">@color/colorPrimary</item>
+    </style>
+
+    <style name="FullScreen.TextAppearance.Title.Inverse" parent="TextAppearance.AppCompat.Title">
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+
+
+    <style name="AppThemeFullScreenImage" parent="Theme.AppCompat.Light.NoActionBar.FullScreen">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
 
 </resources>

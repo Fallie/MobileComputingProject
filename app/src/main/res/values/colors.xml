@@ -19,5 +19,7 @@
 
     <color name="background">#e9e3dd</color>
 
+    <color name="holo_blue_light">#FF33B5E5</color>
+
 
 </resources>
