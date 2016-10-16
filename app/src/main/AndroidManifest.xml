@@ -65,6 +65,7 @@
             android:label="@string/preview"/>
         <activity android:name=".activity.MyfriendsActivity" />
         <activity android:name=".activity.ScanqrcodeActivity"/>
+        <activity android:name=".activity.MyStory.StoryActivity" />
         <activity android:name=".activity.DiscoverActivity" />
         <activity android:name=".activity.DiscoverChannelActivity" />
 
