@@ -34,11 +34,17 @@ public class MyfriendsActivity extends AppCompatActivity implements CustomOnItem
     private ListView userListView;
     private ChatUserAdapter adapter;
     List<User> users=new ArrayList<User>();
+    String contentUrl="";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_myfriends);
+        Intent intent=getIntent();
+        if(intent.hasExtra("url")){
+            contentUrl=intent.getStringExtra("url");
+            Log.d("url",contentUrl);
+        }
         userListView = (ListView)findViewById(R.id.listView_id);
         userListView.setOnTouchListener(new OnSwipeTouchListener(this.getBaseContext(),MyfriendsActivity.this));
         getFriendsFromRemote();
@@ -100,6 +106,8 @@ public class MyfriendsActivity extends AppCompatActivity implements CustomOnItem
         Log.d("Click",((User)value).getEmail());
         Intent i = new Intent(MyfriendsActivity.this, ChatActivity.class);
         i.putExtra(AppConstants.INTENT_GROUP_SELECTED_GROUP, ((User)value).getEmail());
+        if(!contentUrl.equals(""))
+            i.putExtra("file_url",contentUrl);
         startActivity(i);
     }
 
