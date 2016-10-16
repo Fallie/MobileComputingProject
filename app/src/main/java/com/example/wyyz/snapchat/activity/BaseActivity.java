@@ -5,10 +5,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.content.IntentCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.EditText;
 
 import com.example.wyyz.snapchat.R;
-import com.example.wyyz.snapchat.util.AppLog;
+
 import com.example.wyyz.snapchat.util.FirebaseUtility;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -39,15 +40,15 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     }
 
-    /**
-     * navigate to login screen
-     */
-    public void navigateToLoginActivity(){
-        Intent intent = new Intent(MyApplication.getApplicationInstance(), MainActivity.class);
-        ComponentName componentName = intent.getComponent();
-        Intent clearAllPrevousActivityIntent = IntentCompat.makeRestartActivityTask(componentName);
-        startActivity(clearAllPrevousActivityIntent);
-    }
+//    /**
+//     * navigate to login screen
+//     */
+//    public void navigateToLoginActivity(){
+//        Intent intent = new Intent(MyApplication.getApplicationInstance(), MainActivity.class);
+//        ComponentName componentName = intent.getComponent();
+//        Intent clearAllPrevousActivityIntent = IntentCompat.makeRestartActivityTask(componentName);
+//        startActivity(clearAllPrevousActivityIntent);
+//    }
 
     /**
      * show error message
@@ -67,9 +68,9 @@ public abstract class BaseActivity extends AppCompatActivity {
             public void onAuthStateChanged(FirebaseAuth firebaseAuth) {
                 FirebaseUser user = FirebaseUtility.getCurrentUser();
                 if (user != null) {
-                    AppLog.d(TAG, "user is logged in " + user.getUid());
+                    Log.d(TAG, "user is logged in " + user.getUid());
                 } else {
-                    AppLog.d(TAG, "user is logged out");
+                    Log.d(TAG, "user is logged out");
                 }
             }
         };

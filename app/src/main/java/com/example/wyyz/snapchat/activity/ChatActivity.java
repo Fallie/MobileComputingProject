@@ -14,6 +14,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.text.format.DateFormat;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -25,13 +26,15 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.example.wyyz.snapchat.Interface.CustomClickImageListener;
 import com.example.wyyz.snapchat.Interface.CustomOnItemClickListener;
 import com.example.wyyz.snapchat.R;
 import com.example.wyyz.snapchat.activity.chat.AbsCommomAdapter;
-import com.example.wyyz.snapchat.activity.chat.ChatMessage;
+import com.example.wyyz.snapchat.model.ChatMessage;
+import com.example.wyyz.snapchat.db.SnapChatDB;
 import com.example.wyyz.snapchat.model.FileModel;
 import com.example.wyyz.snapchat.util.AppConstants;
-import com.example.wyyz.snapchat.util.AppLog;
+
 import com.example.wyyz.snapchat.util.FirebaseUtility;
 import com.example.wyyz.snapchat.util.Util;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -56,7 +59,7 @@ import java.util.List;
 import java.util.Map;
 
 
-public class ChatActivity extends BaseActivity implements CustomOnItemClickListener, View.OnClickListener {
+public class ChatActivity extends BaseActivity implements CustomOnItemClickListener, View.OnClickListener ,CustomClickImageListener{
 
     private static final String TAG = ChatActivity.class.getSimpleName();
     private RecyclerView recyclerViewChat;
@@ -85,6 +88,7 @@ public class ChatActivity extends BaseActivity implements CustomOnItemClickListe
 
     private void getIntentExtras() {
         selectedUserID = getIntent().getStringExtra(AppConstants.INTENT_GROUP_SELECTED_GROUP);
+        Log.v(TAG,selectedUserID);
     }
 
     @Override
@@ -164,14 +168,14 @@ public class ChatActivity extends BaseActivity implements CustomOnItemClickListe
                         Uri downloadUrl = taskSnapshot.getDownloadUrl();
                         FileModel fileModel = new FileModel("img",downloadUrl.toString(),file.getName(),file.length()+"");
                         ChatMessage newChatMessage = new ChatMessage(System.currentTimeMillis(), sender, message, 0, fileModel);
-                        FirebaseUtility.getFireBaseChatRoomDatabaseReference().child(FirebaseUtility.generateUniqueID(selectedUserID)).push().setValue(newChatMessage, new DatabaseReference.CompletionListener() {
+                        FirebaseUtility.getFireBaseChatRoomDatabaseReference().child(FirebaseUtility.generateUniqueEmailID(selectedUserID)).push().setValue(newChatMessage, new DatabaseReference.CompletionListener() {
                             @Override
                             public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
                                 if (databaseError != null) {
-                                    AppLog.d(TAG, "Data could not be saved. " + databaseError.getMessage());
+                                    Log.d(TAG, "Data could not be saved. " + databaseError.getMessage());
                                 } else {
                                     chatMessageAdapter.updateMessageStatus(databaseReference, 1);
-                                    AppLog.d(TAG, "Data saved successfully.");
+                                    Log.d(TAG, "Data saved successfully.");
                                 }
                             }
                         });
@@ -181,14 +185,14 @@ public class ChatActivity extends BaseActivity implements CustomOnItemClickListe
         }else {
             ChatMessage newChatMessage = new ChatMessage(System.currentTimeMillis(), sender, message, 0, null);
 
-            FirebaseUtility.getFireBaseChatRoomDatabaseReference().child(FirebaseUtility.generateUniqueID(selectedUserID)).push().setValue(newChatMessage, new DatabaseReference.CompletionListener() {
+            FirebaseUtility.getFireBaseChatRoomDatabaseReference().child(FirebaseUtility.generateUniqueEmailID(selectedUserID)).push().setValue(newChatMessage, new DatabaseReference.CompletionListener() {
                 @Override
                 public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
                     if (databaseError != null) {
-                        AppLog.d(TAG, "Data could not be saved. " + databaseError.getMessage());
+                        Log.d(TAG, "Data could not be saved. " + databaseError.getMessage());
                     } else {
                         chatMessageAdapter.updateMessageStatus(databaseReference, 1);
-                        AppLog.d(TAG, "Data saved successfully.");
+                        Log.d(TAG, "Data saved successfully.");
                     }
                 }
             });
@@ -199,7 +203,21 @@ public class ChatActivity extends BaseActivity implements CustomOnItemClickListe
 
     @Override
     public void onItemClick(View v, int position, Object value) {
-        AppLog.e(TAG, "Item Clicked at position - " + position + " and value - " + value);
+        Log.e(TAG, "Item Clicked at position - " + position + " and value - " + value);
+    }
+
+
+    public void clickImageChat(View view, int position,String nameUser,String urlPhotoClick) {
+       // int position = getAdapterPosition();
+        //ChatModel model = getItem(position);
+
+        CustomClickImageListener customClickImageListener = null;
+
+        CustomOnItemClickListener customOnItemClickListener = null;
+
+
+        //customOnItemClickListener.clickImageChat(view,position,nameUser,urlPhotoClick);
+
     }
 
     @Override
@@ -221,6 +239,10 @@ public class ChatActivity extends BaseActivity implements CustomOnItemClickListe
                 functionDialog();
                 break;
         }
+
+
+
+
     }
 
     private void functionDialog() {
@@ -277,36 +299,44 @@ public class ChatActivity extends BaseActivity implements CustomOnItemClickListe
         }
     }
 
+    @Override
+    public void onItemClick(View view, int position, String nameUser, String urlPhotoClick) {
+        CustomClickImageListener customClickImageListener = null;
+        customClickImageListener.onItemClick(view,position,nameUser,urlPhotoClick);
+    }
+
     private static class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.MessagesViewHolder> {
 
         private List<ChatMessage> chatMessageList = new ArrayList<ChatMessage>();
         private CustomOnItemClickListener customOnItemClickListener;
         private Context context;
-        private String selectedUserUUID;
+        private String selectedUserID;
         private TextView textViewNoConversations;
         private RecyclerView recyclerViewChat;
 
-        public ChatMessageAdapter(Context context, String selectedUserUUID, TextView textViewNoConversations, RecyclerView recyclerViewChat) {
+        public ChatMessageAdapter(Context context, String selectedUserID, TextView textViewNoConversations, RecyclerView recyclerViewChat) {
             this.context = context;
-            this.selectedUserUUID = selectedUserUUID;
+//            this.selectedUserUUID = selectedUserUUID;
+            this.selectedUserID = selectedUserID;
+
             this.textViewNoConversations = textViewNoConversations;
             this.recyclerViewChat = recyclerViewChat;
             this.customOnItemClickListener = (CustomOnItemClickListener) context;
             /**
              * get previous chats
              */
-            FirebaseUtility.queryChatMessages(this.selectedUserUUID);
+            FirebaseUtility.queryChatMessages(this.selectedUserID);
         }
 
         private void messageAdded(DataSnapshot dataSnapshot){
             if (dataSnapshot.getValue() != null) {
                 ChatMessage chat = dataSnapshot.getValue(ChatMessage.class);
-                AppLog.e(TAG, chat.getSender() + " - " + chat.getMessage());
+                Log.e(TAG, chat.getSender() + " - " + chat.getMessage());
                 chatMessageList.add(chat);
                 notifyItemInserted(chatMessageList.size() - 1);
                 recyclerViewChat.scrollToPosition(chatMessageList.size() - 1);
 
-                AppLog.e(TAG, dataSnapshot.getKey()+" - addChildEventListener:onChildAdded - " + dataSnapshot.getValue().toString()+" MessageStatus - "+chat.getMessageStatus());
+                Log.e(TAG, dataSnapshot.getKey()+" - addChildEventListener:onChildAdded - " + dataSnapshot.getValue().toString()+" MessageStatus - "+chat.getMessageStatus());
 
                 /**
                  * if message is delivered to server, then only update it to delivered to user
@@ -353,7 +383,7 @@ public class ChatActivity extends BaseActivity implements CustomOnItemClickListe
                         }
                     }
                 } else {
-                    AppLog.w(TAG, "onChildChanged:unknown_child:" + updatedChat);
+                    Log.w(TAG, "onChildChanged:unknown_child:" + updatedChat);
                 }
             }
         }
@@ -368,7 +398,7 @@ public class ChatActivity extends BaseActivity implements CustomOnItemClickListe
                     chatMessageList.remove(chatIndex);
                     notifyItemRemoved(chatIndex);
                 } else {
-                    AppLog.w(TAG, "onChildRemoved:unknown_child:" + removedChat);
+                    Log.w(TAG, "onChildRemoved:unknown_child:" + removedChat);
                 }
             }
         }
@@ -383,7 +413,7 @@ public class ChatActivity extends BaseActivity implements CustomOnItemClickListe
                     JsonElement jsonElement = MyApplication.getGsonInstance().toJsonTree(chatMessageEntry.getValue());
                     ChatMessage previousChatMessage = MyApplication.getGsonInstance().fromJson(jsonElement, ChatMessage.class);
 
-                    AppLog.e(TAG, previousChatMessage.getSender() + " - " + previousChatMessage.getMessage());
+                    Log.e(TAG, previousChatMessage.getSender() + " - " + previousChatMessage.getMessage());
                     chatMessageList.add(previousChatMessage);
 
                     /**
@@ -415,11 +445,11 @@ public class ChatActivity extends BaseActivity implements CustomOnItemClickListe
 
             switch (viewType){
                 case 0:
-                    view = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_chat_left, parent, false);
+                    view = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_chat_right, parent, false);
                     messagesViewHolder = new ChatMessageAdapter.MessagesViewHolder(view, viewType);
                     break;
                 case 1:
-                    view = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_chat_right, parent, false);
+                    view = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_chat_left, parent, false);
                     messagesViewHolder = new ChatMessageAdapter.MessagesViewHolder(view, viewType);
                     break;
             }
@@ -432,13 +462,13 @@ public class ChatActivity extends BaseActivity implements CustomOnItemClickListe
                 }
             });
 
-            AppLog.e(ChatMessageAdapter.class.getSimpleName(), "onCreateViewHolder");
+            Log.e(ChatMessageAdapter.class.getSimpleName(), "onCreateViewHolder");
             return messagesViewHolder;
         }
 
         @Override
         public void onBindViewHolder(ChatMessageAdapter.MessagesViewHolder messagesViewHolder, int position) {
-            AppLog.e(ChatMessageAdapter.class.getSimpleName(), "onBindViewHolder - " + position);
+            Log.e(ChatMessageAdapter.class.getSimpleName(), "onBindViewHolder - " + position);
 
             switch (getItemViewType(position)){
                 case 0:
@@ -451,19 +481,27 @@ public class ChatActivity extends BaseActivity implements CustomOnItemClickListe
         }
 
         private void displayChat(MessagesViewHolder messagesViewHolder, int position){
-            messagesViewHolder.textViewSender.setText(chatMessageList.get(position).getSender());
-            if (chatMessageList.get(position).getMessage() != null ) {
-                messagesViewHolder.textViewMessage.setText(chatMessageList.get(position).getMessage());
-                messagesViewHolder.textViewMessage.setVisibility(View.VISIBLE);
-                messagesViewHolder.imageView.setVisibility(View.GONE);
-            }else {
-                messagesViewHolder.textViewMessage.setVisibility(View.GONE);
-                messagesViewHolder.imageView.setVisibility(View.VISIBLE);
-                if (chatMessageList.get(position).getFile() != null)
-                messagesViewHolder.setIvChatPhoto(chatMessageList.get(position).getFile().getUrl_file());
+            Log.d(TAG,"Sender "+ chatMessageList.get(position).getSender());
+
+            String uname = SnapChatDB.getInstance(context).findUserByEmail(chatMessageList.get(position).getSender()).getUsername();
+            if (uname!=null){
+                messagesViewHolder.textViewSender.setText(uname);
+                if (chatMessageList.get(position).getMessage() != null ) {
+                    messagesViewHolder.textViewMessage.setText(chatMessageList.get(position).getMessage());
+                    messagesViewHolder.textViewMessage.setVisibility(View.VISIBLE);
+                    messagesViewHolder.imageView.setVisibility(View.GONE);
+                }else {
+                    messagesViewHolder.textViewMessage.setVisibility(View.GONE);
+                    messagesViewHolder.imageView.setVisibility(View.VISIBLE);
+                    if (chatMessageList.get(position).getFile() != null)
+                        messagesViewHolder.setIvChatPhoto(chatMessageList.get(position).getFile().getUrl_file());
+                }
+
+
+                messagesViewHolder.textViewTime.setText(MyApplication.getSimpleDateFormat().format(chatMessageList.get(position).getCurrentTime()));
+                Log.d(TAG," (Message Status - "+ chatMessageList.get(position).getMessageStatus()+")");
             }
-            messagesViewHolder.textViewTime.setText(MyApplication.getSimpleDateFormat().format(chatMessageList.get(position).getCurrentTime())
-                    + " (Message Status - "+ chatMessageList.get(position).getMessageStatus()+")");
+
         }
 
         @Override
@@ -509,10 +547,11 @@ public class ChatActivity extends BaseActivity implements CustomOnItemClickListe
             public void setIvChatPhoto(String url){
                 if (imageView == null)return;
                 Glide.with(imageView.getContext()).load(url)
-                        .override(100, 100)
-                        .fitCenter()
+                        .override(200, 200)
+                       // .fitCenter()
                         .into(imageView);
-//                imageView.setOnClickListener(this);
+
+              //  imageView.setOnClickListener((View.OnClickListener) this);
             }
         }
     }
@@ -593,14 +632,16 @@ public class ChatActivity extends BaseActivity implements CustomOnItemClickListe
                     Uri downloadUrl = taskSnapshot.getDownloadUrl();
                     FileModel fileModel = new FileModel("img",downloadUrl.toString(),name,"");
                     ChatMessage newChatMessage = new ChatMessage(System.currentTimeMillis(), email, message, 0, fileModel);
-                    FirebaseUtility.getFireBaseChatRoomDatabaseReference().child(FirebaseUtility.generateUniqueID(selectedUserID)).push().setValue(newChatMessage, new DatabaseReference.CompletionListener() {
+                    FirebaseUtility.getFireBaseChatRoomDatabaseReference().child(FirebaseUtility.generateUniqueEmailID(selectedUserID)).push().setValue(newChatMessage, new DatabaseReference.CompletionListener() {
                         @Override
                         public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
                             if (databaseError != null) {
-                                AppLog.d(TAG, "Data could not be saved. " + databaseError.getMessage());
+                                Log.d(TAG, "Data could not be saved. " + databaseError.getMessage());
                             } else {
                                 chatMessageAdapter.updateMessageStatus(databaseReference, 1);
-                                AppLog.d(TAG, "Data saved successfully.");
+                                Log.d(TAG, "Data saved successfully.");
+
+                                FirebaseUtility.queryChatMessages(email);
                             }
                         }
                     });
@@ -609,6 +650,11 @@ public class ChatActivity extends BaseActivity implements CustomOnItemClickListe
         }else{
             //IS NULL
         }
+    }
+
+
+    private CharSequence converteTimestamp(String timestamp){
+        return DateUtils.getRelativeTimeSpanString(Long.parseLong(timestamp),System.currentTimeMillis(), DateUtils.SECOND_IN_MILLIS);
     }
 
 }

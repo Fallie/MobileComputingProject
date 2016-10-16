@@ -63,6 +63,12 @@
         <activity android:name=".activity.ScanqrcodeActivity"></activity>
         <activity android:name=".activity.DiscoverActivity" />
         <activity android:name=".activity.DiscoverChannelActivity" />
+
+        <activity
+            android:theme="@style/AppThemeFullScreenImage"
+            android:name=".activity.chat.FullScreenImageActivity">
+        </activity>
+
     </application>
 
 </manifest>

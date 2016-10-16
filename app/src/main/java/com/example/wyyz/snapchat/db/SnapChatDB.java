@@ -51,6 +51,7 @@ public class SnapChatDB {
         return snapChatDB;
     }
 
+
     //Some basic database operations
 
     /**
