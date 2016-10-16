@@ -1,9 +1,7 @@
 package com.example.wyyz.snapchat.activity;
 
 
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,10 +13,7 @@ import com.example.wyyz.snapchat.R;
 import com.example.wyyz.snapchat.db.SnapChatDB;
 import com.example.wyyz.snapchat.model.Snap;
 import com.example.wyyz.snapchat.model.User;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
@@ -51,27 +46,6 @@ public class SnapsFragment extends Fragment {
         Log.d("snaps",String.valueOf(snaps.size()));
         for(final Snap s:snaps){
             String url=s.getPath();
-            //Uri photoUri = Uri.parse(url);
-            Log.d("url",String.valueOf(s.getUserId()));
-            Log.d("url",s.getTimestamp());
-            Log.d("url",url);
-            Log.d("url",String.valueOf(s.getSize()));
-            storageRef= FirebaseStorage.getInstance().getReferenceFromUrl(url);
-            final long ONE_MEGABYTE = s.getSize();
-            storageRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-                @Override
-                public void onSuccess(byte[] bytes) {
-                    // Data for "images/island.jpg" is returns, use this as needed
-                    s.setPhoto(BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
-                    snapImgAdapter.notifyDataSetChanged();
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception exception) {
-                    // Handle any errors
-                    Log.d("Failed","Failed");
-                }
-            });
         }
         Log.d("snaps",String.valueOf(snaps.size()));
         snapImgAdapter = new ImageAdapter(snapActivity, R.layout.image_item, snaps);

@@ -4,8 +4,6 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -87,78 +85,12 @@ public class CameraRollFragment extends Fragment{
         return result ;
     }
 
-    private Bitmap getBitmapFromImagePath(String path){
-        //get height and width of image
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        bitmap = BitmapFactory.decodeFile(path, options);
-        options.inJustDecodeBounds = false;
-        int h = options.outHeight;
-        int w = options.outWidth;
-        //Read the scaled bitmap
-        bitmap = BitmapFactory.decodeFile(path, options);
-        // Use ThumbnailUtils to create thumbnails, here to specify the bitmap to zoom objects
-        bitmap = ThumbnailUtils.extractThumbnail(bitmap, 100, 100, ThumbnailUtils.OPTIONS_RECYCLE_INPUT);
-        return bitmap;
-    }
-    public static Bitmap getLocalBitmap(String path){
-        Bitmap bitmap=BitmapFactory.decodeFile(path);
-        return bitmap;
-    }
-
-    public static Bitmap centerSquareScaleBitmap(Bitmap bitmap, int edgeLength)
-    {
-        if(null == bitmap || edgeLength <= 0)
-        {
-            Log.d("null","null");
-            return  null;
-        }
-
-        Bitmap result = bitmap;
-        int widthOrg = bitmap.getWidth();
-        int heightOrg = bitmap.getHeight();
-        Log.d("null",String.valueOf(widthOrg));
-        Log.d("null",String.valueOf(heightOrg));
-
-        if(widthOrg > edgeLength && heightOrg > edgeLength)
-        {
-            //压缩到一个最小长度是edgeLength的bitmap
-            int longerEdge = (int)(edgeLength * Math.max(widthOrg, heightOrg) / Math.min(widthOrg, heightOrg));
-            int scaledWidth = widthOrg > heightOrg ? longerEdge : edgeLength;
-            int scaledHeight = widthOrg > heightOrg ? edgeLength : longerEdge;
-            Bitmap scaledBitmap;
-
-            try{
-                scaledBitmap = Bitmap.createScaledBitmap(bitmap, scaledWidth, scaledHeight, true);
-            }
-            catch(Exception e){
-                return null;
-            }
-
-            //从图中截取正中间的正方形部分。
-            int xTopLeft = (scaledWidth - edgeLength) / 2;
-            int yTopLeft = (scaledHeight - edgeLength) / 2;
-
-            try{
-                result = Bitmap.createBitmap(scaledBitmap, xTopLeft, yTopLeft, edgeLength, edgeLength);
-                scaledBitmap.recycle();
-            }
-            catch(Exception e){
-                return null;
-            }
-        }
-
-        return result;
-    }
-
     private void getSnapsFromSystemPhotos(Context context){
         //ArrayList<Snap> snaps=new ArrayList<Snap>();
         List<String> paths=getSystemPhotoList(context);
         if(paths.size()>0) {
             for (int i = paths.size() - 1; i >= 0; i--) {
-                Log.d("createSnap","snap");
-                squarephoto = getBitmapFromImagePath(paths.get(i));
                 Snap snap = new Snap();
-                snap.setPhoto(squarephoto);
                 snap.setPath(paths.get(i));
                 snaps.add(snap);
             }

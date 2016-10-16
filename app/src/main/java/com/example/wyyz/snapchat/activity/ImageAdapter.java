@@ -11,6 +11,7 @@ import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.wyyz.snapchat.R;
 import com.example.wyyz.snapchat.model.Snap;
 
@@ -56,7 +57,12 @@ public class ImageAdapter extends ArrayAdapter {
             holder = (ViewHolder) view.getTag();
         }
         final Snap item = (Snap)getItem(position);
-        holder.image.setImageBitmap(item.getPhoto());
+        //holder.image.setImageBitmap(item.getPhoto());
+        Glide.with(context)
+                .load(item.getPath())
+                .centerCrop()
+                .crossFade()
+                .into(holder.image);
         checkBoxes.add(holder.checkBox);
         imageViews.add(holder.image);
         shadows.add(holder.shadow);
