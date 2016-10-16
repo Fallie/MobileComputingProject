@@ -51,6 +51,7 @@ public class SnapsFragment extends Fragment {
         Log.d("snaps",String.valueOf(snaps.size()));
         for(final Snap s:snaps){
             String url=s.getPath();
+            //Uri photoUri = Uri.parse(url);
             Log.d("url",String.valueOf(s.getUserId()));
             Log.d("url",s.getTimestamp());
             Log.d("url",url);
@@ -67,6 +68,7 @@ public class SnapsFragment extends Fragment {
                 @Override
                 public void onFailure(@NonNull Exception exception) {
                     // Handle any errors
+                    Log.d("Failed","Failed");
                 }
             });
         }
