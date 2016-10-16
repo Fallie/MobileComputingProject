@@ -1,6 +1,7 @@
 package com.example.wyyz.snapchat.activity;
 
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -9,6 +10,7 @@ import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
@@ -76,6 +78,7 @@ public class PreviewActivity extends AppCompatActivity implements View.OnClickLi
     private NumberPicker np;
     private int chosenEmoticonId;
     private SnapChatDB db;
+    private ProgressDialog progressDialog;
 
 
     @Override
@@ -142,10 +145,8 @@ public class PreviewActivity extends AppCompatActivity implements View.OnClickLi
                 startActivity(intent);
                 break;
             case R.id.btnNextStep:
-                finish();
-                //Intent intent = new Intent(PreviewActivity.this,CameraActivity.class);
-                //startActivity(intent);
-                finishSettingSnap();
+                sendSnaptoFriend();
+                //new SendSnaptoFriend.execute();
                 break;
             case R.id.btnTimer:
                 setTimer();
@@ -458,6 +459,55 @@ public class PreviewActivity extends AppCompatActivity implements View.OnClickLi
 
     private void resetBase(){
         base = TmpPhotoView.photo;
+    }
+
+    private void sendSnaptoFriend(){
+        String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        StorageReference photoRef = mStorage.getInstance().getReference("images")
+                .child(timestamp.toString());
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        base.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] data = baos.toByteArray();
+
+        UploadTask uploadTask = photoRef.putBytes(data);
+        uploadTask.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                // Handle unsuccessful uploads
+                Log.i(TAG,"upload failed!!!");
+            }
+        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
+                String url=taskSnapshot.getDownloadUrl().toString();
+                Log.i(TAG,"upload successful!!!");
+
+                Intent intentNext = new Intent(PreviewActivity.this, MyfriendsActivity.class);
+                intentNext.putExtra("url",url);
+                startActivity(intentNext);
+                finish();
+            }
+        });
+    }
+
+    class SendSnaptoFriend extends AsyncTask<Void, Integer, Boolean> {
+        protected void onPreExecute() {
+            progressDialog=ProgressDialog.show(PreviewActivity.this, "Send to Friend...",
+                    "...", true);
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            sendSnaptoFriend();
+            return true;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            progressDialog.dismiss();
+        }
     }
 
 }
