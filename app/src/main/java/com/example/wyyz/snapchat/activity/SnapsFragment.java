@@ -55,8 +55,9 @@ public class SnapsFragment extends Fragment {
             Log.d("url",String.valueOf(s.getUserId()));
             Log.d("url",s.getTimestamp());
             Log.d("url",url);
+            Log.d("url",String.valueOf(s.getSize()));
             storageRef= FirebaseStorage.getInstance().getReferenceFromUrl(url);
-            final long ONE_MEGABYTE = 1024 * 1024;
+            final long ONE_MEGABYTE = s.getSize();
             storageRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
                 @Override
                 public void onSuccess(byte[] bytes) {

@@ -350,6 +350,7 @@ public class PreviewActivity extends AppCompatActivity implements View.OnClickLi
                 photo.setPath(taskSnapshot.getDownloadUrl().toString());
                 photo.setSize(taskSnapshot.getBytesTransferred());
                 Log.i(TAG,"upload successful!!!");
+                Log.i(TAG,String.valueOf(photo.getSize()));
                 snapChatDB.Snap(photo);
             }
         });

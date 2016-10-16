@@ -170,6 +170,7 @@ public class SnapChatDB {
                 snap.setUserId(cursor.getInt(cursor.getColumnIndex("userId")));
                 snap.setChecked(false);
                 snap.setPath(cursor.getString(cursor.getColumnIndex("path")));
+                snap.setSize(cursor.getInt(cursor.getColumnIndex("size")));
                 snap.setInMemory(cursor.getInt(cursor.getColumnIndex("inMemory"))>0);
                 snap.setTimestamp(cursor.getString(cursor.getColumnIndex("timeStamp")));
                 snap.setTimingOut(cursor.getInt(cursor.getColumnIndex("timingOut")));
