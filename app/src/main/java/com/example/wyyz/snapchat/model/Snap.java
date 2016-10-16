@@ -16,6 +16,16 @@ public class Snap {
     private int timingOut = 3;
     private String timestamp;
 
+    public long getSize() {
+        return size;
+    }
+
+    public void setSize(long size) {
+        this.size = size;
+    }
+
+    private long size;
+
     public int getId() {
         return id;
     }

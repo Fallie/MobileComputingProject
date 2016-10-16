@@ -342,6 +342,7 @@ public class PreviewActivity extends AppCompatActivity implements View.OnClickLi
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                 // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
                 photo.setPath(taskSnapshot.getDownloadUrl().toString());
+                photo.setSize(taskSnapshot.getBytesTransferred());
                 Log.i(TAG,"upload successful!!!");
             }
         });
