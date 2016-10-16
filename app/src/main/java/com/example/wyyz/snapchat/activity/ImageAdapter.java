@@ -23,7 +23,8 @@ import java.util.ArrayList;
 public class ImageAdapter extends ArrayAdapter {
     private Context context;
     private int layoutResourceId;
-    private ArrayList<Snap> images = new ArrayList();
+    //private ArrayList<Snap> images = new ArrayList();
+    private boolean[] selectMap;
     private ArrayList<CheckBox> checkBoxes=new ArrayList<>();
     private ArrayList<ImageView> imageViews=new ArrayList<>();
     private ArrayList<View> shadows=new ArrayList<>();
@@ -32,11 +33,14 @@ public class ImageAdapter extends ArrayAdapter {
         super(context, layoutResourceId, data);
         this.layoutResourceId = layoutResourceId;
         this.context = context;
-        this.images = data;
+        this.selectMap=new boolean[data.size()];
+        for(int i=0;i<selectMap.length;i++){
+            selectMap[i]=false;
+        }
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
         View view = convertView;
         ViewHolder holder = null;
 
@@ -51,7 +55,7 @@ public class ImageAdapter extends ArrayAdapter {
         } else {
             holder = (ViewHolder) view.getTag();
         }
-        final Snap item = (Snap) images.get(position);
+        final Snap item = (Snap)getItem(position);
         holder.image.setImageBitmap(item.getPhoto());
         checkBoxes.add(holder.checkBox);
         imageViews.add(holder.image);
@@ -63,10 +67,11 @@ public class ImageAdapter extends ArrayAdapter {
         holder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                item.setChecked(isChecked);
                 if(isChecked){
+                    selectMap[position]=true;
                     finalHolder.shadow.setVisibility(View.VISIBLE);
                 }else{
+                    selectMap[position]=false;
                     finalHolder.shadow.setVisibility(View.GONE);
                 }
             }
@@ -91,7 +96,7 @@ public class ImageAdapter extends ArrayAdapter {
 
     }
 
-    public void toggleOffSelect(){
+    public void toggleOffSelect() {
         for (CheckBox cb: checkBoxes) {
             cb.setChecked(false);
             cb.setVisibility(View.GONE);
@@ -102,8 +107,8 @@ public class ImageAdapter extends ArrayAdapter {
         for(View s : shadows){
             s.setVisibility(View.GONE);
         }
-        for(Snap s: images){
-            s.setChecked(false);
+        for(int i=0;i<selectMap.length;i++){
+            selectMap[i]=false;
         }
     }
 
@@ -114,7 +119,7 @@ public class ImageAdapter extends ArrayAdapter {
         CheckBox checkBox;
     }
 
-    public ArrayList<Snap> getImages() {
-        return images;
+    public boolean[] getSelectMap() {
+        return selectMap;
     }
 }

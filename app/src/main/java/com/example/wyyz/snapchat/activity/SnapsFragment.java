@@ -28,7 +28,7 @@ import java.util.ArrayList;
  */
 public class SnapsFragment extends Fragment {
     private GridView gridView;
-    private ImageAdapter imageAdapter;
+    private ImageAdapter snapImgAdapter;
     private ArrayList<Snap> snaps=new ArrayList<Snap>();
     SnapChatDB db;
     StorageReference storageRef;
@@ -63,7 +63,7 @@ public class SnapsFragment extends Fragment {
                 public void onSuccess(byte[] bytes) {
                     // Data for "images/island.jpg" is returns, use this as needed
                     s.setPhoto(BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
-                    imageAdapter.notifyDataSetChanged();
+                    snapImgAdapter.notifyDataSetChanged();
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
@@ -74,9 +74,15 @@ public class SnapsFragment extends Fragment {
             });
         }
         Log.d("snaps",String.valueOf(snaps.size()));
-        imageAdapter = new ImageAdapter(snapActivity, R.layout.image_item, snaps);
-        gridView.setAdapter(imageAdapter);
+        snapImgAdapter = new ImageAdapter(snapActivity, R.layout.image_item, snaps);
+        gridView.setAdapter(snapImgAdapter);
         return snapsView;
     }
 
+    public ImageAdapter getSnapImgAdapter() {
+        return snapImgAdapter;
+    }
+    public Snap getSnap(int position){
+        return snaps.get(position);
+    }
 }

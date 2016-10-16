@@ -5,7 +5,6 @@ package com.example.wyyz.snapchat.activity;
  */
 
 
-import android.app.FragmentManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -20,17 +19,16 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.wyyz.snapchat.R;
-import com.example.wyyz.snapchat.model.Snap;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
 
 
 public class SnapActivity extends FragmentActivity implements View.OnClickListener {
-    private FragmentManager fragmentManager = getFragmentManager();
     CameraRollFragment cameraRollFragment;
     SnapsFragment snapsFragment;
-    private ArrayList<Snap> selectedSnaps=new ArrayList<>();
+    private ArrayList<Integer> selectedSnapsId=new ArrayList<>();
+    private boolean[] selectMap;
 
     private ViewPager pager ;
     private ArrayList<Fragment> fragments;
@@ -70,6 +68,7 @@ public class SnapActivity extends FragmentActivity implements View.OnClickListen
                 selectBottomLayout.setVisibility(View.VISIBLE);
                 btnCamera.setVisibility(View.GONE);
                 cameraRollFragment.getCameraRollImgAdapter().toggleOnSelect();
+                snapsFragment.getSnapImgAdapter().toggleOnSelect();
             }
         });
         ivCancel.setOnClickListener(new View.OnClickListener() {
@@ -80,25 +79,26 @@ public class SnapActivity extends FragmentActivity implements View.OnClickListen
                 selectBottomLayout.setVisibility(View.GONE);
                 btnCamera.setVisibility(View.VISIBLE);
                 cameraRollFragment.getCameraRollImgAdapter().toggleOffSelect();
+                snapsFragment.getSnapImgAdapter().toggleOffSelect();
             }
         });
         ivSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ArrayList<Snap> snaps=new ArrayList<Snap>();
-                snaps=cameraRollFragment.getCameraRollImgAdapter().getImages();
-                for(Snap s:snaps){
-                    if(s.getChecked()){
-                        selectedSnaps.add(s);
-                        s.setChecked(false);
+               selectMap=snapsFragment.getSnapImgAdapter().getSelectMap();
+                for(int i=0;i<selectMap.length;i++){
+                    if(selectMap[i]){
+                        selectedSnapsId.add(snapsFragment.getSnap(i).getId());
                     }
                 }
 
-                Log.d("selected",String.valueOf(selectedSnaps.size()));
-                for(Snap s:selectedSnaps){
-                    Log.d("selected",s.getPath());
-                }
+                Log.d("selected",String.valueOf(selectedSnapsId.size()));
+                titleLayout.setVisibility(View.VISIBLE);
+                selectTopLayout.setVisibility(View.GONE);
+                selectBottomLayout.setVisibility(View.GONE);
+                btnCamera.setVisibility(View.VISIBLE);
                 cameraRollFragment.getCameraRollImgAdapter().toggleOffSelect();
+                snapsFragment.getSnapImgAdapter().toggleOffSelect();
             }
         });
     }

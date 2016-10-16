@@ -35,6 +35,8 @@ public class CameraRollFragment extends Fragment{
     private ImageAdapter cameraRollImgAdapter;
     private ArrayList<Snap> snaps=new ArrayList<Snap>();
     private SnapActivity snapActivity;
+    Bitmap bitmap;
+    Bitmap squarephoto;
 
     public CameraRollFragment() {
         // Required empty public constructor
@@ -86,7 +88,6 @@ public class CameraRollFragment extends Fragment{
     }
 
     private Bitmap getBitmapFromImagePath(String path){
-        Bitmap bitmap = null;
         //get height and width of image
         BitmapFactory.Options options = new BitmapFactory.Options();
         bitmap = BitmapFactory.decodeFile(path, options);
@@ -96,7 +97,7 @@ public class CameraRollFragment extends Fragment{
         //Read the scaled bitmap
         bitmap = BitmapFactory.decodeFile(path, options);
         // Use ThumbnailUtils to create thumbnails, here to specify the bitmap to zoom objects
-        bitmap = ThumbnailUtils.extractThumbnail(bitmap, h, w, ThumbnailUtils.OPTIONS_RECYCLE_INPUT);
+        bitmap = ThumbnailUtils.extractThumbnail(bitmap, 100, 100, ThumbnailUtils.OPTIONS_RECYCLE_INPUT);
         return bitmap;
     }
     public static Bitmap getLocalBitmap(String path){
@@ -108,12 +109,15 @@ public class CameraRollFragment extends Fragment{
     {
         if(null == bitmap || edgeLength <= 0)
         {
+            Log.d("null","null");
             return  null;
         }
 
         Bitmap result = bitmap;
         int widthOrg = bitmap.getWidth();
         int heightOrg = bitmap.getHeight();
+        Log.d("null",String.valueOf(widthOrg));
+        Log.d("null",String.valueOf(heightOrg));
 
         if(widthOrg > edgeLength && heightOrg > edgeLength)
         {
@@ -149,13 +153,15 @@ public class CameraRollFragment extends Fragment{
     private void getSnapsFromSystemPhotos(Context context){
         //ArrayList<Snap> snaps=new ArrayList<Snap>();
         List<String> paths=getSystemPhotoList(context);
-        for(int i=paths.size()-1;i>=0;i--){
-            Bitmap photo=getLocalBitmap(paths.get(i));
-            Bitmap squarephoto=centerSquareScaleBitmap(photo,100);
-            Snap snap=new Snap();
-            snap.setPhoto(squarephoto);
-            snap.setPath(paths.get(i));
-            snaps.add(snap);
+        if(paths.size()>0) {
+            for (int i = paths.size() - 1; i >= 0; i--) {
+                Log.d("createSnap","snap");
+                squarephoto = getBitmapFromImagePath(paths.get(i));
+                Snap snap = new Snap();
+                snap.setPhoto(squarephoto);
+                snap.setPath(paths.get(i));
+                snaps.add(snap);
+            }
         }
     }
 
