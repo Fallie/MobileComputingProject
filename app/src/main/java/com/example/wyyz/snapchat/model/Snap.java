@@ -17,6 +17,16 @@ public class Snap {
     private String timestamp;
     private boolean isChecked;
 
+    public long getSize() {
+        return size;
+    }
+
+    public void setSize(long size) {
+        this.size = size;
+    }
+
+    private long size;
+
     public int getId() {
         return id;
     }

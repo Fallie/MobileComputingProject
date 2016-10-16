@@ -205,6 +205,7 @@ public class SnapChatDB {
             values.put("userId", snap.getUserId());
             values.put("inMemory",snap.isInMemory());
             values.put("path", snap.getPath());
+            values.put("size", snap.getSize());
             values.put("timingOut", snap.getTimingOut());
             values.put("timeStamp", snap.getTimestamp());
             db.insert("Snap", null, values);
