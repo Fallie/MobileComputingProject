@@ -11,6 +11,18 @@ public class Snap {
     private int id;
     private String userId;
     private boolean inMemory = false;
+
+    public int getIsLocked() {
+        return isLocked;
+    }
+
+    public void setIsLocked(int isLocked) {
+        this.isLocked = isLocked;
+    }
+
+    // 0  means false, public to see
+    // 1 means true, is locked by the owner
+    private int isLocked = 0;
     private Bitmap photo;
     private String path;
     private int timingOut = 3;

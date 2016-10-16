@@ -91,6 +91,19 @@ public class SnapChatDB {
         }
         return user;
     }
+
+    public void lockSnapByUri(String uri){
+        ContentValues values = new ContentValues();
+        values.put("isLocked", 1);
+        db.update("Snap", values, "path=?",new String[]{uri});
+    }
+
+    public void deleteSnapByPath(String path){
+        ContentValues values = new ContentValues();
+        values.put("isLocked", 1);
+        db.delete
+    }
+
     public void updateUsername(String email, String username){
         ContentValues values = new ContentValues();
         values.put("username", username);
@@ -185,6 +198,7 @@ public class SnapChatDB {
             values.put("inMemory",snap.isInMemory());
             values.put("path", snap.getPath());
             values.put("size", snap.getSize());
+            values.put("isLocked", snap.getIsLocked());
             values.put("timingOut", snap.getTimingOut());
             values.put("timeStamp", snap.getTimestamp());
             db.insert("Snap", null, values);

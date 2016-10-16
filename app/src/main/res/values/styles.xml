@@ -30,5 +30,13 @@
         <item name="android:layout_height">match_parent</item>
     </style>
 
+    <style name="AppBaseTheme" parent="android:Theme.Holo.Light">
+        <!-- API 14 theme customizations can go here. -->
+        <item name="android:actionBarStyle">@style/MyActionBar</item>
+    </style>
+
+    <style name="MyActionBar" parent="@android:style/Widget.Holo.Light.ActionBar">
+        <item name="android:background">#2aa4cd</item>
+    </style>
 
 </resources>
