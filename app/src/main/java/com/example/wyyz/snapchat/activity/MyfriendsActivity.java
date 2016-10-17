@@ -128,6 +128,7 @@ public class MyfriendsActivity extends AppCompatActivity implements CustomOnItem
             Log.d("Click", ((User) value).getEmail());
             Intent i = new Intent(MyfriendsActivity.this, ChatActivity.class);
             i.putExtra(AppConstants.INTENT_GROUP_SELECTED_GROUP, ((User) value).getEmail());
+            i.putExtra("user_name", ((User) value).getUsername());
             startActivity(i);
         }
     }
@@ -160,6 +161,7 @@ public class MyfriendsActivity extends AppCompatActivity implements CustomOnItem
                 Intent intentNext = new Intent(MyfriendsActivity.this, ChatActivity.class);
                 intentNext.putExtra(AppConstants.INTENT_GROUP_SELECTED_GROUP, friend.getEmail());
                 intentNext.putExtra("user_name", friend.getUsername());
+                Log.i(TAG, friend.getUsername()+" myFriend");
                 intentNext.putExtra("file_url",url);
                 startActivity(intentNext);
                 MyfriendsActivity.this.finish();

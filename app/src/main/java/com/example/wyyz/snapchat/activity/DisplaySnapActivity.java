@@ -31,6 +31,7 @@ public class DisplaySnapActivity extends AppCompatActivity {
     private double lower;
     private String activityName;
     private  String username = null;
+    private String uname = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +41,7 @@ public class DisplaySnapActivity extends AppCompatActivity {
         timers = intent.getIntArrayExtra("Timer");
         activityName = intent.getStringExtra("ActivityName");
         username = intent.getStringExtra("UserName");
+        uname = intent.getStringExtra("user_name");
         Log.i(TAG,username+" readuseremail");
         Log.i(TAG, String.valueOf(uris)+" path");
         setContentView(R.layout.activity_display_snap);
@@ -127,6 +129,7 @@ public class DisplaySnapActivity extends AppCompatActivity {
                 Log.i(TAG,username+" eeemail");
                 intent.setClass(DisplaySnapActivity.this, ChatActivity.class);
                 intent.putExtra("AppConstants.INTENT_GROUP_SELECTED_GROUP",username);
+                intent.putExtra("user_name",uname);
                 break;
             default:
                 break;
