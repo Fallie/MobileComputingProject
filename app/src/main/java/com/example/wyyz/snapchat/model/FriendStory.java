@@ -14,11 +14,10 @@ import java.util.Date;
 
 public class FriendStory {
 
-    private ArrayList<String> snaps = new ArrayList<String>();
+    private ArrayList<MyStorySnap> snaps = new ArrayList<MyStorySnap>();
     private String storyName;
     private Date storyTime;
     private int visitNum;
-    private Bitmap preview;
 
     public FriendStory(String name)
     {
@@ -30,14 +29,46 @@ public class FriendStory {
 
     }
 
-    public ArrayList<String> getSnaps()
+    public ArrayList<MyStorySnap> getSnaps()
     {
         return this.snaps;
     }
 
-    public void addSnap(String snap)
+    public void addSnap(MyStorySnap snap)
     {
         this.snaps.add(snap);
+
+        parseSnaps();
+
+        if(snaps.size()>0)
+            storyTime = snaps.get(snaps.size()-1).getTimestamp();
+    }
+
+    public void addSnaps(ArrayList<MyStorySnap> snaps)
+    {
+        for(MyStorySnap snap : snaps)
+            this.snaps.add(snap);
+
+        parseSnaps();
+
+        if(snaps.size()>0)
+            storyTime = snaps.get(snaps.size()-1).getTimestamp();
+    }
+
+    private void parseSnaps()
+    {
+        ArrayList<MyStorySnap> tmpSnaps = new ArrayList<MyStorySnap>();
+        Date date = Calendar.getInstance().getTime();
+        for(MyStorySnap snap : snaps)
+        {
+            Date snapDate = snap.getTimestamp();
+
+            long day = date.getTime() / (24*60*60*1000) - snapDate.getTime() / (24*60*60*1000);
+
+            if(!(day>1))
+                tmpSnaps.add(snap);
+        }
+        this.snaps = tmpSnaps;
     }
 
 

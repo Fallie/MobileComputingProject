@@ -8,10 +8,12 @@ import android.database.sqlite.SQLiteDatabase;
 import com.example.wyyz.snapchat.model.ChatRecord;
 import com.example.wyyz.snapchat.model.Friend;
 import com.example.wyyz.snapchat.model.MyStory;
+import com.example.wyyz.snapchat.model.MyStorySnap;
 import com.example.wyyz.snapchat.model.Snap;
 import com.example.wyyz.snapchat.model.Story;
 import com.example.wyyz.snapchat.model.User;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -241,15 +243,31 @@ public class SnapChatDB {
     /**
      * Save a Mystory
      */
-    public void saveMyStory(MyStory myStory){
+    public void saveMyStory(MyStorySnap myStorySnap, String userId){
         ContentValues values=new ContentValues();
-        values.put("userId", myStory.getUserId());
-        values.put("storyId",myStory.getStoryId());
-        values.put("snapId", myStory.getSnapId());
-        values.put("timeStamp", myStory.getTimestamp().getTime());
-        values.put("public", myStory.isWhetherPublic());
-        values.put("snapNum", myStory.getSnapNum());
+        values.put("userId", userId);
+        values.put("timeStamp", new SimpleDateFormat("yyyyMMdd_HHmmss").format(myStorySnap.getTimestamp()));
+        values.put("timingout", myStorySnap.getTimingOut());
+        values.put("url", myStorySnap.getPath());
         db.insert("MyStory", null, values);
+        values.clear();
+    }
+
+    public ArrayList<MyStorySnap> getMyStory(String userId){
+        ArrayList<MyStorySnap> myStory = new ArrayList<MyStorySnap>();
+        Cursor cursor = db.query("MyStory", null, "userId = \""+userId+"\"", null, null, null, null);
+        if(cursor.moveToFirst())
+        {
+            do {
+                MyStorySnap snap = new MyStorySnap();
+                snap.setPath(cursor.getString(cursor.getColumnIndex("url")));
+                snap.setTimestamp(cursor.getString(cursor.getColumnIndex("timeStamp")));
+                snap.setTimingOut(cursor.getInt(cursor.getColumnIndex("timingout")));
+                myStory.add(snap);
+            }while(cursor.moveToNext());
+        }
+        cursor.close();
+        return myStory;
     }
 
     /**

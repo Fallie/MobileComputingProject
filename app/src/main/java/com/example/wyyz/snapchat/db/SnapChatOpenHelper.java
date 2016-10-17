@@ -90,13 +90,10 @@ public class SnapChatOpenHelper extends SQLiteOpenHelper{
      */
     public static final String CREATE_MYSTORY = "create table MyStory ( " +
             "id integer primary key autoincrement," +
-            "userId integer not null," +
-            "storyId integer," +
-            "snapId integer," +
-            "timeStamp integer not null," +
-            "public integer," +
-            "snapNum integer," +
-            "FOREIGN KEY(userId) REFERENCES User(id))";
+            "userId text not null," +
+            "timeStamp text not null," +
+            "timingout integer not null," +
+            "url text not null);";
 
     /**
      * Channel table creating statement

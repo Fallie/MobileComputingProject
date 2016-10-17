@@ -27,10 +27,14 @@ import android.widget.TextView;
 import com.example.wyyz.snapchat.R;
 import com.example.wyyz.snapchat.activity.DiscoverActivity;
 import com.example.wyyz.snapchat.activity.DiscoverChannelActivity;
+import com.example.wyyz.snapchat.activity.PreviewActivity;
 import com.example.wyyz.snapchat.db.DataBaseOperator;
+import com.example.wyyz.snapchat.db.SnapChatDB;
 import com.example.wyyz.snapchat.model.DiscoveryChannel;
 import com.example.wyyz.snapchat.model.FriendStory;
+import com.example.wyyz.snapchat.model.MyStorySnap;
 import com.example.wyyz.snapchat.util.OnSwipeTouchListener;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,14 +43,7 @@ import java.util.List;
 
 public class StoryActivity extends Activity {
 	public static final String TAG = "StoryActivity";
-	private static final int COLUMNCOUNT = 2;//列数
-	private int columnWidth = 250;// 每个item的宽度
-	private int itemHeight = 0;
-	private int rowCountPerScreen = 2;
-	private int cols = 2;// 当前总列数
-	private ArrayList<Integer> colYs = new ArrayList<Integer>();
-//	private ArrayList<View> currentViews = new ArrayList<View>();
-	private LayoutInflater mInflater;
+
 	private ArrayList<DiscoveryChannel> unsubscribed;
 	private ArrayList<DiscoveryChannel> subscribed;
 
@@ -55,6 +52,7 @@ public class StoryActivity extends Activity {
 	private List<Point> lostPoint = new ArrayList<Point>();// 用于记录空白块的位置
 //	private int currentPage = 1;
 
+	private FirebaseAuth mAuth;
 	private ScrollView frame;
 	private ListView subscriptionList;
 	private SearchView searchView;
@@ -84,7 +82,7 @@ public class StoryActivity extends Activity {
 
 		DBOperator = new DataBaseOperator(this);
 		DBOperator.initialise();
-//		DBOperator.update("leif@gmail.com");
+
 
 		try{
 			init();}
@@ -94,20 +92,12 @@ public class StoryActivity extends Activity {
 			e.printStackTrace();}
 		Log.e("state","finish init");
 
-//		CornerstoneControl cornerstoneControl = new CornerstoneControl(this, mHandler);
-//		cornerstoneControl.onSuccess();
 		int channelNum = DBOperator.getChannelNum();
 
 		for(int i=0;i<channelNum;i++)
 		{
 			infos.add(""+i);
 		}
-
-
-//		Message msg = Message.obtain();
-//		msg.obj = infos;
-//		msg.what = 0;
-//		mHandler.sendMessage(msg);
 	}
 
 	@Override
@@ -191,6 +181,15 @@ public class StoryActivity extends Activity {
 			Log.e("story activity",e.getMessage());
 		}
 
+	}
+
+	private ArrayList<MyStorySnap> getMyStory()
+	{
+		ArrayList<MyStorySnap> myStory = new ArrayList<MyStorySnap>();
+		String userId = mAuth.getInstance().getCurrentUser().getUid();
+		myStory = SnapChatDB.getInstance(StoryActivity.this).getMyStory(userId);
+
+		return myStory;
 	}
 
 	private void init() {
@@ -284,9 +283,8 @@ public class StoryActivity extends Activity {
 
 		ArrayList<FriendStory> myStory = new ArrayList<FriendStory>();
 		FriendStory mystory = new FriendStory("My Story");
-		mystory.addSnap("my snap1");
-		mystory.addSnap("my snap2");
-		mystory.addSnap("my snap3");
+		mystory.addSnaps(getMyStory());
+
 		myStory.add(mystory);
 
 
