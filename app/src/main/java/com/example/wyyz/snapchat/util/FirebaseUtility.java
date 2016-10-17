@@ -164,6 +164,27 @@ public class FirebaseUtility {
         });
     }
 
+    public static void queryChatMessagesFresh(String selectedUserEmail){
+        Query queryChatMessages = FirebaseUtility.getFireBaseChatRoomDatabaseReference()
+                .child(FirebaseUtility.generateUniqueEmailID(selectedUserEmail))
+                .orderByKey()
+                .limitToLast(1);
+        queryChatMessages.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                LinkedList<Object> event = new LinkedList<Object>();
+                event.add(AppConstants.MESSAGE_PREVIOUS_CHATS);
+                event.add(dataSnapshot);
+                MyApplication.getEventBusInstance().post(event);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
     /**
      * get reference of database to update message status
      * @param dataSnapshot

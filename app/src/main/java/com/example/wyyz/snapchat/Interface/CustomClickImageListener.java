@@ -7,5 +7,5 @@ import android.view.View;
  */
 
 public interface CustomClickImageListener {
-    public void onItemClick(View view, int position, String nameUser, String urlPhotoClick);
+    public void onImageClick(View view, int position, String nameUser, String urlPhotoClick);
 }
