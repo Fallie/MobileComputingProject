@@ -494,7 +494,8 @@ public class ChatActivity extends BaseActivity implements CustomOnItemClickListe
         private void displayChat(MessagesViewHolder messagesViewHolder, int position){
             Log.d(TAG,"Sender "+ chatMessageList.get(position).getSender());
 
-            String uname = SnapChatDB.getInstance(context).findUserByEmail(chatMessageList.get(position).getSender()).getUsername();
+            String uname = SnapChatDB.getInstance(context).findUserByEmail(chatMessageList.get(position).getSender())
+                    .getUsername();
             if (uname!=null){
                 messagesViewHolder.textViewSender.setText(uname);
                 if (chatMessageList.get(position).getMessage() != null ) {

@@ -31,6 +31,8 @@ import com.example.wyyz.snapchat.db.SnapChatDB;
 import com.example.wyyz.snapchat.model.MyStorySnap;
 import com.example.wyyz.snapchat.model.Snap;
 import com.example.wyyz.snapchat.model.User;
+import com.example.wyyz.snapchat.util.ConnectionDetector;
+import com.example.wyyz.snapchat.util.ShowNetworkAlert;
 import com.example.wyyz.snapchat.util.TmpPhotoView;
 import com.example.wyyz.snapchat.util.TmpText;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -86,6 +88,12 @@ public class PreviewActivity extends AppCompatActivity implements View.OnClickLi
     private Intent intent;
     private String uri;
     private String timeStamp;
+    // Connection detector class
+    private ConnectionDetector cd;
+    // flag for Internet connection status
+    private Boolean isInternetPresent = false;
+    // Alert Dialog Manager
+    private ShowNetworkAlert alert = new ShowNetworkAlert();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -219,6 +227,8 @@ public class PreviewActivity extends AppCompatActivity implements View.OnClickLi
         builder1.setPositiveButton("Memory", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                cd = new ConnectionDetector(getApplicationContext());
+                checkavailability();
                 finishSettingSnap();
                 Log.i(TAG,"Start deleting text");
             }
@@ -234,6 +244,26 @@ public class PreviewActivity extends AppCompatActivity implements View.OnClickLi
         AlertDialog alertDialog = builder1.create();
         alertDialog.show();
     }
+    public void checkavailability() {
+        // Check if Internet present
+        isInternetPresent = cd.isConnectingToInternet();
+        if (!isInternetPresent) {
+            // Internet Connection is not present
+            alert.showAlertDialog(PreviewActivity.this,
+                    "Fail",
+                    "Internet Connection is NOT Available", false);
+            // stop executing code by return
+            return;
+        } else {
+            // Internet Connection is not present
+            alert.showAlertDialog(PreviewActivity.this,
+                    "Success",
+                    "Internet Connection is Available", true);
+            // stop executing code by return
+            return;
+        }
+    }
+
 
 
     protected void resumeCanvas() {
