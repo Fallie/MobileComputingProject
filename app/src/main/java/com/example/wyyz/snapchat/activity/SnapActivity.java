@@ -127,7 +127,7 @@ public class SnapActivity extends FragmentActivity implements View.OnClickListen
         fragments=new ArrayList<Fragment>();
         fragments.add(new SnapsFragment());
         fragments.add(new CameraRollFragment());
-        fragments.add(new DiscoverFragment());
+        fragments.add(new MyEyesOnlyFragment());
         adapter = new MyPagerAdapter(getSupportFragmentManager(), fragments);
         pager=(ViewPager) findViewById(R.id.pager);
         pager.setAdapter(adapter);
