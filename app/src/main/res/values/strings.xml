@@ -20,6 +20,11 @@
     <string name="openSnap">Open Snap</string>
     <string name="timer">3</string>
 
+    <string name="mysnap">My Snap</string>
+    <string name="myeyes">Move to My Eyes Only</string>
+    <string name="deleteSnap">Delete Snap</string>
+    <string name="createStory">Create Story form this Snap</string>
+
     <!--Preferences-->
     <string name="app_preferences">app_preferences</string>
     <string name="pref_is_user_logged_in">pref_is_user_logged_in</string>

@@ -58,6 +58,7 @@ public class SnapChatOpenHelper extends SQLiteOpenHelper{
             "id integer primary key autoincrement," +
             "userId integer not null," +
             "inMemory integer," +
+            "isLocked integer," +
             "path text," +
             "size integer," +
             "timingOut integer," +

@@ -18,6 +18,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.animation.DecelerateInterpolator;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
@@ -27,6 +28,7 @@ import com.example.wyyz.snapchat.customView.LazyScrollView;
 import com.example.wyyz.snapchat.customView.Rotate3dAnimation;
 import com.example.wyyz.snapchat.db.DataBaseOperator;
 import com.example.wyyz.snapchat.model.DiscoveryChannel;
+import com.example.wyyz.snapchat.util.OnSwipeTouchListener;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -39,6 +41,7 @@ import java.util.Random;
  * @author wy
  */
 public class DiscoverActivity extends Activity {
+	public static final String TAG = "DiscoverActivity";
 	private static final int COLUMNCOUNT = 2;//列数
 	private int columnWidth = 250;// 每个item的宽度
 	private int itemHeight = 0;
@@ -54,6 +57,7 @@ public class DiscoverActivity extends Activity {
 //	private int currentPage = 1;
 	private LazyScrollView rootScroll;
 	private RelativeLayout loading_rl;
+	private FrameLayout frame;
 
 	private DataBaseOperator DBOperator;
 	private ArrayList<DiscoveryChannel> channels;
@@ -103,11 +107,17 @@ public class DiscoverActivity extends Activity {
 		for(int i=0;i<channels.size();i++)
 			Log.e("exchanged channels id",""+channels.get(i).getChannelId());
 //		Log.e("channels size",""+channels.size());
+
+
 		rootView = (RelativeLayout) this.findViewById(R.id.rootView);
 		rootView.setPersistentDrawingCache(ViewGroup.PERSISTENT_ANIMATION_CACHE);
 		rootScroll = (LazyScrollView) this.findViewById(R.id.rootScroll);
+//		rootView.setOnTouchListener(new OnSwipeTouchListener(this.getBaseContext(),DiscoverActivity.this){
+//		});
 //		rootScroll.setOnScrollListener(this);
 		rootScroll.getView();
+//		rootScroll.setOnTouchListener(new OnSwipeTouchListener(this.getBaseContext(),DiscoverActivity.this){
+//		});
 		mInflater = getLayoutInflater();
 		Display display = getWindowManager().getDefaultDisplay();
 		
@@ -128,6 +138,8 @@ public class DiscoverActivity extends Activity {
 		}
 		loading_rl = (RelativeLayout) this.findViewById(R.id.loading_rl);
 		loading_rl.setVisibility(View.VISIBLE);
+//		loading_rl.setOnTouchListener(new OnSwipeTouchListener(this.getBaseContext(),DiscoverActivity.this){
+//		});
 	}
 
 	private void sort (ArrayList<DiscoveryChannel> channels)
@@ -207,6 +219,9 @@ public class DiscoverActivity extends Activity {
 					startActivity(intent);
 //				}
 			}
+		});
+
+		picView.setOnTouchListener(new OnSwipeTouchListener(this.getBaseContext(),DiscoverActivity.this){
 		});
 		startAnim(view);
 

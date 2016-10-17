@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    tools:context="com.example.wyyz.snapchat.activity.PreviewActivity"
+    android:id="@+id/text">
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:id="@+id/previewLayout">
+        <ImageView
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:scaleType="fitXY"
+            android:background="@color/previewBackground"
+            android:id="@+id/previewImage"
+            />
+    </RelativeLayout>
+
+    <Button
+        android:background="@drawable/sharetoother"
+        android:layout_gravity="bottom"
+        android:id="@+id/btnShareSnap"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="69dp" />
+
+    <Button
+        android:background="@drawable/delete"
+        android:layout_gravity="bottom"
+        android:id="@+id/btnDelete"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="20dp" />
+
+    <Button
+        android:background="@drawable/pencil"
+        android:layout_gravity="bottom"
+        android:id="@+id/btnEditSnap"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="120dp" />
+
+
+    <Button
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:background="@drawable/next"
+        android:layout_margin="10dp"
+        android:id="@+id/btnNextStep"
+        android:layout_gravity="bottom|right" />
+
+
+
+
+</FrameLayout>
+

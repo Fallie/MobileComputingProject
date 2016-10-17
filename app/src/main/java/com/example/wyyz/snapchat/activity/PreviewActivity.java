@@ -78,6 +78,9 @@ public class PreviewActivity extends AppCompatActivity implements View.OnClickLi
     private NumberPicker np;
     private int chosenEmoticonId;
     private SnapChatDB db;
+    private Intent intent;
+    private String uri;
+    private String timeStamp;
     private ProgressDialog progressDialog;
 
 
@@ -85,9 +88,9 @@ public class PreviewActivity extends AppCompatActivity implements View.OnClickLi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_preview);
-        //photo.setUserId(mAuth.getInstance().getCurrentUser().getUid());
-        //photo.setPhoto(tmpPhotoView.photo);
-
+        intent = getIntent();
+        uri = intent.getStringExtra("SnapPath");
+        timeStamp = intent.getStringExtra("TimeStamp");
         initialize();
         db=SnapChatDB.getInstance(PreviewActivity.this);
 
@@ -350,6 +353,7 @@ public class PreviewActivity extends AppCompatActivity implements View.OnClickLi
                 // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
                 photo.setPath(taskSnapshot.getDownloadUrl().toString());
                 photo.setSize(taskSnapshot.getBytesTransferred());
+                taskSnapshot.getStorage();
                 Log.i(TAG,"upload successful!!!");
                 Log.i(TAG,String.valueOf(photo.getSize()));
                 snapChatDB.Snap(photo);
@@ -363,7 +367,6 @@ public class PreviewActivity extends AppCompatActivity implements View.OnClickLi
         if (!dir.exists()) {
             dir.mkdir();
         }
-
 
         String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         File mediaFile = new File(dir.getPath() + File.separator + "IMG_" + timestamp + ".jpg");
