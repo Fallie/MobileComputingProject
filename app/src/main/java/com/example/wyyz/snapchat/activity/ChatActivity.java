@@ -137,14 +137,7 @@ public class ChatActivity extends BaseActivity implements CustomOnItemClickListe
             // stop executing code by return
             return;
         }
-//        else {
-//            // Internet Connection is not present
-//            alert.showAlertDialog(ChatActivity.this,
-//                    "Success",
-//                    "Internet Connection is Available", true);
-//            // stop executing code by return
-//            return;
-//        }
+
     }
     private void getIntentExtras() {
 
@@ -651,11 +644,6 @@ public class ChatActivity extends BaseActivity implements CustomOnItemClickListe
 
                 onImageClick();
 
-//                ChatMessageAdapter.
-//                getItem(position);
-//
-//                customClickImageListener.onImageClick(view,position,url);
-//                customClickImageListener.clickImageChat(view,position,model.getUserModel().getName(),model.getUserModel().getPhoto_profile(),model.getFile().getUrl_file());
             }
         }
     }
