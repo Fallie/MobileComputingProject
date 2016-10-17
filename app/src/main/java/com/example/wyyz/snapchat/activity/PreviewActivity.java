@@ -79,6 +79,7 @@ public class PreviewActivity extends AppCompatActivity implements View.OnClickLi
     private Button addToStory;
     private Button addPicto;
     private Button addNote;
+    private Button cancelDrawing;
     private Button draw;
     private TouchEventView imageView;
     private NumberPicker np;
@@ -118,6 +119,8 @@ public class PreviewActivity extends AppCompatActivity implements View.OnClickLi
         timer.setOnClickListener(this);
         addToStory = (Button) findViewById(R.id.btnAddToStory);
         addToStory.setOnClickListener(this);
+        cancelDrawing = (Button) findViewById(R.id.btnCancel);
+        cancelDrawing.setOnClickListener(this);
         addPicto = (Button) findViewById(R.id.btnAddPicto);
         addPicto.setOnClickListener(this);
         addNote = (Button) findViewById(R.id.btnAddNote);
@@ -170,12 +173,13 @@ public class PreviewActivity extends AppCompatActivity implements View.OnClickLi
                 addText();
                 break;
             case R.id.btnSaveToMemory:
-                //savePhotoToMemory();
-                finishSettingSnap();
-                downloadImagePublic();
+                popUpSaveSnap();
                 break;
             case R.id.btnDraw:
                 startDraw();
+                break;
+            case R.id.btnCancel:
+                cancelDrawing();
                 break;
             case R.id.id1:
                 chosenEmoticonId = 1;
@@ -210,9 +214,41 @@ public class PreviewActivity extends AppCompatActivity implements View.OnClickLi
         }
     }
 
+    private void popUpSaveSnap() {
+        AlertDialog.Builder builder1 = new AlertDialog.Builder(PreviewActivity.this);
+        builder1.setTitle("Where do you wanna save to?");
+        // Set up the buttons
+        builder1.setPositiveButton("Memory", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                finishSettingSnap();
+                Log.i(TAG,"Start deleting text");
+            }
+        });
+        builder1.setNegativeButton("Local Gallary", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+                downloadImagePublic();
+            }
+        });
+
+        AlertDialog alertDialog = builder1.create();
+        alertDialog.show();
+    }
+
+
     protected void resumeCanvas() {
 
         Toast.makeText(PreviewActivity.this, "The canvas is cleared!",Toast.LENGTH_SHORT).show();
+    }
+
+    private void cancelDrawing() {
+        //reset the background
+        TmpPhotoView.photo = TmpPhotoView.copy;
+        Intent intent = getIntent();
+        startActivity(intent);
+        Log.i(TAG,"HERE CANCELS THE DRAWING");
     }
 
     private void startDraw() {
@@ -308,6 +344,7 @@ public class PreviewActivity extends AppCompatActivity implements View.OnClickLi
 
     private void addPhotoToStory() {
         finishSettingSnap();
+        TmpPhotoView.copy = null;
 
         String userId = mAuth.getInstance().getCurrentUser().getUid();
         StorageReference photoRef = mStorage.getInstance().getReference("MyStory").child(userId);
@@ -392,6 +429,7 @@ public class PreviewActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void finishSettingSnap(){
+        TmpPhotoView.copy = null;
         //set the timer of the snap
         photo.setTimingOut(secondNumber);
         //set the timestamp of the snap
@@ -454,7 +492,6 @@ public class PreviewActivity extends AppCompatActivity implements View.OnClickLi
         try {
             outputStream = new FileOutputStream(mediaFile);
             newMap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
-            //uploadImage(imageUri);
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -472,46 +509,7 @@ public class PreviewActivity extends AppCompatActivity implements View.OnClickLi
 
 
         sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(mediaFile)));
-        //Toast.makeText(getApplicationContext(), "download successfully", Toast.LENGTH_LONG).show();
-    }
-
-    private void uploadImage(Uri imageUri) {
-        // Get a reference to store file at photos/<FILENAME>.jpg
-        StorageReference photoRef = mStorage.getInstance().getReference("Photos")
-                .child(mAuth.getInstance().getCurrentUser().getUid())
-                .child(imageUri.getLastPathSegment());
-        // [END get_child_ref]
-
-        // Upload file to Firebase Storage
-        Log.d(TAG, "uploadFromUri:dst:" + photoRef.getPath());
-        photoRef.putFile(imageUri)
-                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        // Upload succeeded
-                        Log.d(TAG, "uploadFromUri:onSuccess");
-
-                        // Get the public download URL
-                        //Uri downloadUri = taskSnapshot.getMetadata().getDownloadUrl();
-
-                        // [START_EXCLUDE]
-
-
-                        // [END_EXCLUDE]
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception exception) {
-                        // Upload failed
-                        Log.w(TAG, "uploadFromUri:onFailure", exception);
-
-                        // [START_EXCLUDE]
-
-
-                        // [END_EXCLUDE]
-                    }
-                });
+        Toast.makeText(getApplicationContext(), "download successfully", Toast.LENGTH_LONG).show();
     }
 
     public static Bitmap getBitmapFromView(View view) {

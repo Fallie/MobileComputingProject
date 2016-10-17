@@ -54,6 +54,15 @@
         android:layout_marginLeft="120dp" />
 
     <Button
+        android:background="@drawable/eraser"
+        android:layout_gravity="top"
+        android:id="@+id/btnCancel"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginLeft="150dp"
+        android:layout_marginTop="5dp" />
+
+    <Button
         android:background="@drawable/happiness"
         android:layout_gravity="top"
         android:id="@+id/btnAddPicto"
