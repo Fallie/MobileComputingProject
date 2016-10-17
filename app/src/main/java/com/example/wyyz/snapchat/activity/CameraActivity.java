@@ -23,6 +23,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.wyyz.snapchat.R;
+import com.example.wyyz.snapchat.activity.MyStory.StoryActivity;
 import com.example.wyyz.snapchat.util.OnSwipeTouchListener;
 import com.example.wyyz.snapchat.util.TmpPhotoView;
 import com.google.android.gms.appindexing.Action;
@@ -263,8 +264,8 @@ public class CameraActivity extends AppCompatActivity implements SurfaceHolder.C
         btnDiscovery.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.i("click action","turn to discover");
-                Intent intent = new Intent(CameraActivity.this, DiscoverActivity.class);
+                Log.i("click action","turn to story");
+                Intent intent = new Intent(CameraActivity.this, StoryActivity.class);
                 startActivity(intent);
             }
         });

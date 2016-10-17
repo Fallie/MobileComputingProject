@@ -1,7 +1,6 @@
 package com.example.wyyz.snapchat.activity;
 
 import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -10,7 +9,6 @@ import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
@@ -27,8 +25,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.wyyz.snapchat.R;
+import com.example.wyyz.snapchat.activity.MyStory.StoryActivity;
 import com.example.wyyz.snapchat.customView.TouchEventView;
 import com.example.wyyz.snapchat.db.SnapChatDB;
+import com.example.wyyz.snapchat.model.MyStorySnap;
 import com.example.wyyz.snapchat.model.Snap;
 import com.example.wyyz.snapchat.model.User;
 import com.example.wyyz.snapchat.util.TmpPhotoView;
@@ -36,6 +36,8 @@ import com.example.wyyz.snapchat.util.TmpText;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -47,6 +49,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by Fallie on 27/09/2016.
@@ -78,16 +82,17 @@ public class PreviewActivity extends AppCompatActivity implements View.OnClickLi
     private NumberPicker np;
     private int chosenEmoticonId;
     private SnapChatDB db;
-    private ProgressDialog progressDialog;
-
+    private Intent intent;
+    private String uri;
+    private String timeStamp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_preview);
-        //photo.setUserId(mAuth.getInstance().getCurrentUser().getUid());
-        //photo.setPhoto(tmpPhotoView.photo);
-
+        intent = getIntent();
+        uri = intent.getStringExtra("SnapPath");
+        timeStamp = intent.getStringExtra("TimeStamp");
         initialize();
         db=SnapChatDB.getInstance(PreviewActivity.this);
 
@@ -145,8 +150,10 @@ public class PreviewActivity extends AppCompatActivity implements View.OnClickLi
                 startActivity(intent);
                 break;
             case R.id.btnNextStep:
-                sendSnaptoFriend();
-                //new SendSnaptoFriend.execute();
+                Intent intentNext = new Intent(PreviewActivity.this, MyfriendsActivity.class);
+                intentNext.putExtra("hasImage",true);
+                startActivity(intentNext);
+                finish();
                 break;
             case R.id.btnTimer:
                 setTimer();
@@ -298,7 +305,74 @@ public class PreviewActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void addPhotoToStory() {
-        //finishSettingSnap();
+        finishSettingSnap();
+
+        String userId = mAuth.getInstance().getCurrentUser().getUid();
+        StorageReference photoRef = mStorage.getInstance().getReference("MyStory").child(userId);
+        StorageReference mountainsRef = photoRef.child(photo.getTimestamp()+".jpg");
+
+
+        // Get the data from an ImageView as bytes
+        imageView.setDrawingCacheEnabled(true);
+        imageView.buildDrawingCache();
+        Bitmap bitmap = imageView.getDrawingCache();
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, os);
+        byte[] data = os.toByteArray();
+
+        UploadTask uploadTask = mountainsRef.putBytes(data);
+        uploadTask.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                // Handle unsuccessful uploads
+            }
+        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
+                Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                Log.e("image save url",downloadUrl.toString());
+
+
+                String userId = mAuth.getInstance().getCurrentUser().getUid();
+                final FirebaseDatabase database = FirebaseDatabase.getInstance();
+                DatabaseReference ref = database.getReference();
+
+                DatabaseReference myStoryRef = ref.child("MyStory").child(userId).child(photo.getTimestamp());
+
+
+
+                Map<String, Object> updates = new HashMap<String, Object>();
+                updates.put("timeStamp", photo.getTimestamp());
+                updates.put("timingout", photo.getTimingOut());
+
+                updates.put("url", downloadUrl.toString());
+                myStoryRef.updateChildren(updates);
+
+                Log.e("image remote save","finished");
+
+                MyStorySnap myStorySnap = new MyStorySnap();
+                myStorySnap.setPath(downloadUrl.toString());
+                myStorySnap.setTimestamp(photo.getTimestamp());
+                myStorySnap.setTimingOut(photo.getTimingOut());
+                try {
+                    SnapChatDB.getInstance(PreviewActivity.this).saveMyStory(myStorySnap, userId);
+                }
+                catch(Exception e)
+                {
+                    e.printStackTrace();
+                    Log.e("error",e.getMessage());
+                }
+
+                Log.e("image local save","finished");
+
+                Log.e("image local num",""+SnapChatDB.getInstance(PreviewActivity.this).getMyStory(userId).size());
+
+                Intent intent = new Intent(PreviewActivity.this, StoryActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
     }
 
     private void setTimer() {
@@ -350,6 +424,7 @@ public class PreviewActivity extends AppCompatActivity implements View.OnClickLi
                 // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
                 photo.setPath(taskSnapshot.getDownloadUrl().toString());
                 photo.setSize(taskSnapshot.getBytesTransferred());
+                taskSnapshot.getStorage();
                 Log.i(TAG,"upload successful!!!");
                 Log.i(TAG,String.valueOf(photo.getSize()));
                 snapChatDB.Snap(photo);
@@ -363,7 +438,6 @@ public class PreviewActivity extends AppCompatActivity implements View.OnClickLi
         if (!dir.exists()) {
             dir.mkdir();
         }
-
 
         String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         File mediaFile = new File(dir.getPath() + File.separator + "IMG_" + timestamp + ".jpg");
@@ -459,55 +533,6 @@ public class PreviewActivity extends AppCompatActivity implements View.OnClickLi
 
     private void resetBase(){
         base = TmpPhotoView.photo;
-    }
-
-    private void sendSnaptoFriend(){
-        String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        StorageReference photoRef = mStorage.getInstance().getReference("images")
-                .child(timestamp.toString());
-
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        base.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-        byte[] data = baos.toByteArray();
-
-        UploadTask uploadTask = photoRef.putBytes(data);
-        uploadTask.addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                // Handle unsuccessful uploads
-                Log.i(TAG,"upload failed!!!");
-            }
-        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
-                String url=taskSnapshot.getDownloadUrl().toString();
-                Log.i(TAG,"upload successful!!!");
-
-                Intent intentNext = new Intent(PreviewActivity.this, MyfriendsActivity.class);
-                intentNext.putExtra("url",url);
-                startActivity(intentNext);
-                finish();
-            }
-        });
-    }
-
-    class SendSnaptoFriend extends AsyncTask<Void, Integer, Boolean> {
-        protected void onPreExecute() {
-            progressDialog=ProgressDialog.show(PreviewActivity.this, "Send to Friend...",
-                    "...", true);
-        }
-
-        @Override
-        protected Boolean doInBackground(Void... params) {
-            sendSnaptoFriend();
-            return true;
-        }
-
-        @Override
-        protected void onPostExecute(Boolean result) {
-            progressDialog.dismiss();
-        }
     }
 
 }

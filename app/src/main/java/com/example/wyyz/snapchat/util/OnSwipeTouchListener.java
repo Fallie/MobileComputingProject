@@ -10,6 +10,7 @@ import android.view.View;
 import com.example.wyyz.snapchat.R;
 import com.example.wyyz.snapchat.activity.CameraActivity;
 import com.example.wyyz.snapchat.activity.DiscoverActivity;
+import com.example.wyyz.snapchat.activity.MyStory.StoryActivity;
 import com.example.wyyz.snapchat.activity.MyfriendsActivity;
 import com.example.wyyz.snapchat.activity.ProfileActivity;
 import com.example.wyyz.snapchat.activity.SnapActivity;
@@ -30,6 +31,18 @@ public class OnSwipeTouchListener implements View.OnTouchListener {
     }
 
     public OnSwipeTouchListener(Context ctx,MyfriendsActivity activity) {
+        gestureDetector = new GestureDetector(ctx, new GestureListener());
+        this.activity = activity;
+        this.tag = activity.TAG;
+    }
+
+    public OnSwipeTouchListener(Context ctx,DiscoverActivity activity) {
+        gestureDetector = new GestureDetector(ctx, new GestureListener());
+        this.activity = activity;
+        this.tag = activity.TAG;
+    }
+
+    public OnSwipeTouchListener(Context ctx,StoryActivity activity) {
         gestureDetector = new GestureDetector(ctx, new GestureListener());
         this.activity = activity;
         this.tag = activity.TAG;
@@ -81,25 +94,35 @@ public class OnSwipeTouchListener implements View.OnTouchListener {
 
     public void onSwipeRight() {
         Intent intent = new Intent();
-        intent.setClass(this.activity, MyfriendsActivity.class);
+        if(tag == "CameraActivity"){
+            intent.setClass(this.activity, MyfriendsActivity.class);
+        }
+        else if(tag == "StoryActivity")
+        {
+            intent.setClass(this.activity, CameraActivity.class);
+        }
+        if(tag == "DiscoverActivity"){
+            intent.setClass(this.activity, StoryActivity.class);
+        }
         this.activity.startActivity(intent);
         this.activity.overridePendingTransition(R.anim.in_from_left, R.anim.out_to_right);
+
     }
 
     public void onSwipeLeft() {
+        Intent intent = new Intent();
         if(tag == "CameraActivity"){
-            Intent intent = new Intent();
+            intent.setClass(this.activity, StoryActivity.class);
+        }
+        else if(tag == "StoryActivity")
+        {
             intent.setClass(this.activity, DiscoverActivity.class);
-            this.activity.startActivity(intent);
-            this.activity.overridePendingTransition(R.anim.in_from_right, R.anim.out_to_left);
         }
         if(tag == "MyfriendsActivity"){
-            Intent intent = new Intent();
             intent.setClass(this.activity, CameraActivity.class);
-            this.activity.startActivity(intent);
-            this.activity.overridePendingTransition(R.anim.in_from_right, R.anim.out_to_left);
         }
-
+        this.activity.startActivity(intent);
+        this.activity.overridePendingTransition(R.anim.in_from_right, R.anim.out_to_left);
 
     }
 

@@ -48,6 +48,13 @@
         <activity
             android:name=".activity.CameraActivity"
             android:label="@string/camera" />
+        <activity
+            android:name=".activity.OpenMySnapActivity"
+            android:label="My Snap"
+            android:theme="@style/Theme.AppCompat.Light.ActionBar"/>
+        <activity
+            android:name=".activity.DisplaySnapActivity"
+            android:label="DisplaySnap"/>
         <!--
  ATTENTION: This was auto-generated to add Google Play services to your project for
      App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -60,7 +67,8 @@
             android:name=".activity.PreviewActivity"
             android:label="@string/preview"/>
         <activity android:name=".activity.MyfriendsActivity" />
-        <activity android:name=".activity.ScanqrcodeActivity"></activity>
+        <activity android:name=".activity.ScanqrcodeActivity"/>
+        <activity android:name=".activity.MyStory.StoryActivity" />
         <activity android:name=".activity.DiscoverActivity" />
         <activity android:name=".activity.DiscoverChannelActivity" />
 

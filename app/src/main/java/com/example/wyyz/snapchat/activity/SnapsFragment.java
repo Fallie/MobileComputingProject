@@ -14,7 +14,6 @@ import com.example.wyyz.snapchat.db.SnapChatDB;
 import com.example.wyyz.snapchat.model.Snap;
 import com.example.wyyz.snapchat.model.User;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 
@@ -26,7 +25,6 @@ public class SnapsFragment extends Fragment {
     private ImageAdapter snapImgAdapter;
     private ArrayList<Snap> snaps=new ArrayList<Snap>();
     SnapChatDB db;
-    StorageReference storageRef;
 
     public SnapsFragment() {
         // Required empty public constructor

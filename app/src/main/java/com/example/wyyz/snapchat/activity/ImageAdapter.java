@@ -2,6 +2,7 @@ package com.example.wyyz.snapchat.activity;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,7 +10,6 @@ import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.wyyz.snapchat.R;
@@ -85,8 +85,14 @@ public class ImageAdapter extends ArrayAdapter {
         holder.image.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(context, "Single Photo Edit!",
-                        Toast.LENGTH_SHORT).show();
+                /*Toast.makeText(context, "Single Photo Edit!",
+                        Toast.LENGTH_SHORT).show();*/
+                Intent intent = new Intent(context,OpenMySnapActivity.class);
+                intent.putExtra("SnapPath",item.getPath());
+                intent.putExtra("TimeStamp",item.getTimestamp());
+                intent.putExtra("Size",item.getSize());
+                context.startActivity(intent);
+
             }
         });
         return view;
