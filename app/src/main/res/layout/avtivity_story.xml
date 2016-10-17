@@ -135,6 +135,25 @@
                 android:background="@android:color/transparent" >
             </ListView>
 
+            <TextView
+            android:layout_margin="5dp"
+            android:id ="@+id/allStoryText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity = "center"
+            android:text="ALL STORIES"
+            android:textColor="@color/sinch_purple" />
+
+
+
+            <ListView
+                android:layout_margin="5dp"
+                android:id="@+id/allStoryList"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent" >
+            </ListView>
+
 
             <TextView
                 android:layout_margin="5dp"
