@@ -54,6 +54,26 @@
         android:layout_marginLeft="120dp" />
 
     <Button
+        android:background="@drawable/color_filters"
+        android:layout_gravity="bottom"
+        android:id="@+id/btnApplyFilter"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="170dp"
+        android:alpha="128"/>
+
+    <Button
+        android:background="@drawable/gray_filters"
+        android:layout_gravity="bottom"
+        android:id="@+id/btnApplyGray"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="215dp"
+        android:alpha="128"/>
+
+    <Button
         android:background="@drawable/eraser"
         android:layout_gravity="top"
         android:id="@+id/btnCancel"

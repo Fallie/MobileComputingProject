@@ -26,6 +26,8 @@ import android.widget.Toast;
 
 import com.example.wyyz.snapchat.R;
 import com.example.wyyz.snapchat.activity.MyStory.StoryActivity;
+import com.example.wyyz.snapchat.colorFilter.ColorFilter;
+import com.example.wyyz.snapchat.colorFilter.GrayFilter;
 import com.example.wyyz.snapchat.customView.TouchEventView;
 import com.example.wyyz.snapchat.db.SnapChatDB;
 import com.example.wyyz.snapchat.model.MyStorySnap;
@@ -81,6 +83,8 @@ public class PreviewActivity extends AppCompatActivity implements View.OnClickLi
     private Button addNote;
     private Button cancelDrawing;
     private Button draw;
+    private Button colorFilter;
+    private Button grayFilter;
     private TouchEventView imageView;
     private NumberPicker np;
     private int chosenEmoticonId;
@@ -133,6 +137,10 @@ public class PreviewActivity extends AppCompatActivity implements View.OnClickLi
         saveToMemory.setOnClickListener(this);
         draw = (Button) findViewById(R.id.btnDraw);
         draw.setOnClickListener(this);
+        colorFilter = (Button) findViewById(R.id.btnApplyFilter);
+        colorFilter.setOnClickListener(this);
+        grayFilter = (Button) findViewById(R.id.btnApplyGray);
+        grayFilter.setOnClickListener(this);
 
         np = (NumberPicker)findViewById(R.id.numberPicker);
         np.setMinValue(1);
@@ -187,6 +195,12 @@ public class PreviewActivity extends AppCompatActivity implements View.OnClickLi
             case R.id.btnCancel:
                 cancelDrawing();
                 break;
+            case R.id.btnApplyFilter:
+                applyColorFilter();
+                break;
+            case R.id.btnApplyGray:
+                applyGrayFilter();
+                break;
             case R.id.id1:
                 chosenEmoticonId = 1;
                 break;
@@ -218,6 +232,26 @@ public class PreviewActivity extends AppCompatActivity implements View.OnClickLi
                 break;
 
         }
+    }
+
+    private void applyGrayFilter() {
+        TmpPhotoView.photo = getBitmapFromView(imageView);
+        layout.removeView(imageView);
+        Bitmap newBitmap = GrayFilter.changeToGray(TmpPhotoView.photo);
+        TmpPhotoView.photo = newBitmap;
+        imageView.setBackgroundDrawable(new BitmapDrawable(TmpPhotoView.photo));
+        layout.addView(imageView);
+        Log.i(TAG,"Apply gray filtering");
+    }
+
+    private void applyColorFilter() {
+        TmpPhotoView.photo = getBitmapFromView(imageView);
+        layout.removeView(imageView);
+        Bitmap newBitmap = ColorFilter.changeToColor(TmpPhotoView.photo);
+        TmpPhotoView.photo = newBitmap;
+        imageView.setBackgroundDrawable(new BitmapDrawable(TmpPhotoView.photo));
+        layout.addView(imageView);
+        Log.i(TAG,"Apply color filtering");
     }
 
     private void popUpSaveSnap() {
