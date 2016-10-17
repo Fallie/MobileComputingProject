@@ -8,10 +8,12 @@ import android.database.sqlite.SQLiteDatabase;
 import com.example.wyyz.snapchat.model.ChatRecord;
 import com.example.wyyz.snapchat.model.Friend;
 import com.example.wyyz.snapchat.model.MyStory;
+import com.example.wyyz.snapchat.model.MyStorySnap;
 import com.example.wyyz.snapchat.model.Snap;
 import com.example.wyyz.snapchat.model.Story;
 import com.example.wyyz.snapchat.model.User;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -99,6 +101,32 @@ public class SnapChatDB {
         db.update("Snap", values, "path=?",new String[]{uri});
     }
 
+    public ArrayList<Snap> getUserLockedSnaps(int userId){
+        ArrayList<Snap> snaps = new ArrayList<Snap>();
+
+        String QUERY_FRIENDS="select * from Snap " +
+                "where userId=? AND " +
+                "isLocked=?" +
+                "order by timeStamp desc";
+        Cursor cursor = db.rawQuery(QUERY_FRIENDS, new String[]{String.valueOf(userId),"1"});
+        if(cursor.moveToFirst()){
+            do{
+                Snap snap=new Snap();
+                snap.setUserId(cursor.getInt(cursor.getColumnIndex("userId")));
+                snap.setChecked(false);
+                snap.setPath(cursor.getString(cursor.getColumnIndex("path")));
+                snap.setSize(cursor.getInt(cursor.getColumnIndex("size")));
+                snap.setInMemory(cursor.getInt(cursor.getColumnIndex("inMemory"))>0);
+                snap.setIsLocked(cursor.getInt(cursor.getColumnIndex("isLocked")));
+                snap.setTimestamp(cursor.getString(cursor.getColumnIndex("timeStamp")));
+                snap.setTimingOut(cursor.getInt(cursor.getColumnIndex("timingOut")));
+                snaps.add(snap);
+            }while(cursor.moveToNext());
+        }
+        cursor.close();
+        return snaps;
+    }
+
     public void deleteSnapByPath(String path){
 
         db.delete("Snap","path=?",new String[]{path});
@@ -146,7 +174,7 @@ public class SnapChatDB {
         String QUERY_FRIENDS="select * from Friends " +
                 "where ownerId=?" +
                 "order by lastChatTimeStamp desc";
-        Cursor cursor = db.rawQuery(QUERY_FRIENDS, new String[]{String.valueOf(userId)});
+        Cursor cursor = db.rawQuery(QUERY_FRIENDS, new String[]{String.valueOf(userId),"0"});
         if(cursor.moveToFirst()){
             do{
                 Friend friend=new Friend();
@@ -174,9 +202,10 @@ public class SnapChatDB {
     public ArrayList<Snap> getUserSnap(int userId){
         ArrayList<Snap> snaps = new ArrayList<Snap>();
         String QUERY_FRIENDS="select * from Snap " +
-                "where userId=?" +
+                "where userId=? AND " +
+                "isLocked=?" +
                 "order by timeStamp desc";
-        Cursor cursor = db.rawQuery(QUERY_FRIENDS, new String[]{String.valueOf(userId)});
+        Cursor cursor = db.rawQuery(QUERY_FRIENDS, new String[]{String.valueOf(userId),"0"});
         if(cursor.moveToFirst()){
             do{
                 Snap snap=new Snap();
@@ -185,6 +214,7 @@ public class SnapChatDB {
                 snap.setPath(cursor.getString(cursor.getColumnIndex("path")));
                 snap.setSize(cursor.getInt(cursor.getColumnIndex("size")));
                 snap.setInMemory(cursor.getInt(cursor.getColumnIndex("inMemory"))>0);
+                snap.setIsLocked(cursor.getInt(cursor.getColumnIndex("isLocked")));
                 snap.setTimestamp(cursor.getString(cursor.getColumnIndex("timeStamp")));
                 snap.setTimingOut(cursor.getInt(cursor.getColumnIndex("timingOut")));
                 snaps.add(snap);
@@ -241,15 +271,31 @@ public class SnapChatDB {
     /**
      * Save a Mystory
      */
-    public void saveMyStory(MyStory myStory){
+    public void saveMyStory(MyStorySnap myStorySnap, String userId){
         ContentValues values=new ContentValues();
-        values.put("userId", myStory.getUserId());
-        values.put("storyId",myStory.getStoryId());
-        values.put("snapId", myStory.getSnapId());
-        values.put("timeStamp", myStory.getTimestamp().getTime());
-        values.put("public", myStory.isWhetherPublic());
-        values.put("snapNum", myStory.getSnapNum());
+        values.put("userId", userId);
+        values.put("timeStamp", new SimpleDateFormat("yyyyMMdd_HHmmss").format(myStorySnap.getTimestamp()));
+        values.put("timingout", myStorySnap.getTimingOut());
+        values.put("url", myStorySnap.getPath());
         db.insert("MyStory", null, values);
+        values.clear();
+    }
+
+    public ArrayList<MyStorySnap> getMyStory(String userId){
+        ArrayList<MyStorySnap> myStory = new ArrayList<MyStorySnap>();
+        Cursor cursor = db.query("MyStory", null, "userId = \""+userId+"\"", null, null, null, null);
+        if(cursor.moveToFirst())
+        {
+            do {
+                MyStorySnap snap = new MyStorySnap();
+                snap.setPath(cursor.getString(cursor.getColumnIndex("url")));
+                snap.setTimestamp(cursor.getString(cursor.getColumnIndex("timeStamp")));
+                snap.setTimingOut(cursor.getInt(cursor.getColumnIndex("timingout")));
+                myStory.add(snap);
+            }while(cursor.moveToNext());
+        }
+        cursor.close();
+        return myStory;
     }
 
     /**

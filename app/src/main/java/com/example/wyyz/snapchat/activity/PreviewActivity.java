@@ -27,8 +27,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.wyyz.snapchat.R;
+import com.example.wyyz.snapchat.activity.MyStory.StoryActivity;
 import com.example.wyyz.snapchat.customView.TouchEventView;
 import com.example.wyyz.snapchat.db.SnapChatDB;
+import com.example.wyyz.snapchat.model.MyStorySnap;
 import com.example.wyyz.snapchat.model.Snap;
 import com.example.wyyz.snapchat.model.User;
 import com.example.wyyz.snapchat.util.TmpPhotoView;
@@ -36,6 +38,8 @@ import com.example.wyyz.snapchat.util.TmpText;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -47,6 +51,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by Fallie on 27/09/2016.
@@ -301,7 +307,74 @@ public class PreviewActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void addPhotoToStory() {
-        //finishSettingSnap();
+        finishSettingSnap();
+
+        String userId = mAuth.getInstance().getCurrentUser().getUid();
+        StorageReference photoRef = mStorage.getInstance().getReference("MyStory").child(userId);
+        StorageReference mountainsRef = photoRef.child(photo.getTimestamp()+".jpg");
+
+
+        // Get the data from an ImageView as bytes
+        imageView.setDrawingCacheEnabled(true);
+        imageView.buildDrawingCache();
+        Bitmap bitmap = imageView.getDrawingCache();
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, os);
+        byte[] data = os.toByteArray();
+
+        UploadTask uploadTask = mountainsRef.putBytes(data);
+        uploadTask.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                // Handle unsuccessful uploads
+            }
+        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
+                Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                Log.e("image save url",downloadUrl.toString());
+
+
+                String userId = mAuth.getInstance().getCurrentUser().getUid();
+                final FirebaseDatabase database = FirebaseDatabase.getInstance();
+                DatabaseReference ref = database.getReference();
+
+                DatabaseReference myStoryRef = ref.child("MyStory").child(userId).child(photo.getTimestamp());
+
+
+
+                Map<String, Object> updates = new HashMap<String, Object>();
+                updates.put("timeStamp", photo.getTimestamp());
+                updates.put("timingout", photo.getTimingOut());
+
+                updates.put("url", downloadUrl.toString());
+                myStoryRef.updateChildren(updates);
+
+                Log.e("image remote save","finished");
+
+                MyStorySnap myStorySnap = new MyStorySnap();
+                myStorySnap.setPath(downloadUrl.toString());
+                myStorySnap.setTimestamp(photo.getTimestamp());
+                myStorySnap.setTimingOut(photo.getTimingOut());
+                try {
+                    SnapChatDB.getInstance(PreviewActivity.this).saveMyStory(myStorySnap, userId);
+                }
+                catch(Exception e)
+                {
+                    e.printStackTrace();
+                    Log.e("error",e.getMessage());
+                }
+
+                Log.e("image local save","finished");
+
+                Log.e("image local num",""+SnapChatDB.getInstance(PreviewActivity.this).getMyStory(userId).size());
+
+                Intent intent = new Intent(PreviewActivity.this, StoryActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
     }
 
     private void setTimer() {

@@ -1,0 +1,60 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.wyyz.snapchat.activity.SnapsFragment">
+
+    <!-- TODO: Update blank fragment layout -->
+    <GridView
+        android:id="@+id/gridView"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:columnWidth="100dp"
+        android:drawSelectorOnTop="true"
+        android:gravity="center"
+        android:numColumns="auto_fit"
+        android:stretchMode="columnWidth"
+        android:verticalSpacing="5dp"
+        android:focusable="true"
+        android:clickable="true"
+        android:visibility="gone"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:id="@+id/layout_password"
+        android:layout_marginTop="140dp"
+        android:visibility="visible">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Password"
+            android:textColor="@color/colorAccent"
+            android:textSize="30px"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginBottom="10dp"
+            android:id="@+id/tv_confirmpwd"/>
+        <EditText
+            android:layout_width="match_parent"
+            android:paddingLeft="10dp"
+            android:layout_height="50dp"
+            android:textColor="#000"
+            android:textSize="30px"
+            android:background="@drawable/me_border"
+            android:inputType="numberPassword"
+            android:id="@+id/et_pwd"/>
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:textColor="#fff"
+            android:text="Confirm"
+            android:textSize="50px"
+            android:layout_marginTop="40dp"
+            android:background="@color/colorAccent"
+            android:id="@+id/btn_confirm"/>
+
+    </LinearLayout>
+
+</LinearLayout>
