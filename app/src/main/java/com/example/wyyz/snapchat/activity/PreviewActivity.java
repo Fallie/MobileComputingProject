@@ -56,7 +56,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
+/**This class is for creating preview after taking a photo.
+ * This activity supports edit, add pictogram, add text, cancel editing, set timer, create mystory,
+ * save to memory and two types of filtering as well as send this snap to a friend.
  * Created by Fallie on 27/09/2016.
  */
 

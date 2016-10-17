@@ -14,7 +14,7 @@ import com.example.wyyz.snapchat.customView.CircleTextProgressbar;
 
 import java.util.ArrayList;
 
-/**
+/**This class is for displaying snaps with time enforce.
  * Created by Fallie on 17/10/2016.
  */
 
@@ -30,6 +30,7 @@ public class DisplaySnapActivity extends AppCompatActivity {
     private double upper;
     private double lower;
     private String activityName;
+    private  String username = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +39,9 @@ public class DisplaySnapActivity extends AppCompatActivity {
         uris = intent.getStringArrayListExtra("SnapPath");
         timers = intent.getIntArrayExtra("Timer");
         activityName = intent.getStringExtra("ActivityName");
+        username = intent.getStringExtra("UserName");
+        Log.i(TAG,username+" readuseremail");
+        Log.i(TAG, String.valueOf(uris)+" path");
         setContentView(R.layout.activity_display_snap);
         initialize();
         Log.i(TAG, "Activity created!");
@@ -76,18 +80,22 @@ public class DisplaySnapActivity extends AppCompatActivity {
                     else {
                         round ++;
                         tmp = timers[round];
+                        Log.d(TAG,"000The value of tmp: "+tmp);
                         upper = 100;
                         lower = 100*(tmp-1)/timers[round];
                         displaySnap(round);
+                        return;
                     }
 
                 }
 
                 if (progress > lower && progress < upper) {
                     mTvSkip.setText(String.valueOf(tmp));
+                    Log.d(TAG,"111The value of p: "+progress);
                 } else {
                     tmp--;
                     mTvSkip.setText(String.valueOf(tmp));
+                    Log.d(TAG,"222The value of p: "+progress);
                     upper = 100 * tmp / timers[round];
                     lower = 100 * (tmp - 1) / timers[round];
                 }
@@ -116,7 +124,9 @@ public class DisplaySnapActivity extends AppCompatActivity {
                 intent.setClass(DisplaySnapActivity.this, SnapActivity.class);
                 break;
             case "ChatActivity":
+                Log.i(TAG,username+" eeemail");
                 intent.setClass(DisplaySnapActivity.this, ChatActivity.class);
+                intent.putExtra("AppConstants.INTENT_GROUP_SELECTED_GROUP",username);
                 break;
             default:
                 break;

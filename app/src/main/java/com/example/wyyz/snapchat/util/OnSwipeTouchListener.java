@@ -15,7 +15,7 @@ import com.example.wyyz.snapchat.activity.MyfriendsActivity;
 import com.example.wyyz.snapchat.activity.ProfileActivity;
 import com.example.wyyz.snapchat.activity.SnapActivity;
 
-/**
+/**This class is for listen the gestures.
  * Created by Fallie on 14/10/2016.
  */
 

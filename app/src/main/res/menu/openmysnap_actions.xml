@@ -7,10 +7,6 @@
         android:icon="@drawable/locked"
         android:title="@string/myeyes"
         yourapp:showAsAction="collapseActionView"/>
-    <item android:id="@+id/action_creatstory"
-        android:icon="@drawable/plus"
-        android:title="@string/createStory"
-        yourapp:showAsAction="collapseActionView"
-        android:visible="true"/>
+
 
 </menu>

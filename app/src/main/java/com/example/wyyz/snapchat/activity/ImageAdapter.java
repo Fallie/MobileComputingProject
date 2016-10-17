@@ -110,6 +110,11 @@ public class ImageAdapter extends ArrayAdapter {
         }
 
     }
+    public void disableSelectImg(){
+        for(ImageView imgv:imageViews){
+            imgv.setClickable(false);
+        }
+    }
 
     public void toggleOffSelect() {
         for (CheckBox cb: checkBoxes) {

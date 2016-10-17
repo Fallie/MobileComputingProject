@@ -29,11 +29,10 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
-import java.util.ArrayList;
-
 import static com.example.wyyz.snapchat.activity.PreviewActivity.getBitmapFromView;
 
-/**
+/**This class is for opening my snap from memory which supports both open snaps and photos
+ * from cameraRoll.
  * Created by Fallie on 15/10/2016.
  */
 
@@ -125,14 +124,12 @@ public class OpenMySnapActivity extends AppCompatActivity implements View.OnClic
             case R.id.action_myeyes:
                 lockSnap();
                 return true;
-            case R.id.action_creatstory:
-                createStory();
-                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 
+    /*
     private void createStory() {
         Intent intent = new Intent(OpenMySnapActivity.this,DisplaySnapActivity.class);
         ArrayList<String> str = new ArrayList<String>();
@@ -143,7 +140,7 @@ public class OpenMySnapActivity extends AppCompatActivity implements View.OnClic
         intent.putExtra("Timer",timer);
         intent.putExtra("ActivityName","SnapActivity");
         startActivity(intent);
-    }
+    }*/
 
     private void lockSnap() {
 
