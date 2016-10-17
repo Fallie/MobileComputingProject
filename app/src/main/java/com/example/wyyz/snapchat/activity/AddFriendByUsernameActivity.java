@@ -33,6 +33,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Activity to add friend by searching username
+ */
 public class AddFriendByUsernameActivity extends AppCompatActivity implements View.OnClickListener{
     private ListView userListView;
     private EditText inputText;
@@ -66,6 +69,7 @@ public class AddFriendByUsernameActivity extends AppCompatActivity implements Vi
                 break;
         }
     }
+    //search user by username and send friend request
     private void searchUsersByUsername(String username){
         DatabaseReference usersRef= FirebaseDatabase.getInstance().getReference().child("Users");
         Query queryRef=usersRef.orderByChild("username").equalTo(username);
@@ -117,6 +121,8 @@ public class AddFriendByUsernameActivity extends AppCompatActivity implements Vi
         });
 
     }
+
+    //Send a friend request to user
     public void sendFriendRequest(User user){
         FriendRequestHelper.sendRequest(user);
         Toast.makeText(AddFriendByUsernameActivity.this, "Request successfully sent, please wait for response.",

@@ -22,8 +22,9 @@ import java.util.ArrayList;
 
 
 /**
- * A simple {@link Fragment} subclass.
- *
+ * Fragment for my eyes only snaps
+ * Will check password first
+ * Default password is 123456
  */
 public class MyEyesOnlyFragment extends Fragment implements View.OnClickListener{
     private GridView gridView;

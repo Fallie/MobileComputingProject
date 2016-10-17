@@ -17,7 +17,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import java.util.ArrayList;
 
 /**
- * A simple {@link Fragment} subclass.
+ * Fragment to disply stories
+ * Only display the first snap of the story for thumbnails
  */
 public class StoriesFragment extends Fragment {
     private GridView gridView;
@@ -43,26 +44,6 @@ public class StoriesFragment extends Fragment {
         stories=db.getUserStories(user.getId());
         storyAdapter = new StoryAdapter(snapActivity, R.layout.image_item, stories);
         gridView.setAdapter(storyAdapter);
-        /*gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Story story=stories.get(position);
-                ArrayList<Snap> snaps=db.getStorySnaps(story);
-                ArrayList<String> paths = new ArrayList<String>();
-                int[] timers=new int[snaps.size()];
-                for(int i=0;i<snaps.size();i++){
-                    paths.add(snaps.get(i).getPath());
-                    timers[i]=snaps.get(i).getTimingOut();
-                    Log.d("path",String.valueOf(snaps.get(i).getPath()));
-                    Log.d("path",String.valueOf(snaps.get(i).getTimingOut()));
-                }
-                Intent intent = new Intent(snapActivity, DisplaySnapActivity.class);
-                intent.putExtra("ActivityName","SnapActivity");
-                intent.putExtra("SnapPath",paths);
-                intent.putExtra("Timer",timers);
-                startActivity(intent);
-            }
-        });*/
         return storyView;
     }
 
