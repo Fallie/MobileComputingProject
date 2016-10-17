@@ -33,6 +33,7 @@ import com.example.wyyz.snapchat.activity.chat.AbsCommomAdapter;
 import com.example.wyyz.snapchat.model.ChatMessage;
 import com.example.wyyz.snapchat.db.SnapChatDB;
 import com.example.wyyz.snapchat.model.FileModel;
+import com.example.wyyz.snapchat.model.User;
 import com.example.wyyz.snapchat.util.AppConstants;
 
 import com.example.wyyz.snapchat.util.FirebaseUtility;
@@ -76,12 +77,23 @@ public class ChatActivity extends BaseActivity implements CustomOnItemClickListe
     private static final int IMAGE_GALLERY_REQUEST = 1;
     private static final int IMAGE_CAMERA_REQUEST = 2;
 
+    // Connection detector class
+    private ConnectionDetector cd;
+    // flag for Internet connection status
+    private Boolean isInternetPresent = false;
+    // Alert Dialog Manager
+    private ShowNetworkAlert alert = new ShowNetworkAlert();
+
     FirebaseStorage storage = FirebaseStorage.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setAppTheme();
         super.onCreate(savedInstanceState);
+
+        cd = new ConnectionDetector(getApplicationContext());
+        checkavailability();
+
         setContentView(R.layout.activity_chat);
 
         getIntentExtras();
@@ -107,6 +119,25 @@ public class ChatActivity extends BaseActivity implements CustomOnItemClickListe
         }
     }
 
+    public void checkavailability() {
+        // Check if Internet present
+        isInternetPresent = cd.isConnectingToInternet();
+        if (!isInternetPresent) {
+            // Internet Connection is not present
+            alert.showAlertDialog(OpenMySnapActivity.this,
+                    "Fail",
+                    "Internet Connection is NOT Available", false);
+            // stop executing code by return
+            return;
+        } else {
+            // Internet Connection is not present
+            alert.showAlertDialog(OpenMySnapActivity.this,
+                    "Success",
+                    "Internet Connection is Available", true);
+            // stop executing code by return
+            return;
+        }
+    }
     private void getIntentExtras() {
         selectedUserID = getIntent().getStringExtra(AppConstants.INTENT_GROUP_SELECTED_GROUP);
         Log.v(TAG,selectedUserID);
@@ -487,9 +518,14 @@ public class ChatActivity extends BaseActivity implements CustomOnItemClickListe
         private void displayChat(MessagesViewHolder messagesViewHolder, int position){
             Log.d(TAG,"Sender "+ chatMessageList.get(position).getSender());
 
-            String uname = SnapChatDB.getInstance(context).findUserByEmail(chatMessageList.get(position).getSender()).getUsername();
-            if (uname!=null){
-                messagesViewHolder.textViewSender.setText(uname);
+            String senderEmail = chatMessageList.get(position).getSender();
+
+            Log.d(TAG, senderEmail+ "sender");
+            User sender = SnapChatDB.getInstance(context).findUserByEmail(chatMessageList.get(position).getSender());
+            Log.d(TAG, "Username "+sender.getUsername());
+
+            if (sender.getUsername()!=null){
+                messagesViewHolder.textViewSender.setText(SnapChatDB.getInstance(context).findUserByEmail(chatMessageList.get(position).getSender()).getUsername());
                 if (chatMessageList.get(position).getMessage() != null ) {
                     messagesViewHolder.textViewMessage.setText(chatMessageList.get(position).getMessage());
                     messagesViewHolder.textViewMessage.setVisibility(View.VISIBLE);

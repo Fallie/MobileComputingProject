@@ -8,6 +8,7 @@ public class AppConstants {
     public static final String INTENT_GROUP_SELECTED_GROUP = "INTENT_GROUP_SELECTED_GROUP";
     public static final String FILE_URL = "file_url";
 
+    public static final String USER_NAME = "user_name";
 
     /**
      * Chat Message Types
