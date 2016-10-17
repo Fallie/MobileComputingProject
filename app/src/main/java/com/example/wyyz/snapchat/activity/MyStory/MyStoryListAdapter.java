@@ -72,6 +72,7 @@
 package com.example.wyyz.snapchat.activity.MyStory;
 
 import android.content.Context;
+import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -82,9 +83,12 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.wyyz.snapchat.R;
 import com.example.wyyz.snapchat.model.FriendStory;
+import com.example.wyyz.snapchat.model.MyStorySnap;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 /**
@@ -118,16 +122,18 @@ public class MyStoryListAdapter extends BaseExpandableListAdapter {
         LayoutInflater layoutInflater = LayoutInflater.from(context);
 
         FriendStory story = myStory.get(groupPosition);
-        String mySnap = story.getSnaps().get(childPosition);
+        MyStorySnap mySnap = story.getSnaps().get(childPosition);
+        String url = mySnap.getPath();
 
             convertView = layoutInflater.inflate(R.layout.mystory_nonheader, null);
             ImageView imageView = (ImageView) convertView.findViewById(R.id.headerPreview);
+            Glide.with(context).load(Uri.parse(url)).into(imageView);
 
             TextView storyNameText = (TextView) convertView.findViewById(R.id.storyNameText);
             TextView storyTimeText = (TextView) convertView.findViewById(R.id.storyTimeText);
 
-            storyNameText.setText(mySnap);
-            storyTimeText.setText(story.getTimeStamp());
+            storyNameText.setText("");
+            storyTimeText.setText( new SimpleDateFormat("EEE, d MMM yyyy, HH:mm").format(mySnap.getTimestamp()));
 
         return convertView;
     }
