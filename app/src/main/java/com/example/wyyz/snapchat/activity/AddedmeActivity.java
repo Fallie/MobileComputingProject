@@ -29,6 +29,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Activity to display all the friend requests who added me.
+ * Can accept or ignore the friend request here
+ */
 public class AddedmeActivity extends AppCompatActivity {
     private ListView requestListView;
     private TextView noRequest;
@@ -44,6 +48,7 @@ public class AddedmeActivity extends AppCompatActivity {
         getRequests();
     }
 
+    //get friendRequests from remote
     private void getRequests() {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         String myEmail = currentUser.getEmail();
@@ -149,6 +154,7 @@ class RequestAdapter extends ArrayAdapter<User> {
         });
         return view;
     }
+    //ignore the Request
     private void ignoreRequest(User user){
         //delete from firebase
         final FirebaseUser currentUser= FirebaseAuth.getInstance().getCurrentUser();
@@ -189,6 +195,7 @@ class RequestAdapter extends ArrayAdapter<User> {
         adapter.notifyDataSetChanged();
     }
 
+    //accept the friend request
     private void acceptRequest(User user){
         String fromEmail=user.getEmail();
         //delete from listview

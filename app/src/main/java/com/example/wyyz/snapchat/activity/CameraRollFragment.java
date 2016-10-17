@@ -26,7 +26,7 @@ import java.util.List;
 
 
 /**
- * A simple {@link Fragment} subclass.
+ * Fragment to display pictures from local camera roll
  */
 public class CameraRollFragment extends Fragment{
     private GridView gridView;
@@ -62,6 +62,7 @@ public class CameraRollFragment extends Fragment{
         return camerarollView;
     }
 
+    //get a list of picture path of all the local pictures
     private List<String> getSystemPhotoList(Context context){
         List<String> result = new ArrayList<String>();
         Uri uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
@@ -85,6 +86,7 @@ public class CameraRollFragment extends Fragment{
         return result ;
     }
 
+    //Create snaps for local pictures
     private void getSnapsFromSystemPhotos(Context context){
         //ArrayList<Snap> snaps=new ArrayList<Snap>();
         List<String> paths=getSystemPhotoList(context);
@@ -97,6 +99,7 @@ public class CameraRollFragment extends Fragment{
         }
     }
 
+    //AsyncTask to display local pictures
     class GetSnapsFromSystem extends AsyncTask<Void, Integer, Boolean>{
 
         @Override

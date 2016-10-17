@@ -18,6 +18,9 @@ import com.google.firebase.database.ValueEventListener;
 import cn.bingoogolapple.qrcode.core.QRCodeView;
 import cn.bingoogolapple.qrcode.zxing.ZXingView;
 
+/**
+ * Activity to add friend by scan qr code
+ */
 public class ScanqrcodeActivity extends AppCompatActivity implements QRCodeView.Delegate {
     private static final String TAG = ScanqrcodeActivity.class.getSimpleName();
     private QRCodeView mQRCodeView;
@@ -60,7 +63,7 @@ public class ScanqrcodeActivity extends AppCompatActivity implements QRCodeView.
 
     @Override
     public void onScanQRCodeSuccess(String result) {
-
+        //check the validation of qr code
         char[] invalidChars={'.', '#', '$', '[', ']'};
         if(!containsNone(result,invalidChars)){
             onInvalidQRcode();
@@ -75,6 +78,7 @@ public class ScanqrcodeActivity extends AppCompatActivity implements QRCodeView.
         Log.e(TAG, "Error occured when opening camera");
     }
 
+    //send friend request
     private void sendFriendRequestbyUid(final String uid){
         final DatabaseReference db= FirebaseDatabase.getInstance().getReference().child("Users");
         db.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -112,6 +116,7 @@ public class ScanqrcodeActivity extends AppCompatActivity implements QRCodeView.
 
     }
 
+    //helper method to check string doesn't contain any invalid character
     public static boolean containsNone(String str, char[] invalidChars) {
         if (str == null || invalidChars == null) {
             return true;

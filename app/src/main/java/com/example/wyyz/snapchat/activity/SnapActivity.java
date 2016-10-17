@@ -19,36 +19,47 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.wyyz.snapchat.R;
+import com.example.wyyz.snapchat.db.SnapChatDB;
+import com.example.wyyz.snapchat.model.Snap;
+import com.example.wyyz.snapchat.model.User;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
 
+/**
+ * Activity to display memory.
+ * Includes 4 fragments: snapsFragment, storiesFragment, cameraRollFragment and MyEyeOnlyFragment
+ * Supports mutiple select snaps to create story
+ */
 public class SnapActivity extends FragmentActivity implements View.OnClickListener {
     CameraRollFragment cameraRollFragment;
     SnapsFragment snapsFragment;
-    private ArrayList<Integer> selectedSnapsId = new ArrayList<>();
+    private ArrayList<Snap> selectedSnaps = new ArrayList<>();
     private boolean[] selectMap;
+    private User user;
+    SnapChatDB db;
 
     private ViewPager pager ;
     private ArrayList<Fragment> fragments;
     private PagerAdapter adapter;
-    private TextView tv_tab0, tv_tab1, tv_tab2;
+    private TextView tv_tab0, tv_tab1, tv_tab2, tv_tab3;
     private FirebaseAuth firebaseAuth;
     Button btnCamera;
+    private Button btnCreateStory;
 
     private RelativeLayout titleLayout;
     private RelativeLayout selectTopLayout;
-    private RelativeLayout selectBottomLayout;
     private ImageView ivSelect;
     private ImageView ivCancel;
-    private ImageView ivSend;
-    private ImageView ivDelete;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_snap);
+        db=SnapChatDB.getInstance(SnapActivity.this);
         firebaseAuth = FirebaseAuth.getInstance();
+        String email=firebaseAuth.getInstance().getCurrentUser().getEmail();
+        final User user=db.findUserByEmail(email);
         btnCamera = (Button) findViewById(R.id.btnButton);
         btnCamera.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -58,46 +69,65 @@ public class SnapActivity extends FragmentActivity implements View.OnClickListen
             }
         });
         initView();
+        //enable mutiple select snap to create story
         ivSelect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Log.d("click","1");
                 titleLayout.setVisibility(View.INVISIBLE);
                 selectTopLayout.setVisibility(View.VISIBLE);
-                selectBottomLayout.setVisibility(View.VISIBLE);
+                btnCreateStory.setVisibility(View.VISIBLE);
                 btnCamera.setVisibility(View.GONE);
-                cameraRollFragment.getCameraRollImgAdapter().toggleOnSelect();
+                cameraRollFragment.getCameraRollImgAdapter().disableSelectImg();
                 snapsFragment.getSnapImgAdapter().toggleOnSelect();
             }
         });
+
+        //cancel creating story by disable mutiple select
         ivCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 titleLayout.setVisibility(View.VISIBLE);
                 selectTopLayout.setVisibility(View.GONE);
-                selectBottomLayout.setVisibility(View.GONE);
+                btnCreateStory.setVisibility(View.GONE);
                 btnCamera.setVisibility(View.VISIBLE);
                 cameraRollFragment.getCameraRollImgAdapter().toggleOffSelect();
                 snapsFragment.getSnapImgAdapter().toggleOffSelect();
             }
         });
-        ivSend.setOnClickListener(new View.OnClickListener() {
+        //create a story from a list of selected snaps
+        btnCreateStory.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                selectMap=snapsFragment.getSnapImgAdapter().getSelectMap();
                 for(int i=0;i<selectMap.length;i++){
                     if(selectMap[i]){
-                        selectedSnapsId.add(snapsFragment.getSnap(i).getId());
+                        Log.d("selected",String.valueOf(snapsFragment.getSnap(i).getId()));
+                        selectedSnaps.add(snapsFragment.getSnap(i));
                     }
                 }
-
-                Log.d("selected",String.valueOf(selectedSnapsId.size()));
+                Log.d("selected",String.valueOf(selectedSnaps.size()));
+                db.saveStory(user,selectedSnaps);
                 titleLayout.setVisibility(View.VISIBLE);
                 selectTopLayout.setVisibility(View.GONE);
-                selectBottomLayout.setVisibility(View.GONE);
+                btnCreateStory.setVisibility(View.GONE);
                 btnCamera.setVisibility(View.VISIBLE);
                 cameraRollFragment.getCameraRollImgAdapter().toggleOffSelect();
                 snapsFragment.getSnapImgAdapter().toggleOffSelect();
+
+                ArrayList<String> paths = new ArrayList<String>();
+                int[] timers=new int[selectedSnaps.size()];
+                for(int i=0;i<selectedSnaps.size();i++){
+                    paths.add(selectedSnaps.get(i).getPath());
+                    timers[i]=selectedSnaps.get(i).getTimingOut();
+                    Log.d("path",String.valueOf(selectedSnaps.get(i).getPath()));
+                    Log.d("path",String.valueOf(selectedSnaps.get(i).getTimingOut()));
+                }
+                Intent intent = new Intent(SnapActivity.this, DisplaySnapActivity.class);
+                intent.putExtra("ActivityName","SnapActivity");
+                intent.putExtra("SnapPath",paths);
+                intent.putExtra("Timer",timers);
+                startActivity(intent);
             }
         });
     }
@@ -112,19 +142,20 @@ public class SnapActivity extends FragmentActivity implements View.OnClickListen
                 snapsFragment=(SnapsFragment)f;
             }
         }
+
     }
 
+    //initiate View, involving set up page viewer
     private void initView(){
         titleLayout=(RelativeLayout)findViewById(R.id.title_layout);
         selectTopLayout=(RelativeLayout)findViewById(R.id.select_top);
-        selectBottomLayout=(RelativeLayout)findViewById(R.id.select_bottom);
+        btnCreateStory=(Button)findViewById(R.id.btnCreate);
         ivSelect=(ImageView)findViewById(R.id.imgv_select);
         ivCancel=(ImageView)findViewById(R.id.imgv_cancel);
-        ivSend=(ImageView)findViewById(R.id.imgv_send);
-        ivDelete=(ImageView)findViewById(R.id.imgv_delete);
 
         fragments=new ArrayList<Fragment>();
         fragments.add(new SnapsFragment());
+        fragments.add((new StoriesFragment()));
         fragments.add(new CameraRollFragment());
         fragments.add(new MyEyesOnlyFragment());
         adapter = new MyPagerAdapter(getSupportFragmentManager(), fragments);
@@ -134,14 +165,17 @@ public class SnapActivity extends FragmentActivity implements View.OnClickListen
         tv_tab0=(TextView) findViewById(R.id.tv_tab0);
         tv_tab1=(TextView) findViewById(R.id.tv_tab1);
         tv_tab2=(TextView) findViewById(R.id.tv_tab2);
+        tv_tab3=(TextView) findViewById(R.id.tv_tab3);
 
-        pager.setCurrentItem(1);
-        tv_tab0.setTextColor(getResources().getColor(R.color.previewBackground));
-        tv_tab1.setTextColor(getResources().getColor(R.color.colorAccent));
+        pager.setCurrentItem(0);
+        tv_tab0.setTextColor(getResources().getColor(R.color.colorAccent));
+        tv_tab1.setTextColor(getResources().getColor(R.color.previewBackground));
         tv_tab2.setTextColor(getResources().getColor(R.color.previewBackground));
+        tv_tab3.setTextColor(getResources().getColor(R.color.previewBackground));
         tv_tab0.setOnClickListener(this);
         tv_tab1.setOnClickListener(this);
         tv_tab2.setOnClickListener(this);
+        tv_tab3.setOnClickListener(this);
         pager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener(){
             public void onPageSelected(int position){
                 switch (position){
@@ -149,21 +183,25 @@ public class SnapActivity extends FragmentActivity implements View.OnClickListen
                         tv_tab0.setTextColor(getResources().getColor(R.color.colorAccent));
                         tv_tab1.setTextColor(getResources().getColor(R.color.previewBackground));
                         tv_tab2.setTextColor(getResources().getColor(R.color.previewBackground));
+                        tv_tab3.setTextColor(getResources().getColor(R.color.previewBackground));
                         break;
                     case 1:
                         tv_tab0.setTextColor(getResources().getColor(R.color.previewBackground));
-                        tv_tab1.setTextColor(getResources().getColor(R.color.colorAccent));
+                        tv_tab1.setTextColor(getResources().getColor(R.color.previewBackground));
                         tv_tab2.setTextColor(getResources().getColor(R.color.previewBackground));
+                        tv_tab3.setTextColor(getResources().getColor(R.color.colorAccent));
                         break;
                     case 2:
                         tv_tab0.setTextColor(getResources().getColor(R.color.previewBackground));
-                        tv_tab1.setTextColor(getResources().getColor(R.color.previewBackground));
-                        tv_tab2.setTextColor(getResources().getColor(R.color.colorAccent));
+                        tv_tab1.setTextColor(getResources().getColor(R.color.colorAccent));
+                        tv_tab2.setTextColor(getResources().getColor(R.color.previewBackground));
+                        tv_tab3.setTextColor(getResources().getColor(R.color.previewBackground));
                         break;
                     case 3:
                         tv_tab0.setTextColor(getResources().getColor(R.color.previewBackground));
                         tv_tab1.setTextColor(getResources().getColor(R.color.previewBackground));
-                        tv_tab2.setTextColor(getResources().getColor(R.color.previewBackground));
+                        tv_tab2.setTextColor(getResources().getColor(R.color.colorAccent));
+                        tv_tab3.setTextColor(getResources().getColor(R.color.previewBackground));
                         break;
                     default:
                         break;
@@ -178,10 +216,13 @@ public class SnapActivity extends FragmentActivity implements View.OnClickListen
                 pager.setCurrentItem(0);
                 break;
             case R.id.tv_tab1:
-                pager.setCurrentItem(1);
+                pager.setCurrentItem(2);
                 break;
             case R.id.tv_tab2:
-                pager.setCurrentItem(2);
+                pager.setCurrentItem(3);
+                break;
+            case R.id.tv_tab3:
+                pager.setCurrentItem(1);
                 break;
             default:
                 break;
