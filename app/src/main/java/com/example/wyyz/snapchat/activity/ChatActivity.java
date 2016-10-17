@@ -30,13 +30,16 @@ import com.example.wyyz.snapchat.Interface.CustomClickImageListener;
 import com.example.wyyz.snapchat.Interface.CustomOnItemClickListener;
 import com.example.wyyz.snapchat.R;
 import com.example.wyyz.snapchat.activity.chat.AbsCommomAdapter;
+import com.example.wyyz.snapchat.activity.chat.FullScreenImageActivity;
 import com.example.wyyz.snapchat.model.ChatMessage;
 import com.example.wyyz.snapchat.db.SnapChatDB;
 import com.example.wyyz.snapchat.model.FileModel;
 import com.example.wyyz.snapchat.model.User;
 import com.example.wyyz.snapchat.util.AppConstants;
 
+import com.example.wyyz.snapchat.util.ConnectionDetector;
 import com.example.wyyz.snapchat.util.FirebaseUtility;
+import com.example.wyyz.snapchat.util.ShowNetworkAlert;
 import com.example.wyyz.snapchat.util.Util;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -62,7 +65,7 @@ import java.util.Map;
 import static com.example.wyyz.snapchat.util.AppConstants.FILE_URL;
 
 
-public class ChatActivity extends BaseActivity implements CustomOnItemClickListener, View.OnClickListener{
+public class ChatActivity extends BaseActivity implements CustomOnItemClickListener, View.OnClickListener,CustomClickImageListener{
 
     private static final String TAG = ChatActivity.class.getSimpleName();
     private RecyclerView recyclerViewChat;
@@ -74,6 +77,7 @@ public class ChatActivity extends BaseActivity implements CustomOnItemClickListe
     private String selectedUserID;
     private String fileUrl;
     private File filePathImageCamera;
+    private String urlPhotoClick;
     private static final int IMAGE_GALLERY_REQUEST = 1;
     private static final int IMAGE_CAMERA_REQUEST = 2;
 
@@ -92,7 +96,7 @@ public class ChatActivity extends BaseActivity implements CustomOnItemClickListe
         super.onCreate(savedInstanceState);
 
         cd = new ConnectionDetector(getApplicationContext());
-        checkavailability();
+        //checkavailability();
 
         setContentView(R.layout.activity_chat);
 
@@ -119,26 +123,27 @@ public class ChatActivity extends BaseActivity implements CustomOnItemClickListe
         }
     }
 
-    public void checkavailability() {
-        // Check if Internet present
-        isInternetPresent = cd.isConnectingToInternet();
-        if (!isInternetPresent) {
-            // Internet Connection is not present
-            alert.showAlertDialog(OpenMySnapActivity.this,
-                    "Fail",
-                    "Internet Connection is NOT Available", false);
-            // stop executing code by return
-            return;
-        } else {
-            // Internet Connection is not present
-            alert.showAlertDialog(OpenMySnapActivity.this,
-                    "Success",
-                    "Internet Connection is Available", true);
-            // stop executing code by return
-            return;
-        }
-    }
+//    public void checkavailability() {
+//        // Check if Internet present
+//        isInternetPresent = cd.isConnectingToInternet();
+//        if (!isInternetPresent) {
+//            // Internet Connection is not present
+//            alert.showAlertDialog(OpenMySnapActivity.this,
+//                    "Fail",
+//                    "Internet Connection is NOT Available", false);
+//            // stop executing code by return
+//            return;
+//        } else {
+//            // Internet Connection is not present
+//            alert.showAlertDialog(OpenMySnapActivity.this,
+//                    "Success",
+//                    "Internet Connection is Available", true);
+//            // stop executing code by return
+//            return;
+//        }
+//    }
     private void getIntentExtras() {
+
         selectedUserID = getIntent().getStringExtra(AppConstants.INTENT_GROUP_SELECTED_GROUP);
         Log.v(TAG,selectedUserID);
         if(getIntent().getStringExtra(FILE_URL)!= null){
@@ -150,6 +155,7 @@ public class ChatActivity extends BaseActivity implements CustomOnItemClickListe
     @Override
     protected void onResume() {
         super.onResume();
+
 
         if(!MyApplication.getEventBusInstance().isRegistered(this)){
             MyApplication.getEventBusInstance().register(this);
@@ -203,6 +209,24 @@ public class ChatActivity extends BaseActivity implements CustomOnItemClickListe
         return true;
     }
 
+    @Override
+    public void onImageClick() {
+
+
+        Log.d(TAG,urlPhotoClick+" Testout");
+        Intent intent = new Intent(ChatActivity.this,DisplaySnapActivity.class);
+        ArrayList<String> str = new ArrayList<String>();
+        str.add(urlPhotoClick);
+        int[] timer = {3};
+
+        intent.putStringArrayListExtra("SnapPath",str);
+        intent.putExtra("Timer",timer);
+        intent.putExtra("ActivityName","ChatActivity");
+        intent.putExtra("UserName", selectedUserID);
+
+        Log.d(TAG, "Ready to display "+ selectedUserID);
+        startActivity(intent);
+    }
     /**
      * send message to FireBase Database
      * @param sender
@@ -340,7 +364,7 @@ public class ChatActivity extends BaseActivity implements CustomOnItemClickListe
     }
 
 
-    private static class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.MessagesViewHolder> {
+    private class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.MessagesViewHolder> {
 
         private List<ChatMessage> chatMessageList = new ArrayList<ChatMessage>();
         private CustomOnItemClickListener customOnItemClickListener;
@@ -518,21 +542,21 @@ public class ChatActivity extends BaseActivity implements CustomOnItemClickListe
         private void displayChat(MessagesViewHolder messagesViewHolder, int position){
             Log.d(TAG,"Sender "+ chatMessageList.get(position).getSender());
 
-<<<<<<< HEAD
+//<<<<<<< HEAD
             String senderEmail = chatMessageList.get(position).getSender();
 
             Log.d(TAG, senderEmail+ "sender");
             User sender = SnapChatDB.getInstance(context).findUserByEmail(chatMessageList.get(position).getSender());
             Log.d(TAG, "Username "+sender.getUsername());
 
-            if (sender.getUsername()!=null){
-                messagesViewHolder.textViewSender.setText(SnapChatDB.getInstance(context).findUserByEmail(chatMessageList.get(position).getSender()).getUsername());
-=======
+//            if (sender.getUsername()!=null){
+//                messagesViewHolder.textViewSender.setText(SnapChatDB.getInstance(context).findUserByEmail(chatMessageList.get(position).getSender()).getUsername());
+//=======
             String uname = SnapChatDB.getInstance(context).findUserByEmail(chatMessageList.get(position).getSender())
                     .getUsername();
             if (uname!=null){
                 messagesViewHolder.textViewSender.setText(uname);
->>>>>>> 56df049999aa8e783b257339ab100302b4e67c71
+//>>>>>>> 56df049999aa8e783b257339ab100302b4e67c71
                 if (chatMessageList.get(position).getMessage() != null ) {
                     messagesViewHolder.textViewMessage.setText(chatMessageList.get(position).getMessage());
                     messagesViewHolder.textViewMessage.setVisibility(View.VISIBLE);
@@ -567,11 +591,13 @@ public class ChatActivity extends BaseActivity implements CustomOnItemClickListe
             return chatMessageList.size();
         }
 
-        public static class MessagesViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+        public class MessagesViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
             public TextView textViewSender, textViewMessage, textViewTime;
             private ImageView imageView;
+
             private CustomClickImageListener customClickImageListener;
+
 
             public MessagesViewHolder(View view, int viewType) {
                 super(view);
@@ -602,13 +628,20 @@ public class ChatActivity extends BaseActivity implements CustomOnItemClickListe
                 imageView.setOnClickListener(this);
             }
 
-
             @Override
             public void onClick(View view) {
 
                 int position = getAdapterPosition();
+                Log.d(TAG,"HI "+position);
 
+                String username = chatMessageList.get(position).getSender();
+                Log.e("TAG", "username "+username);
+                String imageurl = chatMessageList.get(position).getFile().getUrl_file();
+                Log.e("TAG", "imageurl "+ imageurl);
 
+                urlPhotoClick = imageurl;
+
+                onImageClick();
 
 //                ChatMessageAdapter.
 //                getItem(position);
@@ -618,20 +651,16 @@ public class ChatActivity extends BaseActivity implements CustomOnItemClickListe
             }
         }
     }
-    /**
-     * Enviar foto tirada pela camera
-     */
+
     private void photoCameraIntent(){
-        String nomeFoto = DateFormat.format("yyyy-MM-dd_hhmmss", new Date()).toString();
-        filePathImageCamera = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), nomeFoto+"camera.jpg");
+        String filename = DateFormat.format("yyyy-MM-dd_hhmmss", new Date()).toString();
+        filePathImageCamera = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), filename+"camera.jpg");
         Intent it = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         it.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(filePathImageCamera));
         startActivityForResult(it, IMAGE_CAMERA_REQUEST);
     }
 
-    /**
-     * Enviar foto pela galeria
-     */
+
     private void photoGalleryIntent(){
         Intent intent = new Intent();
         intent.setType("image/*");
@@ -749,8 +778,8 @@ public class ChatActivity extends BaseActivity implements CustomOnItemClickListe
 
 
 
-    private CharSequence converteTimestamp(String timestamp){
-        return DateUtils.getRelativeTimeSpanString(Long.parseLong(timestamp),System.currentTimeMillis(), DateUtils.SECOND_IN_MILLIS);
-    }
+//    private CharSequence converteTimestamp(String timestamp){
+//        return DateUtils.getRelativeTimeSpanString(Long.parseLong(timestamp),System.currentTimeMillis(), DateUtils.SECOND_IN_MILLIS);
+//    }
 
 }

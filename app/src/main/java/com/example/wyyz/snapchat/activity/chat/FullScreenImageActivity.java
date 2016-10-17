@@ -67,9 +67,9 @@ public class FullScreenImageActivity extends AppCompatActivity {
     }
 
     private void setValues(){
-        String nameUser,urlPhotoUser,urlPhotoClick;
+        String nameUser,urlPhotoClick;
         nameUser = getIntent().getStringExtra("nameUser");
-        urlPhotoUser = getIntent().getStringExtra("urlPhotoUser");
+        //urlPhotoUser = getIntent().getStringExtra("urlPhotoUser");
         urlPhotoClick = getIntent().getStringExtra("urlPhotoClick");
         Log.i("TAG","imagem recebida "+urlPhotoClick);
         tvUser.setText(nameUser); // Name
