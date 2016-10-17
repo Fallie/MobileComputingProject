@@ -1,7 +1,10 @@
 package com.example.wyyz.snapchat.activity;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -12,6 +15,9 @@ import com.example.wyyz.snapchat.R;
 import com.example.wyyz.snapchat.model.User;
 import com.example.wyyz.snapchat.util.OnSwipeTouchListener;
 import com.example.wyyz.snapchat.util.AppConstants;
+import com.example.wyyz.snapchat.util.TmpPhotoView;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -19,8 +25,14 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -34,16 +46,18 @@ public class MyfriendsActivity extends AppCompatActivity implements CustomOnItem
     private ListView userListView;
     private ChatUserAdapter adapter;
     List<User> users=new ArrayList<User>();
-    String contentUrl="";
+    boolean containsImage=false;
+    Bitmap base;
+    ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_myfriends);
         Intent intent=getIntent();
-        if(intent.hasExtra("url")){
-            contentUrl=intent.getStringExtra("url");
-            Log.d("url",contentUrl);
+        if(intent.hasExtra("hasImage")){
+            containsImage=intent.getBooleanExtra("hasImage",false);
+            Log.d("containsImage",String.valueOf(containsImage));
         }
         userListView = (ListView)findViewById(R.id.listView_id);
         userListView.setOnTouchListener(new OnSwipeTouchListener(this.getBaseContext(),MyfriendsActivity.this));
@@ -103,15 +117,49 @@ public class MyfriendsActivity extends AppCompatActivity implements CustomOnItem
 
     @Override
     public void onItemClick(View v, int position, Object value) {
-        Log.d("Click",((User)value).getEmail());
-        Intent i = new Intent(MyfriendsActivity.this, ChatActivity.class);
-        i.putExtra(AppConstants.INTENT_GROUP_SELECTED_GROUP, ((User)value).getEmail());
-        if(!contentUrl.equals(""))
-            i.putExtra("file_url",contentUrl);
-        startActivity(i);
+        if(containsImage){
+            progressDialog = ProgressDialog.show(MyfriendsActivity.this, "Send to Friend", "Sending...");
+            sendSnaptoFriend((User)value);
+        }else {
+            Log.d("Click", ((User) value).getEmail());
+            Intent i = new Intent(MyfriendsActivity.this, ChatActivity.class);
+            i.putExtra(AppConstants.INTENT_GROUP_SELECTED_GROUP, ((User) value).getEmail());
+            startActivity(i);
+        }
     }
+    private void sendSnaptoFriend(final User friend){
+        base= TmpPhotoView.photo;
+        String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        StorageReference photoRef = FirebaseStorage.getInstance().getReference("images")
+                .child(timestamp.toString());
 
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        base.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] data = baos.toByteArray();
 
+        UploadTask uploadTask = photoRef.putBytes(data);
+        uploadTask.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                // Handle unsuccessful uploads
+                Log.i(TAG,"upload failed!!!");
+                progressDialog.dismiss();
+            }
+        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
+                String url=taskSnapshot.getDownloadUrl().toString();
+                Log.i(TAG,"upload successful!!!");
+                progressDialog.dismiss();
+                Intent intentNext = new Intent(MyfriendsActivity.this, ChatActivity.class);
+                intentNext.putExtra(AppConstants.INTENT_GROUP_SELECTED_GROUP, friend.getEmail());
+                intentNext.putExtra("file_url",url);
+                startActivity(intentNext);
+                MyfriendsActivity.this.finish();
+            }
+        });
+    }
 }
 
 
