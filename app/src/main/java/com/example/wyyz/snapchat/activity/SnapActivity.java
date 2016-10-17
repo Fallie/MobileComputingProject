@@ -28,6 +28,8 @@ public class SnapActivity extends FragmentActivity implements View.OnClickListen
     SnapsFragment snapsFragment;
     private ArrayList<Integer> selectedSnapsId = new ArrayList<>();
     private boolean[] selectMap;
+    private String fromActivity;
+    private String firstPath; //path of the first picture
 
     private ViewPager pager ;
     private ArrayList<Fragment> fragments;
@@ -48,6 +50,16 @@ public class SnapActivity extends FragmentActivity implements View.OnClickListen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_snap);
+        Intent intent=getIntent();
+        if(intent.hasExtra("activityName")){
+            fromActivity=intent.getStringExtra("activityName");
+            firstPath=intent.getStringExtra("path");
+        }
+        if(fromActivity.equals("MySnap")){
+
+        }else{
+
+        }
         firebaseAuth = FirebaseAuth.getInstance();
         btnCamera = (Button) findViewById(R.id.btnButton);
         btnCamera.setOnClickListener(new View.OnClickListener() {

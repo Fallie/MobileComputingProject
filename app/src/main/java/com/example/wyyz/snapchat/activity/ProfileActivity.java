@@ -32,6 +32,14 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     SnapChatDB db;
     GestureDetector gestureDetector;
 
+    // Connection detector class
+    private ConnectionDetector cd;
+    // flag for Internet connection status
+    private Boolean isInternetPresent = false;
+    // Alert Dialog Manager
+    private ShowNetworkAlert alert = new ShowNetworkAlert();
+    private boolean networkAvailability=true;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -74,12 +82,20 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 startActivity(intent);
                 break;
             case R.id.tv_addfriend:
-                Intent intent1=new Intent(ProfileActivity.this, AddFriendsActivity.class);
-                startActivity(intent1);
+                cd = new ConnectionDetector(getApplicationContext());
+                checkavailability();
+                if(networkAvailability) {
+                    Intent intent1 = new Intent(ProfileActivity.this, AddFriendsActivity.class);
+                    startActivity(intent1);
+                }
                 break;
             case R.id.tv_addedme:
-                Intent intent2=new Intent(ProfileActivity.this, AddedmeActivity.class);
-                startActivity(intent2);
+                cd = new ConnectionDetector(getApplicationContext());
+                checkavailability();
+                if(networkAvailability) {
+                    Intent intent2 = new Intent(ProfileActivity.this, AddedmeActivity.class);
+                    startActivity(intent2);
+                }
                 break;
             case R.id.imageView3:
                 Intent intent3=new Intent(ProfileActivity.this, CameraActivity.class);
@@ -140,6 +156,21 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         } else
             return false;
     }
+
+    public void checkavailability() {
+        // Check if Internet present
+        isInternetPresent = cd.isConnectingToInternet();
+        if (!isInternetPresent) {
+            // Internet Connection is not present
+            networkAvailability=false;
+            alert.showAlertDialog(ProfileActivity.this,
+                    "Fail",
+                    "Internet Connection is NOT Available", false);
+            // stop executing code by return
+            return;
+        }
+    }
+
 
 }
 
