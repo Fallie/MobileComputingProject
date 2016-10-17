@@ -20,6 +20,8 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.example.wyyz.snapchat.R;
 import com.example.wyyz.snapchat.db.SnapChatDB;
+import com.example.wyyz.snapchat.util.ConnectionDetector;
+import com.example.wyyz.snapchat.util.ShowNetworkAlert;
 import com.example.wyyz.snapchat.util.TmpPhotoView;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -48,10 +50,18 @@ public class OpenMySnapActivity extends AppCompatActivity implements View.OnClic
     private MenuInflater inflater;
     private String timeStamp;
     private long size;
+    // Connection detector class
+    private ConnectionDetector cd;
+    // flag for Internet connection status
+    private Boolean isInternetPresent = false;
+    // Alert Dialog Manager
+    private ShowNetworkAlert alert = new ShowNetworkAlert();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        cd = new ConnectionDetector(getApplicationContext());
+        checkavailability();
         Intent intent = getIntent();
         uri = Uri.parse(intent.getStringExtra("SnapPath"));
         timeStamp = intent.getStringExtra("TimeStamp");
@@ -63,7 +73,6 @@ public class OpenMySnapActivity extends AppCompatActivity implements View.OnClic
 
     private void initialize() {
         snapChatDB = SnapChatDB.getInstance(this);
-
         final TextView secondNum = (TextView) findViewById(R.id.secondNumber);
         imageView = (ImageView) findViewById(R.id.previewImage);
         //imageView.setBackgroundDrawable(new BitmapDrawable(base));
@@ -81,6 +90,18 @@ public class OpenMySnapActivity extends AppCompatActivity implements View.OnClic
 
     }
 
+    public void checkavailability() {
+        // Check if Internet present
+        isInternetPresent = cd.isConnectingToInternet();
+        if (!isInternetPresent) {
+            // Internet Connection is not present
+            alert.showAlertDialog(OpenMySnapActivity.this,
+                    "Fail",
+                    "Internet Connection is NOT Available", false);
+            // stop executing code by return
+            return;
+        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
