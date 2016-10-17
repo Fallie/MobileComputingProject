@@ -19,7 +19,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.wyyz.snapchat.R;
-import com.example.wyyz.snapchat.StoriesFragment;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;

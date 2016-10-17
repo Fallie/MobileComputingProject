@@ -311,7 +311,7 @@ public class SnapChatDB {
         ArrayList<Story> stories = new ArrayList<Story>();
         String QUERY="select * from Story " +
                 "where userId=? AND " +
-                "isLocked=?" +
+                "locked=?" +
                 "order by timeStamp desc";
         Cursor cursor = db.rawQuery(QUERY, new String[]{String.valueOf(userId),"0"});
         if(cursor.moveToFirst()){

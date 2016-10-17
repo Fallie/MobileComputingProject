@@ -1,4 +1,4 @@
-package com.example.wyyz.snapchat;
+package com.example.wyyz.snapchat.activity;
 
 
 import android.os.Bundle;
@@ -8,9 +8,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridView;
 
-import com.example.wyyz.snapchat.activity.ImageAdapter;
-import com.example.wyyz.snapchat.activity.SnapActivity;
-import com.example.wyyz.snapchat.model.Snap;
+import com.example.wyyz.snapchat.R;
+import com.example.wyyz.snapchat.db.SnapChatDB;
+import com.example.wyyz.snapchat.model.Story;
+import com.example.wyyz.snapchat.model.User;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
 
@@ -19,8 +21,9 @@ import java.util.ArrayList;
  */
 public class StoriesFragment extends Fragment {
     private GridView gridView;
-    private ImageAdapter storyImgAdapter;
-    private ArrayList<Snap> snaps=new ArrayList<Snap>();
+    private StoryAdapter storyAdapter;
+    private ArrayList<Story> stories=new ArrayList<>();
+    SnapChatDB db;
 
     public StoriesFragment() {
         // Required empty public constructor
@@ -34,8 +37,12 @@ public class StoriesFragment extends Fragment {
         View storyView=inflater.inflate(R.layout.fragment_stories, container, false);
         SnapActivity snapActivity = (SnapActivity) getActivity();
         gridView = (GridView) storyView.findViewById(R.id.gridView);
-        storyImgAdapter = new ImageAdapter(snapActivity, R.layout.image_item, snaps);
-        gridView.setAdapter(storyImgAdapter);
+        db=SnapChatDB.getInstance(snapActivity);
+        String email= FirebaseAuth.getInstance().getCurrentUser().getEmail();
+        User user=db.findUserByEmail(email);
+        stories=db.getUserStories(user.getId());
+        storyAdapter = new StoryAdapter(snapActivity, R.layout.image_item, stories);
+        gridView.setAdapter(storyAdapter);
         return storyView;
     }
 

@@ -73,7 +73,7 @@ public class SnapChatOpenHelper extends SQLiteOpenHelper{
             "id integer primary key autoincrement," +
             "name text," +
             "timeStamp integer not null," +
-            "locked integer" +
+            "locked integer," +
             "userId integer)";
 
     /**
@@ -82,7 +82,7 @@ public class SnapChatOpenHelper extends SQLiteOpenHelper{
     public static final String CREATE_STORYSNAP = "create table StorySnap ( " +
             "snapId integer not null," +
             "storyId integer not null," +
-            "timeStamp integer" +
+            "timeStamp integer," +
             "PRIMARY KEY(snapId, storyId)," +
             "FOREIGN KEY(snapId) REFERENCES Snap(id)," +
             "FOREIGN KEY(storyId) REFERENCES Story(id))";
