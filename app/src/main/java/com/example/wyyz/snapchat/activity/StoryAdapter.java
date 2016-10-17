@@ -20,6 +20,7 @@ import java.util.ArrayList;
 
 /**
  * Created by ZIYUAN on 17/10/2016.
+ * StoryAdapter, used by StoriesFragment
  */
 
 public class StoryAdapter extends ArrayAdapter{

@@ -19,12 +19,13 @@ import java.util.ArrayList;
 
 /**
  * Created by ZIYUAN on 11/10/2016.
+ * ImageAdapter, used by SnapsFragment, CameraRollFragment
+ * This adapter supports the behaviour of multiple select images
  */
 
 public class ImageAdapter extends ArrayAdapter {
     private Context context;
     private int layoutResourceId;
-    //private ArrayList<Snap> images = new ArrayList();
     private boolean[] selectMap;
     private ArrayList<CheckBox> checkBoxes=new ArrayList<>();
     private ArrayList<ImageView> imageViews=new ArrayList<>();
@@ -72,6 +73,7 @@ public class ImageAdapter extends ArrayAdapter {
         holder.image.setId(position);
         holder.shadow.setId(position);
         final ViewHolder finalHolder = holder;
+        //click checkBox for multiple select
         holder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -84,6 +86,7 @@ public class ImageAdapter extends ArrayAdapter {
                 }
             }
         });
+        //single select image, will be redirect to OpenMySnapActivity
         holder.image.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -101,6 +104,7 @@ public class ImageAdapter extends ArrayAdapter {
         return view;
     }
 
+    //Enable multiple click
     public void toggleOnSelect(){
         for (CheckBox cb: checkBoxes) {
             cb.setVisibility(View.VISIBLE);
@@ -116,6 +120,7 @@ public class ImageAdapter extends ArrayAdapter {
         }
     }
 
+    //disable multiple select
     public void toggleOffSelect() {
         for (CheckBox cb: checkBoxes) {
             cb.setChecked(false);

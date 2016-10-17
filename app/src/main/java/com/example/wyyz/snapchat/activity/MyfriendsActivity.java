@@ -40,7 +40,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-
+/**
+ * Activity to display all my friends
+ * It supports to pass image to a selected friend
+ */
 public class MyfriendsActivity extends AppCompatActivity implements CustomOnItemClickListener {
     public static final String TAG = "MyfriendsActivity";
     private ListView userListView;
@@ -55,7 +58,7 @@ public class MyfriendsActivity extends AppCompatActivity implements CustomOnItem
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_myfriends);
         Intent intent=getIntent();
-        if(intent.hasExtra("hasImage")){
+        if(intent.hasExtra("hasImage")){//contains image to pass
             containsImage=intent.getBooleanExtra("hasImage",false);
             Log.d("containsImage",String.valueOf(containsImage));
         }
@@ -66,6 +69,7 @@ public class MyfriendsActivity extends AppCompatActivity implements CustomOnItem
         userListView.setAdapter(adapter);
     }
 
+    //Get my friends from firebase
     private void getFriendsFromRemote(){
         //current user
         FirebaseUser currentUser= FirebaseAuth.getInstance().getCurrentUser();
@@ -127,6 +131,7 @@ public class MyfriendsActivity extends AppCompatActivity implements CustomOnItem
             startActivity(i);
         }
     }
+    //Send to friend, upload image to firebase
     private void sendSnaptoFriend(final User friend){
         base= TmpPhotoView.photo;
         String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());

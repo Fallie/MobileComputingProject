@@ -21,6 +21,9 @@ import com.example.wyyz.snapchat.util.ShowNetworkAlert;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+/**
+ * Activity to display user profile page
+ */
 public class ProfileActivity extends AppCompatActivity implements View.OnClickListener,GestureDetector.OnGestureListener {
     TextView _nickName;
     ImageView settings;
@@ -159,6 +162,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             return false;
     }
 
+    //Check network availability
     public void checkavailability() {
         // Check if Internet present
         isInternetPresent = cd.isConnectingToInternet();
