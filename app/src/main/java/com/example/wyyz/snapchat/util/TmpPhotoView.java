@@ -8,4 +8,5 @@ import android.graphics.Bitmap;
 
 public class TmpPhotoView {
     public static Bitmap photo;
+    public static Bitmap copy;
 }

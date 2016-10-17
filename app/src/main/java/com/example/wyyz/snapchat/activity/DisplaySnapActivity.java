@@ -9,6 +9,7 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.example.wyyz.snapchat.R;
+import com.example.wyyz.snapchat.activity.MyStory.StoryActivity;
 import com.example.wyyz.snapchat.customView.CircleTextProgressbar;
 
 import java.util.ArrayList;
@@ -25,9 +26,10 @@ public class DisplaySnapActivity extends AppCompatActivity {
     private int[] timers;
     // this is the roundth of the story
     private int round;
-    int tmp;
-    double upper;
-    double lower;
+    private int tmp;
+    private double upper;
+    private double lower;
+    private String activityName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,13 +37,14 @@ public class DisplaySnapActivity extends AppCompatActivity {
         Intent intent = getIntent();
         uris = intent.getStringArrayListExtra("SnapPath");
         timers = intent.getIntArrayExtra("Timer");
+        activityName = intent.getStringExtra("ActivityName");
         setContentView(R.layout.activity_display_snap);
         initialize();
         Log.i(TAG, "Activity created!");
     }
 
     private void initialize() {
-        round = 0;
+        round = uris.size();
         imageView = (ImageView) findViewById(R.id.displayImage);
         mTvSkip = (CircleTextProgressbar) findViewById(R.id.countDown);
         mTvSkip.setCountdownProgressListener(1,progressListener);
@@ -49,12 +52,14 @@ public class DisplaySnapActivity extends AppCompatActivity {
         mTvSkip.setInCircleColor(Color.parseColor("#AAC6C6C6"));
         mTvSkip.setProgressColor(Color.DKGRAY);
         mTvSkip.setProgressLineWidth(8);
-        tmp = timers[round];
+        tmp = timers[0];
         upper = 100;
-        lower = 100*(tmp-1)/timers[round];
-        displaySnap(round);
+        lower = 100*(tmp-1)/timers[0];
+        displaySnap(0);
         Log.i(TAG,"current tmp :" + tmp);
     }
+
+
 
 
     private CircleTextProgressbar.OnCountdownProgressListener progressListener = new CircleTextProgressbar.OnCountdownProgressListener() {
@@ -70,17 +75,22 @@ public class DisplaySnapActivity extends AppCompatActivity {
                     upper = 100 * tmp / timers[round];
                     lower = 100 * (tmp - 1) / timers[round];
                 }
-                if(progress == 0){
+                if(progress == 0 && round < uris.size()){
+                    round ++;
+                    tmp = timers[round];
+                    upper = 100;
+                    lower = 100*(tmp-1)/timers[round];
+                    displaySnap(round);
+                }
+                if(round >= uris.size()){
                     finishDisplay();
                     Log.i(TAG,"finish display!!!");
                 }
-
 
             }
 
         }
     };
-
 
     private void displaySnap(int i){
         Glide.with(getBaseContext())
@@ -92,7 +102,20 @@ public class DisplaySnapActivity extends AppCompatActivity {
     }
 
     private void finishDisplay() {
-        Intent intent = new Intent(DisplaySnapActivity.this, SnapActivity.class);
+        Intent intent = new Intent();
+        switch (activityName){
+            case "StoryActivity":
+                intent.setClass(DisplaySnapActivity.this, StoryActivity.class);
+                break;
+            case "SnapActivity":
+                intent.setClass(DisplaySnapActivity.this, SnapActivity.class);
+                break;
+            case "ChatActivity":
+                intent.setClass(DisplaySnapActivity.this, ChatActivity.class);
+                break;
+            default:
+                break;
+        }
         startActivity(intent);
         Log.i(TAG,"finish display!!!");
     }

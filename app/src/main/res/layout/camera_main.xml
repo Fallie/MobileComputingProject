@@ -57,6 +57,16 @@
             android:backgroundTint="@color/timerColor" />
 
         <Button
+            android:layout_gravity="left|top"
+            android:id="@+id/btnFlash"
+            android:background="@drawable/flash_off"
+            android:layout_marginTop="6dp"
+            android:layout_width="26dp"
+            android:layout_height="26dp"
+            android:backgroundTint="@color/timerColor"
+            android:layout_marginLeft="6dp" />
+
+        <Button
             android:layout_gravity="left|bottom"
             android:id="@+id/btnMsg"
             android:background="@drawable/msg"
