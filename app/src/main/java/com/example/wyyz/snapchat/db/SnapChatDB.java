@@ -99,6 +99,32 @@ public class SnapChatDB {
         db.update("Snap", values, "path=?",new String[]{uri});
     }
 
+    public ArrayList<Snap> getUserLockedSnaps(int userId){
+        ArrayList<Snap> snaps = new ArrayList<Snap>();
+
+        String QUERY_FRIENDS="select * from Snap " +
+                "where userId=? AND " +
+                "isLocked=?" +
+                "order by timeStamp desc";
+        Cursor cursor = db.rawQuery(QUERY_FRIENDS, new String[]{String.valueOf(userId),"1"});
+        if(cursor.moveToFirst()){
+            do{
+                Snap snap=new Snap();
+                snap.setUserId(cursor.getInt(cursor.getColumnIndex("userId")));
+                snap.setChecked(false);
+                snap.setPath(cursor.getString(cursor.getColumnIndex("path")));
+                snap.setSize(cursor.getInt(cursor.getColumnIndex("size")));
+                snap.setInMemory(cursor.getInt(cursor.getColumnIndex("inMemory"))>0);
+                snap.setIsLocked(cursor.getInt(cursor.getColumnIndex("isLocked")));
+                snap.setTimestamp(cursor.getString(cursor.getColumnIndex("timeStamp")));
+                snap.setTimingOut(cursor.getInt(cursor.getColumnIndex("timingOut")));
+                snaps.add(snap);
+            }while(cursor.moveToNext());
+        }
+        cursor.close();
+        return snaps;
+    }
+
     public void deleteSnapByPath(String path){
 
         db.delete("Snap","path=?",new String[]{path});
@@ -146,7 +172,7 @@ public class SnapChatDB {
         String QUERY_FRIENDS="select * from Friends " +
                 "where ownerId=?" +
                 "order by lastChatTimeStamp desc";
-        Cursor cursor = db.rawQuery(QUERY_FRIENDS, new String[]{String.valueOf(userId)});
+        Cursor cursor = db.rawQuery(QUERY_FRIENDS, new String[]{String.valueOf(userId),"0"});
         if(cursor.moveToFirst()){
             do{
                 Friend friend=new Friend();
@@ -174,9 +200,10 @@ public class SnapChatDB {
     public ArrayList<Snap> getUserSnap(int userId){
         ArrayList<Snap> snaps = new ArrayList<Snap>();
         String QUERY_FRIENDS="select * from Snap " +
-                "where userId=?" +
+                "where userId=? AND " +
+                "isLocked=?" +
                 "order by timeStamp desc";
-        Cursor cursor = db.rawQuery(QUERY_FRIENDS, new String[]{String.valueOf(userId)});
+        Cursor cursor = db.rawQuery(QUERY_FRIENDS, new String[]{String.valueOf(userId),"0"});
         if(cursor.moveToFirst()){
             do{
                 Snap snap=new Snap();
@@ -185,6 +212,7 @@ public class SnapChatDB {
                 snap.setPath(cursor.getString(cursor.getColumnIndex("path")));
                 snap.setSize(cursor.getInt(cursor.getColumnIndex("size")));
                 snap.setInMemory(cursor.getInt(cursor.getColumnIndex("inMemory"))>0);
+                snap.setIsLocked(cursor.getInt(cursor.getColumnIndex("isLocked")));
                 snap.setTimestamp(cursor.getString(cursor.getColumnIndex("timeStamp")));
                 snap.setTimingOut(cursor.getInt(cursor.getColumnIndex("timingOut")));
                 snaps.add(snap);
