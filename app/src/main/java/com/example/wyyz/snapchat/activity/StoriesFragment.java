@@ -35,7 +35,7 @@ public class StoriesFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View storyView=inflater.inflate(R.layout.fragment_stories, container, false);
-        SnapActivity snapActivity = (SnapActivity) getActivity();
+        final SnapActivity snapActivity = (SnapActivity) getActivity();
         gridView = (GridView) storyView.findViewById(R.id.gridView);
         db=SnapChatDB.getInstance(snapActivity);
         String email= FirebaseAuth.getInstance().getCurrentUser().getEmail();
@@ -43,6 +43,26 @@ public class StoriesFragment extends Fragment {
         stories=db.getUserStories(user.getId());
         storyAdapter = new StoryAdapter(snapActivity, R.layout.image_item, stories);
         gridView.setAdapter(storyAdapter);
+        /*gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Story story=stories.get(position);
+                ArrayList<Snap> snaps=db.getStorySnaps(story);
+                ArrayList<String> paths = new ArrayList<String>();
+                int[] timers=new int[snaps.size()];
+                for(int i=0;i<snaps.size();i++){
+                    paths.add(snaps.get(i).getPath());
+                    timers[i]=snaps.get(i).getTimingOut();
+                    Log.d("path",String.valueOf(snaps.get(i).getPath()));
+                    Log.d("path",String.valueOf(snaps.get(i).getTimingOut()));
+                }
+                Intent intent = new Intent(snapActivity, DisplaySnapActivity.class);
+                intent.putExtra("ActivityName","SnapActivity");
+                intent.putExtra("SnapPath",paths);
+                intent.putExtra("Timer",timers);
+                startActivity(intent);
+            }
+        });*/
         return storyView;
     }
 

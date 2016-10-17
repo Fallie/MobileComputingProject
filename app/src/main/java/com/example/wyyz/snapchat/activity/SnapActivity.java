@@ -133,6 +133,7 @@ public class SnapActivity extends FragmentActivity implements View.OnClickListen
                 snapsFragment=(SnapsFragment)f;
             }
         }
+
     }
 
     private void initView(){

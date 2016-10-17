@@ -2,6 +2,8 @@ package com.example.wyyz.snapchat.activity;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -60,13 +62,21 @@ public class StoryAdapter extends ArrayAdapter{
         holder.image.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                /*Toast.makeText(context, "Single Photo Edit!",
-                        Toast.LENGTH_SHORT).show();*/
-                /*Intent intent = new Intent(context,OpenMySnapActivity.class);
-                intent.putExtra("SnapPath",item.getPath());
-                intent.putExtra("TimeStamp",item.getTimestamp());
-                intent.putExtra("Size",item.getSize());
-                context.startActivity(intent);*/
+                Story story=(Story) getItem(position);
+                ArrayList<Snap> snaps=db.getStorySnaps(story);
+                ArrayList<String> paths = new ArrayList<String>();
+                int[] timers=new int[snaps.size()];
+                for(int i=0;i<snaps.size();i++){
+                    paths.add(snaps.get(i).getPath());
+                    timers[i]=snaps.get(i).getTimingOut();
+                    Log.d("path",String.valueOf(snaps.get(i).getPath()));
+                    Log.d("path",String.valueOf(snaps.get(i).getTimingOut()));
+                }
+                Intent intent = new Intent(context, DisplaySnapActivity.class);
+                intent.putExtra("ActivityName","SnapActivity");
+                intent.putExtra("SnapPath",paths);
+                intent.putExtra("Timer",timers);
+                context.startActivity(intent);
 
             }
         });

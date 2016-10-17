@@ -76,18 +76,22 @@ public class DisplaySnapActivity extends AppCompatActivity {
                     else {
                         round ++;
                         tmp = timers[round];
+                        Log.d(TAG,"000The value of tmp: "+tmp);
                         upper = 100;
                         lower = 100*(tmp-1)/timers[round];
                         displaySnap(round);
+                        return;
                     }
 
                 }
 
                 if (progress > lower && progress < upper) {
                     mTvSkip.setText(String.valueOf(tmp));
+                    Log.d(TAG,"111The value of p: "+progress);
                 } else {
                     tmp--;
                     mTvSkip.setText(String.valueOf(tmp));
+                    Log.d(TAG,"222The value of p: "+progress);
                     upper = 100 * tmp / timers[round];
                     lower = 100 * (tmp - 1) / timers[round];
                 }
