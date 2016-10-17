@@ -19,6 +19,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.wyyz.snapchat.R;
+import com.example.wyyz.snapchat.StoriesFragment;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
@@ -33,7 +34,7 @@ public class SnapActivity extends FragmentActivity implements View.OnClickListen
     private ViewPager pager ;
     private ArrayList<Fragment> fragments;
     private PagerAdapter adapter;
-    private TextView tv_tab0, tv_tab1, tv_tab2;
+    private TextView tv_tab0, tv_tab1, tv_tab2, tv_tab3;
     private FirebaseAuth firebaseAuth;
     Button btnCamera;
 
@@ -126,6 +127,7 @@ public class SnapActivity extends FragmentActivity implements View.OnClickListen
 
         fragments=new ArrayList<Fragment>();
         fragments.add(new SnapsFragment());
+        fragments.add((new StoriesFragment()));
         fragments.add(new CameraRollFragment());
         fragments.add(new MyEyesOnlyFragment());
         adapter = new MyPagerAdapter(getSupportFragmentManager(), fragments);
@@ -135,14 +137,17 @@ public class SnapActivity extends FragmentActivity implements View.OnClickListen
         tv_tab0=(TextView) findViewById(R.id.tv_tab0);
         tv_tab1=(TextView) findViewById(R.id.tv_tab1);
         tv_tab2=(TextView) findViewById(R.id.tv_tab2);
+        tv_tab3=(TextView) findViewById(R.id.tv_tab3);
 
-        pager.setCurrentItem(1);
-        tv_tab0.setTextColor(getResources().getColor(R.color.previewBackground));
-        tv_tab1.setTextColor(getResources().getColor(R.color.colorAccent));
+        pager.setCurrentItem(0);
+        tv_tab0.setTextColor(getResources().getColor(R.color.colorAccent));
+        tv_tab1.setTextColor(getResources().getColor(R.color.previewBackground));
         tv_tab2.setTextColor(getResources().getColor(R.color.previewBackground));
+        tv_tab3.setTextColor(getResources().getColor(R.color.previewBackground));
         tv_tab0.setOnClickListener(this);
         tv_tab1.setOnClickListener(this);
         tv_tab2.setOnClickListener(this);
+        tv_tab3.setOnClickListener(this);
         pager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener(){
             public void onPageSelected(int position){
                 switch (position){
@@ -150,21 +155,25 @@ public class SnapActivity extends FragmentActivity implements View.OnClickListen
                         tv_tab0.setTextColor(getResources().getColor(R.color.colorAccent));
                         tv_tab1.setTextColor(getResources().getColor(R.color.previewBackground));
                         tv_tab2.setTextColor(getResources().getColor(R.color.previewBackground));
+                        tv_tab3.setTextColor(getResources().getColor(R.color.previewBackground));
                         break;
                     case 1:
                         tv_tab0.setTextColor(getResources().getColor(R.color.previewBackground));
-                        tv_tab1.setTextColor(getResources().getColor(R.color.colorAccent));
+                        tv_tab1.setTextColor(getResources().getColor(R.color.previewBackground));
                         tv_tab2.setTextColor(getResources().getColor(R.color.previewBackground));
+                        tv_tab3.setTextColor(getResources().getColor(R.color.colorAccent));
                         break;
                     case 2:
                         tv_tab0.setTextColor(getResources().getColor(R.color.previewBackground));
-                        tv_tab1.setTextColor(getResources().getColor(R.color.previewBackground));
-                        tv_tab2.setTextColor(getResources().getColor(R.color.colorAccent));
+                        tv_tab1.setTextColor(getResources().getColor(R.color.colorAccent));
+                        tv_tab2.setTextColor(getResources().getColor(R.color.previewBackground));
+                        tv_tab3.setTextColor(getResources().getColor(R.color.previewBackground));
                         break;
                     case 3:
                         tv_tab0.setTextColor(getResources().getColor(R.color.previewBackground));
                         tv_tab1.setTextColor(getResources().getColor(R.color.previewBackground));
-                        tv_tab2.setTextColor(getResources().getColor(R.color.previewBackground));
+                        tv_tab2.setTextColor(getResources().getColor(R.color.colorAccent));
+                        tv_tab3.setTextColor(getResources().getColor(R.color.previewBackground));
                         break;
                     default:
                         break;
@@ -179,10 +188,13 @@ public class SnapActivity extends FragmentActivity implements View.OnClickListen
                 pager.setCurrentItem(0);
                 break;
             case R.id.tv_tab1:
-                pager.setCurrentItem(1);
+                pager.setCurrentItem(2);
                 break;
             case R.id.tv_tab2:
-                pager.setCurrentItem(2);
+                pager.setCurrentItem(3);
+                break;
+            case R.id.tv_tab3:
+                pager.setCurrentItem(1);
                 break;
             default:
                 break;
