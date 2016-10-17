@@ -14,7 +14,6 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.text.format.DateFormat;
-import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -30,11 +29,8 @@ import com.example.wyyz.snapchat.Interface.CustomClickImageListener;
 import com.example.wyyz.snapchat.Interface.CustomOnItemClickListener;
 import com.example.wyyz.snapchat.R;
 import com.example.wyyz.snapchat.activity.chat.AbsCommomAdapter;
-import com.example.wyyz.snapchat.activity.chat.FullScreenImageActivity;
 import com.example.wyyz.snapchat.model.ChatMessage;
-import com.example.wyyz.snapchat.db.SnapChatDB;
 import com.example.wyyz.snapchat.model.FileModel;
-import com.example.wyyz.snapchat.model.User;
 import com.example.wyyz.snapchat.util.AppConstants;
 
 import com.example.wyyz.snapchat.util.ConnectionDetector;
@@ -54,7 +50,6 @@ import com.google.gson.JsonElement;
 import org.greenrobot.eventbus.Subscribe;
 
 import java.io.File;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -65,6 +60,11 @@ import java.util.Map;
 
 import static com.example.wyyz.snapchat.util.AppConstants.FILE_URL;
 
+/**
+ * The activity is mainly used for chatting between two friends. Friends can talk each other, send pictures through gallery
+ * or mobile camera. By tapping at the picture it can be displayed on full screen. Meanwhile, there is an additional limitation
+ * that the chat will only keep the latest 5 chats.
+ */
 
 public class ChatActivity extends BaseActivity implements CustomOnItemClickListener, View.OnClickListener,CustomClickImageListener{
 
@@ -76,6 +76,7 @@ public class ChatActivity extends BaseActivity implements CustomOnItemClickListe
     private ChatMessageAdapter chatMessageAdapter;
     private Toolbar toolbar;
     private String selectedUserID;
+    private String selectedUsername;
     private String fileUrl;
     private File filePathImageCamera;
     private String urlPhotoClick;
@@ -97,7 +98,7 @@ public class ChatActivity extends BaseActivity implements CustomOnItemClickListe
         super.onCreate(savedInstanceState);
 
         cd = new ConnectionDetector(getApplicationContext());
-        //checkavailability();
+        checkavailability();
 
         setContentView(R.layout.activity_chat);
 
@@ -105,6 +106,7 @@ public class ChatActivity extends BaseActivity implements CustomOnItemClickListe
         initComponents();
         addListeners();
         setUpToolbar();
+        Log.i(TAG, selectedUsername +" username");
 
         if (fileUrl!=null){
 
@@ -124,28 +126,23 @@ public class ChatActivity extends BaseActivity implements CustomOnItemClickListe
         }
     }
 
-    //    public void checkavailability() {
-//        // Check if Internet present
-//        isInternetPresent = cd.isConnectingToInternet();
-//        if (!isInternetPresent) {
-//            // Internet Connection is not present
-//            alert.showAlertDialog(OpenMySnapActivity.this,
-//                    "Fail",
-//                    "Internet Connection is NOT Available", false);
-//            // stop executing code by return
-//            return;
-//        } else {
-//            // Internet Connection is not present
-//            alert.showAlertDialog(OpenMySnapActivity.this,
-//                    "Success",
-//                    "Internet Connection is Available", true);
-//            // stop executing code by return
-//            return;
-//        }
-//    }
+    public void checkavailability() {
+        // Check if Internet present
+        isInternetPresent = cd.isConnectingToInternet();
+        if (!isInternetPresent) {
+            // Internet Connection is not present
+            alert.showAlertDialog(ChatActivity.this,
+                    "Fail",
+                    "Internet Connection is NOT Available", false);
+            // stop executing code by return
+            return;
+        }
+
+    }
     private void getIntentExtras() {
 
         selectedUserID = getIntent().getStringExtra(AppConstants.INTENT_GROUP_SELECTED_GROUP);
+        selectedUsername = getIntent().getStringExtra("user_name");
         Log.v(TAG,selectedUserID);
         if(getIntent().getStringExtra(FILE_URL)!= null){
             fileUrl = getIntent().getStringExtra(FILE_URL);
@@ -224,6 +221,7 @@ public class ChatActivity extends BaseActivity implements CustomOnItemClickListe
         intent.putExtra("Timer",timer);
         intent.putExtra("ActivityName","ChatActivity");
         intent.putExtra("UserName", selectedUserID);
+        intent.putExtra("user_name", selectedUsername);
 
         Log.d(TAG, "Ready to display "+ selectedUserID);
         startActivity(intent);
@@ -543,36 +541,38 @@ public class ChatActivity extends BaseActivity implements CustomOnItemClickListe
         private void displayChat(MessagesViewHolder messagesViewHolder, int position){
             Log.d(TAG,"Sender "+ chatMessageList.get(position).getSender());
 
-//<<<<<<< HEAD
+
             String senderEmail = chatMessageList.get(position).getSender();
 
             Log.d(TAG, senderEmail+ "sender");
-            User sender = SnapChatDB.getInstance(context).findUserByEmail(chatMessageList.get(position).getSender());
-            Log.d(TAG, "Username "+sender.getUsername());
+            //User sender = SnapChatDB.getInstance(context).findUserByEmail(chatMessageList.get(position).getSender());
+            //Log.d(TAG, "Username "+sender.getUsername());
 
 //            if (sender.getUsername()!=null){
 //                messagesViewHolder.textViewSender.setText(SnapChatDB.getInstance(context).findUserByEmail(chatMessageList.get(position).getSender()).getUsername());
 //=======
-            String uname = SnapChatDB.getInstance(context).findUserByEmail(chatMessageList.get(position).getSender())
-                    .getUsername();
-            if (uname!=null){
-                messagesViewHolder.textViewSender.setText(uname);
-//>>>>>>> 56df049999aa8e783b257339ab100302b4e67c71
-                if (chatMessageList.get(position).getMessage() != null ) {
-                    messagesViewHolder.textViewMessage.setText(chatMessageList.get(position).getMessage());
-                    messagesViewHolder.textViewMessage.setVisibility(View.VISIBLE);
-                    messagesViewHolder.imageView.setVisibility(View.GONE);
-                }else {
-                    messagesViewHolder.textViewMessage.setVisibility(View.GONE);
-                    messagesViewHolder.imageView.setVisibility(View.VISIBLE);
-                    if (chatMessageList.get(position).getFile() != null)
-                        messagesViewHolder.setIvChatPhoto(chatMessageList.get(position).getFile().getUrl_file());
-                }
+            // String uname = SnapChatDB.getInstance(context).findUserByEmail(chatMessageList.get(position).getSender())
+            //  .getUsername();
+            //if (uname!=null){
 
+            Log.d(TAG, selectedUsername +" username");
+            messagesViewHolder.textViewSender.setText(selectedUsername);
 
-                messagesViewHolder.textViewTime.setText(MyApplication.getSimpleDateFormat().format(chatMessageList.get(position).getCurrentTime()));
-                Log.d(TAG," (Message Status - "+ chatMessageList.get(position).getMessageStatus()+")");
+            if (chatMessageList.get(position).getMessage() != null ) {
+                messagesViewHolder.textViewMessage.setText(chatMessageList.get(position).getMessage());
+                messagesViewHolder.textViewMessage.setVisibility(View.VISIBLE);
+                messagesViewHolder.imageView.setVisibility(View.GONE);
+            }else {
+                messagesViewHolder.textViewMessage.setVisibility(View.GONE);
+                messagesViewHolder.imageView.setVisibility(View.VISIBLE);
+                if (chatMessageList.get(position).getFile() != null)
+                    messagesViewHolder.setIvChatPhoto(chatMessageList.get(position).getFile().getUrl_file());
             }
+
+
+            messagesViewHolder.textViewTime.setText(MyApplication.getSimpleDateFormat().format(chatMessageList.get(position).getCurrentTime()));
+            Log.d(TAG," (Message Status - "+ chatMessageList.get(position).getMessageStatus()+")");
+            //}
 
         }
 
@@ -644,11 +644,6 @@ public class ChatActivity extends BaseActivity implements CustomOnItemClickListe
 
                 onImageClick();
 
-//                ChatMessageAdapter.
-//                getItem(position);
-//
-//                customClickImageListener.onImageClick(view,position,url);
-//                customClickImageListener.clickImageChat(view,position,model.getUserModel().getName(),model.getUserModel().getPhoto_profile(),model.getFile().getUrl_file());
             }
         }
     }

@@ -2,8 +2,11 @@ package com.example.wyyz.snapchat.activity.MyStory;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Point;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -27,18 +30,39 @@ import android.widget.TextView;
 import com.example.wyyz.snapchat.R;
 import com.example.wyyz.snapchat.activity.DiscoverActivity;
 import com.example.wyyz.snapchat.activity.DiscoverChannelActivity;
+import com.example.wyyz.snapchat.activity.DisplaySnapActivity;
+import com.example.wyyz.snapchat.activity.OpenMySnapActivity;
 import com.example.wyyz.snapchat.activity.PreviewActivity;
 import com.example.wyyz.snapchat.db.DataBaseOperator;
 import com.example.wyyz.snapchat.db.SnapChatDB;
 import com.example.wyyz.snapchat.model.DiscoveryChannel;
 import com.example.wyyz.snapchat.model.FriendStory;
+import com.example.wyyz.snapchat.model.FriendStorySnap;
 import com.example.wyyz.snapchat.model.MyStorySnap;
+import com.example.wyyz.snapchat.model.User;
 import com.example.wyyz.snapchat.util.OnSwipeTouchListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
-
+import java.util.Map;
+import java.util.Set;
 
 
 public class StoryActivity extends Activity {
@@ -47,7 +71,7 @@ public class StoryActivity extends Activity {
 	private ArrayList<DiscoveryChannel> unsubscribed;
 	private ArrayList<DiscoveryChannel> subscribed;
 
-//	private FinalBitmap fb;
+	//	private FinalBitmap fb;
 	private List<String> infos = new ArrayList<String>();
 	private List<Point> lostPoint = new ArrayList<Point>();// 用于记录空白块的位置
 //	private int currentPage = 1;
@@ -60,6 +84,7 @@ public class StoryActivity extends Activity {
 	private ImageButton discoverButton;
 	private ExpandableListView storyList;
 	private ListView friendStoryList;
+	private ListView allStoryList;
 	private GridView featureList;
 	private TextView rootSubscriptionText;
 	private TextView featuredText;
@@ -68,6 +93,9 @@ public class StoryActivity extends Activity {
 	private ImageButton ChatButton;
 	private ImageButton CameraButton;
 	private ImageButton StoryButton;
+	private final ArrayList<ArrayList<FriendStorySnap>> stories  = new ArrayList<ArrayList<FriendStorySnap>>();
+	private final ArrayList<ArrayList<FriendStorySnap>> allStories  = new ArrayList<ArrayList<FriendStorySnap>>();
+	private ArrayList<FriendStory> myStory;
 
 
 
@@ -223,6 +251,7 @@ public class StoryActivity extends Activity {
 
 		Log.e("story activity","friendStoryList");
 		friendStoryList = (ListView) findViewById(R.id.friendStoryList);
+		allStoryList = (ListView) findViewById(R.id.allStoryList);
 
 		Log.e("story activity","featureList");
 		featureList = (GridView) findViewById(R.id.featureList);
@@ -281,7 +310,7 @@ public class StoryActivity extends Activity {
 
 		featureList.setAdapter(new featuredAdapter(this, unsubscribed));
 
-		ArrayList<FriendStory> myStory = new ArrayList<FriendStory>();
+		myStory = new ArrayList<FriendStory>();
 		FriendStory mystory = new FriendStory("My Story");
 		mystory.addSnaps(getMyStory());
 
@@ -293,13 +322,17 @@ public class StoryActivity extends Activity {
 		storyList.setAdapter(new MyStoryListAdapter(this, myStory));
 		setListViewHeightBasedOnChildren(storyList);
 
-		ArrayList<FriendStory> stories = new ArrayList<FriendStory>();
-		stories.add(new FriendStory("test1"));
-		stories.add(new FriendStory("test2"));
-		stories.add(new FriendStory("test3"));
 
-		friendStoryList.setAdapter(new StoryListAdapter(this, stories));
+//		stories.add(new FriendStory("test1"));
+//		stories.add(new FriendStory("test2"));
+//		stories.add(new FriendStory("test3"));
+		fetchFriendStory(stories);
+		friendStoryList.setAdapter(new newStoryListAdapter(this, stories));
 		setListViewHeightBasedOnChildren(friendStoryList);
+
+		fetchAllStory(allStories);
+		allStoryList.setAdapter(new allStoryListAdapter(this, allStories));
+		setListViewHeightBasedOnChildren(allStoryList);
 
 		subscriptionList.setAdapter(new featuredAdapter(this, subscribed));
 		setListViewHeightBasedOnChildren(subscriptionList);
@@ -338,6 +371,33 @@ public class StoryActivity extends Activity {
 				@Override
 				public void onClick(View v) {
 					Log.e("Button action", "turn to search friend activity");
+					try {
+//						Log.e("stories size",""+stories.size());
+//						ArrayList<ArrayList<FriendStorySnap>> tmp = new ArrayList<ArrayList<FriendStorySnap>>();
+//						tmp = stories;
+//						for(int i =0;i<stories.size();i++)
+//							if(stories.get(i).size()==0)
+//								tmp.remove(stories.get(i));
+//						Log.e("stories size",""+tmp.size());
+//						stories.clear();
+//						stories.addAll(tmp);
+						Log.e("stories size",""+stories.size());
+						for(int i =0;i<stories.size();i++)
+							Log.e("story size "+i,""+stories.get(i).size());
+//						try {
+
+//						}catch(Exception e)
+//						{
+////							e.printStackTrace();
+//							Log.e("error",e.getMessage());
+//						}
+//						fetchFriendStory(new ArrayList<ArrayList<FriendStorySnap>> a);
+					}
+					catch(Exception e)
+					{
+						Log.e("error", e.getMessage());
+						e.printStackTrace();
+					}
 //				Intent intent = new Intent(StoryActivity.this, DiscoverActivity.class);
 //				startActivity(intent);
 				}
@@ -428,6 +488,52 @@ public class StoryActivity extends Activity {
 				}
 			});
 
+
+//			storyList.setOnChildClickListener(new ExpandableListView.OnChildClickListener()
+//			{
+//				@Override
+//				public boolean onChildClick(ExpandableListView parent, View v, int group_position, int child_position, long id)
+//				{
+//					Log.e("group",""+group_position);
+//					Log.e("child",""+child_position);
+//					return true;
+//				}
+//			});
+
+			storyList.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+				@Override
+				public boolean onChildClick(ExpandableListView parent, View v,
+											int groupPosition, int childPosition, long id) {
+//					ExpandableListView storyList = (ExpandableListView) parent;
+					try {
+						Log.e("group", "" + groupPosition);
+						Log.e("child", "" + childPosition);
+						MyStorySnap snap = myStory.get(groupPosition).getSnaps().get(childPosition);
+						Log.e("path", snap.getPath());
+						Log.e("timer", "" + snap.getTimingOut());
+						Intent intent = new Intent(StoryActivity.this,DisplaySnapActivity.class);
+						ArrayList<String> str = new ArrayList<String>();
+
+							str.add(snap.getPath());
+
+						int[] timer = new int[1];
+							timer[0] = snap.getTimingOut();
+
+
+						intent.putExtra("SnapPath",str);
+						intent.putExtra("Timer",timer);
+						intent.putExtra("ActivityName","StoryActivity");
+						startActivity(intent);
+					}catch(Exception e)
+					{
+						Log.e("error",e.getMessage());
+					}
+
+					return true;
+				}
+			});
+
+
 			Log.e("initListener", "expand listener");
 			storyList.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
 
@@ -475,6 +581,53 @@ public class StoryActivity extends Activity {
 			});
 
 
+			allStoryList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+				public void onItemClick(AdapterView<?> parent, View view,
+										int position, long id) {
+
+					try {
+						Log.e("story clicked", "" + position);
+
+						ListView storyList = (ListView) parent;
+						ArrayList<FriendStorySnap> story = (ArrayList<FriendStorySnap>) storyList.getItemAtPosition(position);
+
+						Log.e("story read", story.get(0).getUserName());
+
+						Intent intent = new Intent(StoryActivity.this,DisplaySnapActivity.class);
+						ArrayList<String> str = new ArrayList<String>();
+						for(FriendStorySnap snap: story) {
+							str.add(snap.getPath());
+							Log.e("path",snap.getPath());
+						}
+						int[] timer = new int[story.size()];
+						for(int i=0;i<story.size();i++) {
+							timer[i] = story.get(i).getTimingOut();
+							Log.e("timer",""+timer[i]);
+						}
+
+						intent.putExtra("SnapPath",str);
+						intent.putExtra("Timer",timer);
+						intent.putExtra("ActivityName","StoryActivity");
+
+						for(FriendStorySnap snap: story)
+							snap.visit();
+
+						startActivity(intent);
+
+						((allStoryListAdapter) allStoryList.getAdapter()).notifyDataSetChanged();
+
+
+					} catch (Exception e) {
+						e.printStackTrace();
+						Log.e("sub item error", e.getMessage());
+					}
+
+
+				}
+			});
+
+
+
 			Log.e("initListener", "friendStoryList");
 			friendStoryList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 				public void onItemClick(AdapterView<?> parent, View view,
@@ -484,22 +637,46 @@ public class StoryActivity extends Activity {
 						Log.e("story clicked", "" + position);
 
 						ListView storyList = (ListView) parent;
-						FriendStory story = (FriendStory) storyList.getItemAtPosition(position);
+						ArrayList<FriendStorySnap> story = (ArrayList<FriendStorySnap>) storyList.getItemAtPosition(position);
 
-						Log.e("story read", story.getName());
-						Log.e("story read", ""+story.getVisitNum());
+						Log.e("story read", story.get(0).getUserName());
 
-						story.visit();
+						Intent intent = new Intent(StoryActivity.this,DisplaySnapActivity.class);
+						ArrayList<String> str = new ArrayList<String>();
+						for(FriendStorySnap snap: story) {
+							str.add(snap.getPath());
+							Log.e("path",snap.getPath());
+						}
+						int[] timer = new int[story.size()];
+						for(int i=0;i<story.size();i++) {
+							timer[i] = story.get(i).getTimingOut();
+							Log.e("timer",""+timer[i]);
+						}
 
-						if(story.getVisitNum()>=2) {
-							((StoryListAdapter) friendStoryList.getAdapter()).list.remove(story);
+						intent.putExtra("SnapPath",str);
+						intent.putExtra("Timer",timer);
+						intent.putExtra("ActivityName","StoryActivity");
+
+						for(FriendStorySnap snap: story)
+							snap.visit();
+
+						startActivity(intent);
+
+						boolean remove = true;
+						for(FriendStorySnap snap: story)
+							if(snap.getVisitNum()<2) {
+								remove = false;
+							}
+
+						if(remove) {
+							((newStoryListAdapter) friendStoryList.getAdapter()).list.remove(story);
 							setListViewHeightBasedOnChildren(friendStoryList);
 						}
 
-						if(((StoryListAdapter) friendStoryList.getAdapter()).list.size()==0)
+						if(((newStoryListAdapter) friendStoryList.getAdapter()).list.size()==0)
 							friendStoryText.setVisibility(View.INVISIBLE);
 
-						((StoryListAdapter) friendStoryList.getAdapter()).notifyDataSetChanged();
+						((newStoryListAdapter) friendStoryList.getAdapter()).notifyDataSetChanged();
 
 
 					} catch (Exception e) {
@@ -567,6 +744,337 @@ public class StoryActivity extends Activity {
 		for(int i = 0; i < channelArray.length; i++)
 			channels.add(channelArray[i]);
 	}
+
+
+	private void fetchFriendStory(final ArrayList<ArrayList<FriendStorySnap>> stories) {
+
+		stories.clear();
+		final String userId = mAuth.getInstance().getCurrentUser().getUid();
+		final FirebaseDatabase database = FirebaseDatabase.getInstance();
+		final DatabaseReference ref = database.getReference();
+
+		DatabaseReference friendRef = ref.child("Users").child(userId).child("friends");
+//		Log.e("read friend",friendRef.toString());
+		friendRef.addListenerForSingleValueEvent(new ValueEventListener() {
+			@Override
+			public void onDataChange(DataSnapshot dataSnapshot) {
+//				Log.e("read friend","start");
+				if (dataSnapshot.getValue() != null) {
+//					Log.d("friendDataSnap", dataSnapshot.getValue().toString());
+					Map<String, Object> objectMap = (HashMap<String, Object>) dataSnapshot.getValue();
+					Set<String> friendIdSet = new HashSet<String>();
+					Iterator<Map.Entry<String, Object>> entries = objectMap.entrySet().iterator();
+					while (entries.hasNext()) {
+						Map.Entry<String, Object> entry = entries.next();
+						friendIdSet.add(entry.getKey());
+					}
+
+					//get user instance of friend
+//					Log.e("friend size",""+friendIdSet.size());
+					for (final String friendid : friendIdSet) {
+
+
+//						Log.e("friendSet", friendid);
+						DatabaseReference friendStoryRef = ref.child("MyStory").child(friendid);
+						DatabaseReference friendStoryRecordRef = ref.child("MyStoryVisitRecord").child(friendid);
+
+
+
+
+
+
+						friendStoryRef.addListenerForSingleValueEvent(new ValueEventListener() {
+							@Override
+							public void onDataChange(DataSnapshot dataSnapshot) {
+//								Log.e("read snaps","start");
+								if (dataSnapshot.getValue() != null) {
+									Log.e("friend available",""+friendid);
+									final ArrayList<FriendStorySnap> story = new ArrayList<FriendStorySnap>();
+									stories.add(story);
+//									Log.e("friendDataSnap", dataSnapshot.getValue().toString());
+									Map<String, Object> objectMap = (HashMap<String, Object>) dataSnapshot.getValue();
+									Set<String> friendStoryIdSet = new HashSet<String>();
+									Iterator<Map.Entry<String, Object>> entries = objectMap.entrySet().iterator();
+
+									while (entries.hasNext()) {
+										Map.Entry<String, Object> entry = entries.next();
+										friendStoryIdSet.add(entry.getKey());
+//										Log.e("friendStoryIdSet entry",entry.getKey());
+									}
+
+									//get user instance of friend
+									for (final String friendStoryId : friendStoryIdSet) {
+//										Log.e("friendStorySet", friendStoryId);
+										DatabaseReference friendStoryRef = ref.child("MyStory").child(friendid);
+										friendStoryRef.addListenerForSingleValueEvent(new ValueEventListener() {
+											@Override
+											public void onDataChange(DataSnapshot dataSnapshot) {
+//												Log.e("read snap", "start");
+												if (dataSnapshot.getValue() != null) {
+
+													final int timingout =  Integer.parseInt(dataSnapshot.child(friendStoryId).child("timingout").getValue().toString());
+													final String timeStamp = dataSnapshot.child(friendStoryId).child("timeStamp").getValue().toString();
+													final String url = dataSnapshot.child(friendStoryId).child("url").getValue().toString();
+
+													DatabaseReference friendStoryRef = ref.child("MyStoryVisitRecord").child(friendid).child(friendStoryId).child(userId);
+//													Log.e("check ref", friendStoryRef.toString());
+													friendStoryRef.addListenerForSingleValueEvent(new ValueEventListener() {
+														@Override
+														public void onDataChange(DataSnapshot dataSnapshot) {
+
+															if (dataSnapshot.getValue() != null) {
+//																Log.e("read snapvisit", "start");
+																final int visitNum =  Integer.parseInt(dataSnapshot.child("visitNum").getValue().toString());
+																DatabaseReference friendStoryRef = ref.child("Users").child(friendid);
+//																Log.e("fetch user", friendStoryRef.toString());
+																friendStoryRef.addListenerForSingleValueEvent(new ValueEventListener() {
+																	@Override
+																	public void onDataChange(DataSnapshot dataSnapshot) {
+//																		Log.e("read user", "start");
+																		if (dataSnapshot.getValue() != null) {
+																			final String userName =  dataSnapshot.child("username").getValue().toString();
+
+																			Log.e("userId",friendid);
+																			Log.e("userName",userName);
+																			Log.e("timeStamp",timeStamp);
+																			Log.e("timingout",""+timingout);
+																			Log.e("visitNum",""+visitNum);
+																			FriendStorySnap friendStorySnap= new FriendStorySnap();
+																			friendStorySnap.setTimingOut(timingout);
+																			friendStorySnap.setTimestamp(timeStamp);
+																			friendStorySnap.setPath(url);
+																			friendStorySnap.setUserId(friendid);
+																			friendStorySnap.setUserName(userName);
+																			friendStorySnap.setVisitNum(visitNum);
+																			Date date = Calendar.getInstance().getTime();
+																			Date snapDate = friendStorySnap.getTimestamp();
+																			long day = date.getTime() / (24*60*60*1000) - snapDate.getTime() / (24*60*60*1000);
+																			if((day<=1)&&(friendStorySnap.getVisitNum()<2)) {
+																				story.add(friendStorySnap);
+																				((newStoryListAdapter) friendStoryList.getAdapter()).notifyDataSetChanged();
+																			}
+
+																		}
+																	}
+
+																	@Override
+																	public void onCancelled(DatabaseError databaseError) {
+																	}
+																});
+															}
+														}
+
+														@Override
+														public void onCancelled(DatabaseError databaseError) {
+														}
+													});
+//													stories.add(story);
+												}
+											}
+
+											@Override
+											public void onCancelled(DatabaseError databaseError) {
+											}
+										});
+
+//										DatabaseReference friendStoryRecordRef = ref.child("MyStoryVisitRecord").child(uid).child(Snapname);
+//
+//										Map<String, Object> updates = new HashMap<String, Object>();
+//										updates.put("visitNum", 0);
+//										myStoryRecordRef.updateChildren(updates);
+
+									}
+
+								}
+							}
+
+							@Override
+							public void onCancelled(DatabaseError databaseError) {
+
+							}
+						});
+
+
+					}
+					Log.e("length of stories",""+stories.size());
+					for(int i=0;i<stories.size();i++)
+						Log.e("length of storie "+i,""+stories.get(i).size());
+				}
+			}
+
+			@Override
+			public void onCancelled(DatabaseError databaseError) {
+
+			}
+		});
+	}
+
+
+
+
+	private void fetchAllStory(final ArrayList<ArrayList<FriendStorySnap>> stories) {
+
+		stories.clear();
+		final String userId = mAuth.getInstance().getCurrentUser().getUid();
+		final FirebaseDatabase database = FirebaseDatabase.getInstance();
+		final DatabaseReference ref = database.getReference();
+
+		DatabaseReference friendRef = ref.child("Users").child(userId).child("friends");
+//		Log.e("read friend",friendRef.toString());
+		friendRef.addListenerForSingleValueEvent(new ValueEventListener() {
+			@Override
+			public void onDataChange(DataSnapshot dataSnapshot) {
+//				Log.e("read friend","start");
+				if (dataSnapshot.getValue() != null) {
+//					Log.d("friendDataSnap", dataSnapshot.getValue().toString());
+					Map<String, Object> objectMap = (HashMap<String, Object>) dataSnapshot.getValue();
+					Set<String> friendIdSet = new HashSet<String>();
+					Iterator<Map.Entry<String, Object>> entries = objectMap.entrySet().iterator();
+					while (entries.hasNext()) {
+						Map.Entry<String, Object> entry = entries.next();
+						friendIdSet.add(entry.getKey());
+					}
+
+					//get user instance of friend
+//					Log.e("friend size",""+friendIdSet.size());
+					for (final String friendid : friendIdSet) {
+
+
+//						Log.e("friendSet", friendid);
+						DatabaseReference friendStoryRef = ref.child("MyStory").child(friendid);
+						DatabaseReference friendStoryRecordRef = ref.child("MyStoryVisitRecord").child(friendid);
+
+
+
+
+
+
+						friendStoryRef.addListenerForSingleValueEvent(new ValueEventListener() {
+							@Override
+							public void onDataChange(DataSnapshot dataSnapshot) {
+//								Log.e("read snaps","start");
+								if (dataSnapshot.getValue() != null) {
+									Log.e("friend available",""+friendid);
+									final ArrayList<FriendStorySnap> story = new ArrayList<FriendStorySnap>();
+									stories.add(story);
+//									Log.e("friendDataSnap", dataSnapshot.getValue().toString());
+									Map<String, Object> objectMap = (HashMap<String, Object>) dataSnapshot.getValue();
+									Set<String> friendStoryIdSet = new HashSet<String>();
+									Iterator<Map.Entry<String, Object>> entries = objectMap.entrySet().iterator();
+
+									while (entries.hasNext()) {
+										Map.Entry<String, Object> entry = entries.next();
+										friendStoryIdSet.add(entry.getKey());
+//										Log.e("friendStoryIdSet entry",entry.getKey());
+									}
+
+									//get user instance of friend
+									for (final String friendStoryId : friendStoryIdSet) {
+//										Log.e("friendStorySet", friendStoryId);
+										DatabaseReference friendStoryRef = ref.child("MyStory").child(friendid);
+										friendStoryRef.addListenerForSingleValueEvent(new ValueEventListener() {
+											@Override
+											public void onDataChange(DataSnapshot dataSnapshot) {
+//												Log.e("read snap", "start");
+												if (dataSnapshot.getValue() != null) {
+
+													final int timingout =  Integer.parseInt(dataSnapshot.child(friendStoryId).child("timingout").getValue().toString());
+													final String timeStamp = dataSnapshot.child(friendStoryId).child("timeStamp").getValue().toString();
+													final String url = dataSnapshot.child(friendStoryId).child("url").getValue().toString();
+
+													DatabaseReference friendStoryRef = ref.child("MyStoryVisitRecord").child(friendid).child(friendStoryId).child(userId);
+//													Log.e("check ref", friendStoryRef.toString());
+													friendStoryRef.addListenerForSingleValueEvent(new ValueEventListener() {
+														@Override
+														public void onDataChange(DataSnapshot dataSnapshot) {
+
+															if (dataSnapshot.getValue() != null) {
+//																Log.e("read snapvisit", "start");
+																final int visitNum =  Integer.parseInt(dataSnapshot.child("visitNum").getValue().toString());
+																DatabaseReference friendStoryRef = ref.child("Users").child(friendid);
+//																Log.e("fetch user", friendStoryRef.toString());
+																friendStoryRef.addListenerForSingleValueEvent(new ValueEventListener() {
+																	@Override
+																	public void onDataChange(DataSnapshot dataSnapshot) {
+//																		Log.e("read user", "start");
+																		if (dataSnapshot.getValue() != null) {
+																			final String userName =  dataSnapshot.child("username").getValue().toString();
+
+																			Log.e("userId",friendid);
+																			Log.e("userName",userName);
+																			Log.e("timeStamp",timeStamp);
+																			Log.e("timingout",""+timingout);
+																			Log.e("visitNum",""+visitNum);
+																			FriendStorySnap friendStorySnap= new FriendStorySnap();
+																			friendStorySnap.setTimingOut(timingout);
+																			friendStorySnap.setTimestamp(timeStamp);
+																			friendStorySnap.setPath(url);
+																			friendStorySnap.setUserId(friendid);
+																			friendStorySnap.setUserName(userName);
+																			friendStorySnap.setVisitNum(visitNum);
+																			Date date = Calendar.getInstance().getTime();
+																			Date snapDate = friendStorySnap.getTimestamp();
+																			long day = date.getTime() / (24*60*60*1000) - snapDate.getTime() / (24*60*60*1000);
+																			if((day<=1)&&(friendStorySnap.getVisitNum()>=2)) {
+																				story.add(friendStorySnap);
+																				((allStoryListAdapter) allStoryList.getAdapter()).notifyDataSetChanged();
+																			}
+
+																		}
+																	}
+
+																	@Override
+																	public void onCancelled(DatabaseError databaseError) {
+																	}
+																});
+															}
+														}
+
+														@Override
+														public void onCancelled(DatabaseError databaseError) {
+														}
+													});
+//													stories.add(story);
+												}
+											}
+
+											@Override
+											public void onCancelled(DatabaseError databaseError) {
+											}
+										});
+
+//										DatabaseReference friendStoryRecordRef = ref.child("MyStoryVisitRecord").child(uid).child(Snapname);
+//
+//										Map<String, Object> updates = new HashMap<String, Object>();
+//										updates.put("visitNum", 0);
+//										myStoryRecordRef.updateChildren(updates);
+
+									}
+
+								}
+							}
+
+							@Override
+							public void onCancelled(DatabaseError databaseError) {
+
+							}
+						});
+
+
+					}
+					Log.e("length of stories",""+stories.size());
+					for(int i=0;i<stories.size();i++)
+						Log.e("length of storie "+i,""+stories.get(i).size());
+				}
+			}
+
+			@Override
+			public void onCancelled(DatabaseError databaseError) {
+
+			}
+		});
+	}
+
 
 
 	public static void setListViewHeightBasedOnChildren(ListView listView) {

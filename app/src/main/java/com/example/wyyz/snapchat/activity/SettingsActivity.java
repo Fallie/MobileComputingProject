@@ -17,6 +17,9 @@ import com.example.wyyz.snapchat.util.ShowNetworkAlert;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+/**
+ * Activity to allow user check and edit profile information, signout
+ */
 public class SettingsActivity extends AppCompatActivity implements View.OnClickListener{
     RelativeLayout emailLayout;
     RelativeLayout usernameLayout;
@@ -108,6 +111,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         }
     }
 
+    //check network availability
     public void checkavailability() {
         // Check if Internet present
         isInternetPresent = cd.isConnectingToInternet();
@@ -121,6 +125,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         }
     }
 
+    //signout
     private void doSignout(){
         AlertDialog.Builder builder = new AlertDialog.Builder(SettingsActivity.this);
         builder.setTitle("Wanna sign out?");

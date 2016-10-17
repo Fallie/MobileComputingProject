@@ -26,6 +26,11 @@ import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
 
+/**
+ * Activity to display memory.
+ * Includes 4 fragments: snapsFragment, storiesFragment, cameraRollFragment and MyEyeOnlyFragment
+ * Supports mutiple select snaps to create story
+ */
 public class SnapActivity extends FragmentActivity implements View.OnClickListener {
     CameraRollFragment cameraRollFragment;
     SnapsFragment snapsFragment;
@@ -64,6 +69,7 @@ public class SnapActivity extends FragmentActivity implements View.OnClickListen
             }
         });
         initView();
+        //enable mutiple select snap to create story
         ivSelect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -76,6 +82,8 @@ public class SnapActivity extends FragmentActivity implements View.OnClickListen
                 snapsFragment.getSnapImgAdapter().toggleOnSelect();
             }
         });
+
+        //cancel creating story by disable mutiple select
         ivCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -87,6 +95,7 @@ public class SnapActivity extends FragmentActivity implements View.OnClickListen
                 snapsFragment.getSnapImgAdapter().toggleOffSelect();
             }
         });
+        //create a story from a list of selected snaps
         btnCreateStory.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -136,6 +145,7 @@ public class SnapActivity extends FragmentActivity implements View.OnClickListen
 
     }
 
+    //initiate View, involving set up page viewer
     private void initView(){
         titleLayout=(RelativeLayout)findViewById(R.id.title_layout);
         selectTopLayout=(RelativeLayout)findViewById(R.id.select_top);
