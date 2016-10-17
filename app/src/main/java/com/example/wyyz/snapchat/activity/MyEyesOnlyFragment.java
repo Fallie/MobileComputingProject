@@ -55,7 +55,7 @@ public class MyEyesOnlyFragment extends Fragment implements View.OnClickListener
         User user=db.findUserByEmail(email);
         snaps=db.getUserLockedSnaps(user.getId());
         Log.d("snaps",String.valueOf(snaps.size()));
-        lockedImgAdapter = new ImageAdapter(snapActivity, R.layout.image_item, snaps);
+        lockedImgAdapter = new ImageAdapter(snapActivity, R.layout.image_item, snaps,"My Snap");
         gridView.setAdapter(lockedImgAdapter);
         return myEyeView;
     }

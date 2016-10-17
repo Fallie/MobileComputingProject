@@ -31,6 +31,8 @@ import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 
+import static com.example.wyyz.snapchat.activity.PreviewActivity.getBitmapFromView;
+
 /**
  * Created by Fallie on 15/10/2016.
  */
@@ -40,7 +42,7 @@ public class OpenMySnapActivity extends AppCompatActivity implements View.OnClic
     private static final String TAG = "OpenMySnapActivity";
     private FirebaseStorage mStorage;
     private SnapChatDB snapChatDB;
-    private Uri uri;
+    private Uri uri = null;
     private FirebaseAuth mAuth;
     private Button deleteSnap;
     private Button nextStep;
@@ -50,6 +52,7 @@ public class OpenMySnapActivity extends AppCompatActivity implements View.OnClic
     private MenuInflater inflater;
     private String timeStamp;
     private long size;
+    private String labelText;
     // Connection detector class
     private ConnectionDetector cd;
     // flag for Internet connection status
@@ -66,6 +69,8 @@ public class OpenMySnapActivity extends AppCompatActivity implements View.OnClic
         uri = Uri.parse(intent.getStringExtra("SnapPath"));
         timeStamp = intent.getStringExtra("TimeStamp");
         size = intent.getLongExtra("Size",0);
+        labelText = intent.getStringExtra("Label");
+        this.setTitle(labelText);
         setContentView(R.layout.activity_openmysnap);
         initialize();
         Log.i(TAG, "Activity created!");
@@ -82,6 +87,9 @@ public class OpenMySnapActivity extends AppCompatActivity implements View.OnClic
         nextStep = (Button) findViewById(R.id.btnNextStep);
         nextStep.setOnClickListener(this);
         deleteSnap = (Button) findViewById(R.id.btnDelete);
+        if(labelText.equals("My CameraRoll"))
+            deleteSnap.setVisibility(View.INVISIBLE);
+        else
         deleteSnap.setOnClickListener(this);
         editSnap = (Button) findViewById(R.id.btnEditSnap);
         editSnap.setOnClickListener(this);
@@ -133,6 +141,7 @@ public class OpenMySnapActivity extends AppCompatActivity implements View.OnClic
 
         intent.putExtra("SnapPath",str);
         intent.putExtra("Timer",timer);
+        intent.putExtra("ActivityName","SnapActivity");
         startActivity(intent);
     }
 
@@ -166,6 +175,13 @@ public class OpenMySnapActivity extends AppCompatActivity implements View.OnClic
     }
 
     private void editSnap() {
+        if(labelText.equals("My CameraRoll")){
+            TmpPhotoView.photo = getBitmapFromView(imageView);
+            Intent intent = new Intent(OpenMySnapActivity.this,PreviewActivity.class);
+            startActivity(intent);
+        }else {
+
+
         StorageReference islandRef = mStorage.getInstance().getReferenceFromUrl(uri.toString());
 
 
@@ -185,6 +201,7 @@ public class OpenMySnapActivity extends AppCompatActivity implements View.OnClic
                 Log.e(TAG,"Fail to download to tmp file");
             }
         });
+        }
     }
 
 
