@@ -254,13 +254,6 @@ public class PreviewActivity extends AppCompatActivity implements View.OnClickLi
                     "Internet Connection is NOT Available", false);
             // stop executing code by return
             return;
-        } else {
-            // Internet Connection is not present
-            alert.showAlertDialog(PreviewActivity.this,
-                    "Success",
-                    "Internet Connection is Available", true);
-            // stop executing code by return
-            return;
         }
     }
 

@@ -100,13 +100,6 @@ public class OpenMySnapActivity extends AppCompatActivity implements View.OnClic
                     "Internet Connection is NOT Available", false);
             // stop executing code by return
             return;
-        } else {
-            // Internet Connection is not present
-            alert.showAlertDialog(OpenMySnapActivity.this,
-                    "Success",
-                    "Internet Connection is Available", true);
-            // stop executing code by return
-            return;
         }
     }
 
