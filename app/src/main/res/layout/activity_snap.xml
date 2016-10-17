@@ -83,7 +83,16 @@
             android:layout_weight="1"
             android:layout_height="match_parent"
             android:text="SNAPS"
-            android:textSize="16sp"
+            android:textSize="12sp"
+            android:gravity="center"
+            />
+        <TextView
+            android:id="@+id/tv_tab3"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:text="STORIES"
+            android:textSize="12sp"
             android:gravity="center"
             />
         <TextView
@@ -92,7 +101,7 @@
             android:layout_weight="1"
             android:layout_height="match_parent"
             android:text="CAMERA ROLL"
-            android:textSize="16sp"
+            android:textSize="12sp"
             android:gravity="center"
             />
         <TextView
@@ -101,7 +110,7 @@
             android:layout_weight="1"
             android:layout_height="match_parent"
             android:text="MY EYES ONLY"
-            android:textSize="16sp"
+            android:textSize="12sp"
             android:gravity="center"
             />
     </LinearLayout>
