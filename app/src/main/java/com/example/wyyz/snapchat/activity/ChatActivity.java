@@ -85,11 +85,11 @@ public class ChatActivity extends BaseActivity implements CustomOnItemClickListe
         setContentView(R.layout.activity_chat);
 
         getIntentExtras();
-        if (fileUrl!=null){
+        initComponents();
+        addListeners();
+        setUpToolbar();
 
-            initComponents();
-            addListeners();
-            setUpToolbar();
+        if (fileUrl!=null){
 
             StorageReference storageRef = storage.getReferenceFromUrl(Util.URL_STORAGE_REFERENCE).child(Util.FOLDER_STORAGE_IMG);
 
@@ -102,10 +102,8 @@ public class ChatActivity extends BaseActivity implements CustomOnItemClickListe
 
             //sendMessage(FirebaseUtility.getCurrentUser().getEmail(),"", filea ,storageRef);
 
-        }else{
-        initComponents();
-        addListeners();
-        setUpToolbar();
+            fileUrl = null;
+
         }
     }
 
