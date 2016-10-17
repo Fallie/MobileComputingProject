@@ -27,6 +27,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.util.ArrayList;
+
 /**
  * Created by Fallie on 15/10/2016.
  */
@@ -67,7 +69,6 @@ public class OpenMySnapActivity extends AppCompatActivity implements View.OnClic
         //imageView.setBackgroundDrawable(new BitmapDrawable(base));
         Glide.with(getBaseContext())
                 .load(uri.toString())
-                //.crossFade()
                 .into(imageView);
         nextStep = (Button) findViewById(R.id.btnNextStep);
         nextStep.setOnClickListener(this);
@@ -77,9 +78,6 @@ public class OpenMySnapActivity extends AppCompatActivity implements View.OnClic
         editSnap.setOnClickListener(this);
         shareSnap = (Button) findViewById(R.id.btnShareSnap);
         shareSnap.setOnClickListener(this);
-
-
-
 
     }
 
@@ -107,6 +105,14 @@ public class OpenMySnapActivity extends AppCompatActivity implements View.OnClic
     }
 
     private void createStory() {
+        Intent intent = new Intent(OpenMySnapActivity.this,DisplaySnapActivity.class);
+        ArrayList<String> str = new ArrayList<String>();
+        str.add(uri.toString());
+        int[] timer = {3};
+
+        intent.putExtra("SnapPath",str);
+        intent.putExtra("Timer",timer);
+        startActivity(intent);
     }
 
     private void lockSnap() {

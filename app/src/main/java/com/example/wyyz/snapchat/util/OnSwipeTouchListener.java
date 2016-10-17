@@ -93,50 +93,36 @@ public class OnSwipeTouchListener implements View.OnTouchListener {
     }
 
     public void onSwipeRight() {
-
+        Intent intent = new Intent();
         if(tag == "CameraActivity"){
-            Intent intent = new Intent();
             intent.setClass(this.activity, MyfriendsActivity.class);
-            this.activity.startActivity(intent);
-            this.activity.overridePendingTransition(R.anim.in_from_left, R.anim.out_to_right);
         }
         else if(tag == "StoryActivity")
         {
-            Intent intent = new Intent();
             intent.setClass(this.activity, CameraActivity.class);
-            this.activity.startActivity(intent);
-            this.activity.overridePendingTransition(R.anim.in_from_left, R.anim.out_to_right);
         }
         if(tag == "DiscoverActivity"){
-            Intent intent = new Intent();
             intent.setClass(this.activity, StoryActivity.class);
-            this.activity.startActivity(intent);
-            this.activity.overridePendingTransition(R.anim.in_from_left, R.anim.out_to_right);
         }
+        this.activity.startActivity(intent);
+        this.activity.overridePendingTransition(R.anim.in_from_left, R.anim.out_to_right);
 
     }
 
     public void onSwipeLeft() {
+        Intent intent = new Intent();
         if(tag == "CameraActivity"){
-            Intent intent = new Intent();
             intent.setClass(this.activity, StoryActivity.class);
-            this.activity.startActivity(intent);
-            this.activity.overridePendingTransition(R.anim.in_from_right, R.anim.out_to_left);
         }
         else if(tag == "StoryActivity")
         {
-            Intent intent = new Intent();
             intent.setClass(this.activity, DiscoverActivity.class);
-            this.activity.startActivity(intent);
-            this.activity.overridePendingTransition(R.anim.in_from_right, R.anim.out_to_left);
         }
         if(tag == "MyfriendsActivity"){
-            Intent intent = new Intent();
             intent.setClass(this.activity, CameraActivity.class);
-            this.activity.startActivity(intent);
-            this.activity.overridePendingTransition(R.anim.in_from_right, R.anim.out_to_left);
         }
-
+        this.activity.startActivity(intent);
+        this.activity.overridePendingTransition(R.anim.in_from_right, R.anim.out_to_left);
 
     }
 
