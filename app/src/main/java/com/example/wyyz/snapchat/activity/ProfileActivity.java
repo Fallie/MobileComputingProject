@@ -16,6 +16,8 @@ import android.widget.TextView;
 import com.example.wyyz.snapchat.R;
 import com.example.wyyz.snapchat.db.SnapChatDB;
 import com.example.wyyz.snapchat.model.User;
+import com.example.wyyz.snapchat.util.ConnectionDetector;
+import com.example.wyyz.snapchat.util.ShowNetworkAlert;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 

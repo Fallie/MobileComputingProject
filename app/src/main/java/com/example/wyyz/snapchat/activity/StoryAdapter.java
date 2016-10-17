@@ -48,11 +48,13 @@ public class StoryAdapter extends ArrayAdapter{
         Story story=(Story)getItem(position);
         Snap snap=db.getStoryFirstSnap(story);
         //holder.image.setImageBitmap(item.getPhoto());
-        Glide.with(context)
-                .load(snap.getPath())
-                .centerCrop()
-                .crossFade()
-                .into(holder.image);
+        if(snap!=null) {
+            Glide.with(context)
+                    .load(snap.getPath())
+                    .centerCrop()
+                    .crossFade()
+                    .into(holder.image);
+        }
 
 
         holder.image.setOnClickListener(new View.OnClickListener() {

@@ -208,6 +208,7 @@ public class SnapChatDB {
         if(cursor.moveToFirst()){
             do{
                 Snap snap=new Snap();
+                snap.setId(cursor.getInt(cursor.getColumnIndex("id")));
                 snap.setUserId(cursor.getInt(cursor.getColumnIndex("userId")));
                 snap.setChecked(false);
                 snap.setPath(cursor.getString(cursor.getColumnIndex("path")));
@@ -259,7 +260,10 @@ public class SnapChatDB {
     /**
      * Save a story
      */
-    public void saveStory(User user, Story story, ArrayList<Snap> snaps){
+    public void saveStory(User user, ArrayList<Snap> snaps){
+        Story story=new Story();
+        story.setTimestamp(new Date());
+        story.setLocked(false);
         ContentValues values=new ContentValues();
         values.put("name", story.getName());
         values.put("timeStamp",story.getTimestamp().getTime());
@@ -280,8 +284,9 @@ public class SnapChatDB {
     public ArrayList<Snap> getStorySnaps(Story story){
         ArrayList<Snap> snaps=new ArrayList<>();
         ArrayList<Integer> snapIds=new ArrayList<>();
-        String QUERY="select snapId from StorySnap order by timeStamp" +
-                "where storyId=?";
+        String QUERY="select snapId from StorySnap " +
+                "where storyId=? " +
+                "order by timeStamp";
         Cursor cursor = db.rawQuery(QUERY, new String[]{String.valueOf(story.getId())});
         if(cursor.moveToFirst()) {
             do {
@@ -297,11 +302,14 @@ public class SnapChatDB {
     }
     public Snap getStoryFirstSnap(Story story){
         int id=0;
-        String QUERY="select top 1 snapId from StorySnap order by timeStamp" +
-                "where storyId=?";
-        Cursor cursor = db.rawQuery(QUERY, null);
+
+        String QUERY="select snapId from StorySnap " +
+                "where storyId=? " +
+                "order by timeStamp " +
+                "limit 1";
+        Cursor cursor = db.rawQuery(QUERY, new String[]{String.valueOf(story.getId())});
         if(cursor.moveToFirst()){
-            id=cursor.getInt(cursor.getColumnIndex("id"));
+            id=cursor.getInt(cursor.getColumnIndex("snapId"));
         }
         cursor.close();
         Snap snap=getSnapById(id);
@@ -349,7 +357,8 @@ public class SnapChatDB {
 
     private int getLastedStoryId(){
         int id = 0;
-        String QUERY="select top 1 id from Story order by timeStamp desc";
+        String QUERY="select id from Story order by timeStamp desc " +
+                "limit 1";
         Cursor cursor = db.rawQuery(QUERY, null);
         if(cursor.moveToFirst()){
             id=cursor.getInt(cursor.getColumnIndex("id"));
