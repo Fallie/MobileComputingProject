@@ -54,6 +54,7 @@ import com.google.gson.JsonElement;
 import org.greenrobot.eventbus.Subscribe;
 
 import java.io.File;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -216,7 +217,7 @@ public class ChatActivity extends BaseActivity implements CustomOnItemClickListe
         Log.d(TAG,urlPhotoClick+" Testout");
         Intent intent = new Intent(ChatActivity.this,DisplaySnapActivity.class);
         ArrayList<String> str = new ArrayList<String>();
-        str.add(urlPhotoClick);
+        str.add(Uri.parse(urlPhotoClick).toString());
         int[] timer = {3};
 
         intent.putStringArrayListExtra("SnapPath",str);
