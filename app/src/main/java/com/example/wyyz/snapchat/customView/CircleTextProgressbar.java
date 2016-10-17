@@ -16,7 +16,7 @@ import android.widget.TextView;
 
 import com.example.wyyz.snapchat.R;
 
-/**
+/**This is for showing countdown animation when displaying a snap.
  * Created by Fallie on 13/10/2016.
  */
 

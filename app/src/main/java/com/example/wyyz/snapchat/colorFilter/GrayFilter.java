@@ -6,7 +6,7 @@ import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Paint;
 
-/**
+/**This class is for gray filtering.
  * Created by Fallie on 17/10/2016.
  */
 

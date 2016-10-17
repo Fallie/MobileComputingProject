@@ -1,6 +1,6 @@
 package com.example.wyyz.snapchat.colorFilter;
 
-/**
+/**This class is for colorful filtering.
  * Created by Fallie on 17/10/2016.
  */
 

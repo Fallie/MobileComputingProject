@@ -40,15 +40,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     }
 
-//    /**
-//     * navigate to login screen
-//     */
-//    public void navigateToLoginActivity(){
-//        Intent intent = new Intent(MyApplication.getApplicationInstance(), MainActivity.class);
-//        ComponentName componentName = intent.getComponent();
-//        Intent clearAllPrevousActivityIntent = IntentCompat.makeRestartActivityTask(componentName);
-//        startActivity(clearAllPrevousActivityIntent);
-//    }
+
 
     /**
      * show error message

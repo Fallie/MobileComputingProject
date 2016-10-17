@@ -137,14 +137,7 @@ public class ChatActivity extends BaseActivity implements CustomOnItemClickListe
             // stop executing code by return
             return;
         }
-//        else {
-//            // Internet Connection is not present
-//            alert.showAlertDialog(ChatActivity.this,
-//                    "Success",
-//                    "Internet Connection is Available", true);
-//            // stop executing code by return
-//            return;
-//        }
+
     }
     private void getIntentExtras() {
 
@@ -238,7 +231,7 @@ public class ChatActivity extends BaseActivity implements CustomOnItemClickListe
      * @param sender
      * @param message
      */
-	private void sendMessage(final String sender,final String message, final File file ,StorageReference storageReference) {
+    private void sendMessage(final String sender,final String message, final File file ,StorageReference storageReference) {
         if (file != null){
             if (storageReference != null){
                 UploadTask uploadTask = storageReference.putFile(Uri.fromFile(file));
@@ -537,10 +530,10 @@ public class ChatActivity extends BaseActivity implements CustomOnItemClickListe
 
             switch (getItemViewType(position)){
                 case 0:
-                        displayChat(messagesViewHolder, position);
+                    displayChat(messagesViewHolder, position);
                     break;
                 case 1:
-                        displayChat(messagesViewHolder, position);
+                    displayChat(messagesViewHolder, position);
                     break;
             }
         }
@@ -558,27 +551,27 @@ public class ChatActivity extends BaseActivity implements CustomOnItemClickListe
 //            if (sender.getUsername()!=null){
 //                messagesViewHolder.textViewSender.setText(SnapChatDB.getInstance(context).findUserByEmail(chatMessageList.get(position).getSender()).getUsername());
 //=======
-           // String uname = SnapChatDB.getInstance(context).findUserByEmail(chatMessageList.get(position).getSender())
-                  //  .getUsername();
+            // String uname = SnapChatDB.getInstance(context).findUserByEmail(chatMessageList.get(position).getSender())
+            //  .getUsername();
             //if (uname!=null){
 
             Log.d(TAG, selectedUsername +" username");
-                messagesViewHolder.textViewSender.setText(selectedUsername);
+            messagesViewHolder.textViewSender.setText(selectedUsername);
 
-                if (chatMessageList.get(position).getMessage() != null ) {
-                    messagesViewHolder.textViewMessage.setText(chatMessageList.get(position).getMessage());
-                    messagesViewHolder.textViewMessage.setVisibility(View.VISIBLE);
-                    messagesViewHolder.imageView.setVisibility(View.GONE);
-                }else {
-                    messagesViewHolder.textViewMessage.setVisibility(View.GONE);
-                    messagesViewHolder.imageView.setVisibility(View.VISIBLE);
-                    if (chatMessageList.get(position).getFile() != null)
-                        messagesViewHolder.setIvChatPhoto(chatMessageList.get(position).getFile().getUrl_file());
-                }
+            if (chatMessageList.get(position).getMessage() != null ) {
+                messagesViewHolder.textViewMessage.setText(chatMessageList.get(position).getMessage());
+                messagesViewHolder.textViewMessage.setVisibility(View.VISIBLE);
+                messagesViewHolder.imageView.setVisibility(View.GONE);
+            }else {
+                messagesViewHolder.textViewMessage.setVisibility(View.GONE);
+                messagesViewHolder.imageView.setVisibility(View.VISIBLE);
+                if (chatMessageList.get(position).getFile() != null)
+                    messagesViewHolder.setIvChatPhoto(chatMessageList.get(position).getFile().getUrl_file());
+            }
 
 
-                messagesViewHolder.textViewTime.setText(MyApplication.getSimpleDateFormat().format(chatMessageList.get(position).getCurrentTime()));
-                Log.d(TAG," (Message Status - "+ chatMessageList.get(position).getMessageStatus()+")");
+            messagesViewHolder.textViewTime.setText(MyApplication.getSimpleDateFormat().format(chatMessageList.get(position).getCurrentTime()));
+            Log.d(TAG," (Message Status - "+ chatMessageList.get(position).getMessageStatus()+")");
             //}
 
         }
@@ -630,7 +623,7 @@ public class ChatActivity extends BaseActivity implements CustomOnItemClickListe
                 if (imageView == null)return;
                 Glide.with(imageView.getContext()).load(url)
                         .override(200, 200)
-                       // .fitCenter()
+                        // .fitCenter()
                         .into(imageView);
 
                 imageView.setOnClickListener(this);
@@ -651,11 +644,6 @@ public class ChatActivity extends BaseActivity implements CustomOnItemClickListe
 
                 onImageClick();
 
-//                ChatMessageAdapter.
-//                getItem(position);
-//
-//                customClickImageListener.onImageClick(view,position,url);
-//                customClickImageListener.clickImageChat(view,position,model.getUserModel().getName(),model.getUserModel().getPhoto_profile(),model.getFile().getUrl_file());
             }
         }
     }
@@ -703,7 +691,7 @@ public class ChatActivity extends BaseActivity implements CustomOnItemClickListe
                 }
             }
         }else
-            if (requestCode == IMAGE_CAMERA_REQUEST){
+        if (requestCode == IMAGE_CAMERA_REQUEST){
             if (resultCode == RESULT_OK){
                 if (filePathImageCamera != null && filePathImageCamera.exists()){
                     StorageReference imageCameraRef = storageRef.child(filePathImageCamera.getName()+"_camera");
@@ -758,14 +746,14 @@ public class ChatActivity extends BaseActivity implements CustomOnItemClickListe
             //UploadTask uploadTask = storageReference.putFile(Uri.fromFile(file));
             //uploadTask.addOnFailureListener(new OnFailureListener() {
             //@Override
-                    //public void onFailure(@NonNull Exception e) {
-                    //  Log.e(TAG, "onFailure sendFileFirebase " + e.getMessage());
-                    //}
-                    //}).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                    //        @Override
-                    //  public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+            //public void onFailure(@NonNull Exception e) {
+            //  Log.e(TAG, "onFailure sendFileFirebase " + e.getMessage());
+            //}
+            //}).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            //        @Override
+            //  public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
 
-                            Log.i(TAG, "onSuccess sendFileFirebase");
+            Log.i(TAG, "onSuccess sendFileFirebase");
             Uri downloadUrl = Uri.parse(fileUrl);
             FileModel fileModel = new FileModel("img", fileUrl, storageReference.child(fileUrl).getName(), storageReference.child(fileUrl).getMetadata() + "");
             ChatMessage newChatMessage = new ChatMessage(System.currentTimeMillis(), sender, message, 0, fileModel);

@@ -1,6 +1,6 @@
 package com.example.wyyz.snapchat.activity;
 
-/**
+/**This class is created for creating account of a new user using Firebase Authentication method.
  * Created by Fallie on 21/09/2016.
  */
 

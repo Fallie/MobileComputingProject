@@ -30,6 +30,7 @@ import static com.example.wyyz.snapchat.R.drawable.winking;
 /**TypeCode = 100: free-hand-draw
  * TypeCode = 200: Add-text
  * TypeCode = 300: Add emoticon
+ * This class is a customView for editing a photo before storing it.
  * Created by Fallie on 06/10/2016.
  */
 
