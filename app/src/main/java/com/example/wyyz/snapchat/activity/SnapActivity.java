@@ -107,10 +107,10 @@ public class SnapActivity extends FragmentActivity implements View.OnClickListen
                 snapsFragment.getSnapImgAdapter().toggleOffSelect();
 
                 ArrayList<String> paths = new ArrayList<String>();
-                ArrayList<Integer> timers=new ArrayList<Integer>();
+                int[] timers=new int[selectedSnaps.size()];
                 for(int i=0;i<selectedSnaps.size();i++){
                     paths.add(selectedSnaps.get(i).getPath());
-                    timers.add(selectedSnaps.get(i).getTimingOut());
+                    timers[i]=selectedSnaps.get(i).getTimingOut();
                     Log.d("path",String.valueOf(selectedSnaps.get(i).getPath()));
                     Log.d("path",String.valueOf(selectedSnaps.get(i).getTimingOut()));
                 }
