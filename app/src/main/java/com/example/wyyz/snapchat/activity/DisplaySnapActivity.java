@@ -48,7 +48,7 @@ public class DisplaySnapActivity extends AppCompatActivity {
     }
 
     private void initialize() {
-        round = uris.size();
+        round = 0;
         imageView = (ImageView) findViewById(R.id.displayImage);
         mTvSkip = (CircleTextProgressbar) findViewById(R.id.countDown);
         mTvSkip.setCountdownProgressListener(1,progressListener);
@@ -71,24 +71,33 @@ public class DisplaySnapActivity extends AppCompatActivity {
         @Override
         public void onProgress(int what, int progress) {
             if (what == 1) {
+
+                if(progress == 0){
+                    if(round+1 >= uris.size()){
+                        finishDisplay();
+                        Log.i(TAG,"finish display!!!");
+                    }
+                    else {
+                        round ++;
+                        tmp = timers[round];
+                        Log.d(TAG,"000The value of tmp: "+tmp);
+                        upper = 100;
+                        lower = 100*(tmp-1)/timers[round];
+                        displaySnap(round);
+                        return;
+                    }
+
+                }
+
                 if (progress > lower && progress < upper) {
                     mTvSkip.setText(String.valueOf(tmp));
+                    Log.d(TAG,"111The value of p: "+progress);
                 } else {
                     tmp--;
                     mTvSkip.setText(String.valueOf(tmp));
+                    Log.d(TAG,"222The value of p: "+progress);
                     upper = 100 * tmp / timers[round];
                     lower = 100 * (tmp - 1) / timers[round];
-                }
-                if(progress == 0 && round < uris.size()){
-                    round ++;
-                    tmp = timers[round];
-                    upper = 100;
-                    lower = 100*(tmp-1)/timers[round];
-                    displaySnap(round);
-                }
-                if(round >= uris.size()){
-                    finishDisplay();
-                    Log.i(TAG,"finish display!!!");
                 }
 
             }

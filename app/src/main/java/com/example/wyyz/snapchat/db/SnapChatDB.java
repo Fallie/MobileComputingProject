@@ -7,7 +7,6 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.example.wyyz.snapchat.model.ChatRecord;
 import com.example.wyyz.snapchat.model.Friend;
-import com.example.wyyz.snapchat.model.MyStory;
 import com.example.wyyz.snapchat.model.MyStorySnap;
 import com.example.wyyz.snapchat.model.Snap;
 import com.example.wyyz.snapchat.model.Story;
@@ -209,6 +208,7 @@ public class SnapChatDB {
         if(cursor.moveToFirst()){
             do{
                 Snap snap=new Snap();
+                snap.setId(cursor.getInt(cursor.getColumnIndex("id")));
                 snap.setUserId(cursor.getInt(cursor.getColumnIndex("userId")));
                 snap.setChecked(false);
                 snap.setPath(cursor.getString(cursor.getColumnIndex("path")));
@@ -260,12 +260,111 @@ public class SnapChatDB {
     /**
      * Save a story
      */
-    public void saveStory(Story story){
+    public void saveStory(User user, ArrayList<Snap> snaps){
+        Story story=new Story();
+        story.setTimestamp(new Date());
+        story.setLocked(false);
         ContentValues values=new ContentValues();
         values.put("name", story.getName());
         values.put("timeStamp",story.getTimestamp().getTime());
         values.put("locked",story.isLocked());
+        values.put("userId", user.getId());
         db.insert("Story", null, values);
+
+        //add snap to story
+        int storyId=getLastedStoryId();
+        for(int i=0;i<snaps.size();i++){
+            ContentValues storyValues=new ContentValues();
+            storyValues.put("storyId",storyId);
+            storyValues.put("snapId",snaps.get(i).getId());
+            db.insert("StorySnap",null,storyValues);
+        }
+    }
+
+    public ArrayList<Snap> getStorySnaps(Story story){
+        ArrayList<Snap> snaps=new ArrayList<>();
+        ArrayList<Integer> snapIds=new ArrayList<>();
+        String QUERY="select snapId from StorySnap " +
+                "where storyId=? " +
+                "order by timeStamp";
+        Cursor cursor = db.rawQuery(QUERY, new String[]{String.valueOf(story.getId())});
+        if(cursor.moveToFirst()) {
+            do {
+                snapIds.add(cursor.getInt(cursor.getColumnIndex("snapId")));
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        for(int i=0;i<snapIds.size();i++){
+            Snap snap=getSnapById(snapIds.get(i));
+            snaps.add(snap);
+        }
+        return snaps;
+    }
+    public Snap getStoryFirstSnap(Story story){
+        int id=0;
+
+        String QUERY="select snapId from StorySnap " +
+                "where storyId=? " +
+                "order by timeStamp " +
+                "limit 1";
+        Cursor cursor = db.rawQuery(QUERY, new String[]{String.valueOf(story.getId())});
+        if(cursor.moveToFirst()){
+            id=cursor.getInt(cursor.getColumnIndex("snapId"));
+        }
+        cursor.close();
+        Snap snap=getSnapById(id);
+        return snap;
+    }
+    public ArrayList<Story> getUserStories(int userId){
+        ArrayList<Story> stories = new ArrayList<Story>();
+        String QUERY="select * from Story " +
+                "where userId=? AND " +
+                "locked=?" +
+                "order by timeStamp desc";
+        Cursor cursor = db.rawQuery(QUERY, new String[]{String.valueOf(userId),"0"});
+        if(cursor.moveToFirst()){
+            do{
+                Story story=new Story();
+                story.setLocked(cursor.getInt(cursor.getColumnIndex("locked"))>0);
+                story.setTimestamp(new Date(cursor.getInt(cursor.getColumnIndex("timeStamp"))));
+                story.setId(cursor.getInt(cursor.getColumnIndex("id")));
+                story.setName(cursor.getString(cursor.getColumnIndex("name")));
+                stories.add(story);
+            }while(cursor.moveToNext());
+        }
+        cursor.close();
+        return stories;
+    }
+    public Snap getSnapById(int id){
+        Snap snap=null;
+        String QUERY="select * from Snap " +
+                "where id=?";
+        Cursor cursor = db.rawQuery(QUERY, new String[]{String.valueOf(id)});
+        if(cursor.moveToFirst()){
+            snap=new Snap();
+            snap.setUserId(cursor.getInt(cursor.getColumnIndex("userId")));
+            snap.setChecked(false);
+            snap.setPath(cursor.getString(cursor.getColumnIndex("path")));
+            snap.setSize(cursor.getInt(cursor.getColumnIndex("size")));
+            snap.setInMemory(cursor.getInt(cursor.getColumnIndex("inMemory"))>0);
+            snap.setIsLocked(cursor.getInt(cursor.getColumnIndex("isLocked")));
+            snap.setTimestamp(cursor.getString(cursor.getColumnIndex("timeStamp")));
+            snap.setTimingOut(cursor.getInt(cursor.getColumnIndex("timingOut")));
+        }
+        cursor.close();
+        return snap;
+    }
+
+    private int getLastedStoryId(){
+        int id = 0;
+        String QUERY="select id from Story order by timeStamp desc " +
+                "limit 1";
+        Cursor cursor = db.rawQuery(QUERY, null);
+        if(cursor.moveToFirst()){
+            id=cursor.getInt(cursor.getColumnIndex("id"));
+        }
+        cursor.close();
+        return id;
     }
 
     /**

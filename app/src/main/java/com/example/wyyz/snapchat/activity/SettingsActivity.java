@@ -12,6 +12,8 @@ import android.widget.TextView;
 import com.example.wyyz.snapchat.R;
 import com.example.wyyz.snapchat.db.SnapChatDB;
 import com.example.wyyz.snapchat.model.User;
+import com.example.wyyz.snapchat.util.ConnectionDetector;
+import com.example.wyyz.snapchat.util.ShowNetworkAlert;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -30,9 +32,18 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     FirebaseUser user;
     SnapChatDB db;
 
+    // Connection detector class
+    private ConnectionDetector cd;
+    // flag for Internet connection status
+    private Boolean isInternetPresent = false;
+    // Alert Dialog Manager
+    private ShowNetworkAlert alert = new ShowNetworkAlert();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        cd = new ConnectionDetector(getApplicationContext());
+        checkavailability();
         setContentView(R.layout.activity_settings);
         user= FirebaseAuth.getInstance().getCurrentUser();
         db=SnapChatDB.getInstance(SettingsActivity.this);
@@ -94,6 +105,19 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
                 doSignout();
             default:
                 break;
+        }
+    }
+
+    public void checkavailability() {
+        // Check if Internet present
+        isInternetPresent = cd.isConnectingToInternet();
+        if (!isInternetPresent) {
+            // Internet Connection is not present
+            alert.showAlertDialog(SettingsActivity.this,
+                    "Fail",
+                    "Internet Connection is NOT Available", false);
+            // stop executing code by return
+            return;
         }
     }
 

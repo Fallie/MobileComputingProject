@@ -29,12 +29,14 @@ public class ImageAdapter extends ArrayAdapter {
     private ArrayList<CheckBox> checkBoxes=new ArrayList<>();
     private ArrayList<ImageView> imageViews=new ArrayList<>();
     private ArrayList<View> shadows=new ArrayList<>();
+    private String fragname;
 
-    public ImageAdapter(Context context, int layoutResourceId, ArrayList data) {
+    public ImageAdapter(Context context, int layoutResourceId, ArrayList data, String fragmentName) {
         super(context, layoutResourceId, data);
         this.layoutResourceId = layoutResourceId;
         this.context = context;
         this.selectMap=new boolean[data.size()];
+        this.fragname = fragmentName;
         for(int i=0;i<selectMap.length;i++){
             selectMap[i]=false;
         }
@@ -91,6 +93,7 @@ public class ImageAdapter extends ArrayAdapter {
                 intent.putExtra("SnapPath",item.getPath());
                 intent.putExtra("TimeStamp",item.getTimestamp());
                 intent.putExtra("Size",item.getSize());
+                intent.putExtra("Label",fragname);
                 context.startActivity(intent);
 
             }
@@ -106,6 +109,11 @@ public class ImageAdapter extends ArrayAdapter {
             imgv.setClickable(false);
         }
 
+    }
+    public void disableSelectImg(){
+        for(ImageView imgv:imageViews){
+            imgv.setClickable(false);
+        }
     }
 
     public void toggleOffSelect() {

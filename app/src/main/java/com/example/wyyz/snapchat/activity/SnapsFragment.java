@@ -46,7 +46,7 @@ public class SnapsFragment extends Fragment {
             String url=s.getPath();
         }
         Log.d("snaps",String.valueOf(snaps.size()));
-        snapImgAdapter = new ImageAdapter(snapActivity, R.layout.image_item, snaps);
+        snapImgAdapter = new ImageAdapter(snapActivity, R.layout.image_item, snaps,"My Snap");
         gridView.setAdapter(snapImgAdapter);
         return snapsView;
     }

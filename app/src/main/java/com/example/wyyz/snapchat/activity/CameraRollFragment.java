@@ -48,7 +48,7 @@ public class CameraRollFragment extends Fragment{
         View camerarollView= inflater.inflate(R.layout.fragment_snaps, container, false);
         snapActivity = (SnapActivity) getActivity();
         gridView = (GridView) camerarollView.findViewById(R.id.gridView);
-        cameraRollImgAdapter = new ImageAdapter(snapActivity, R.layout.image_item, snaps);
+        cameraRollImgAdapter = new ImageAdapter(snapActivity, R.layout.image_item, snaps,"My CameraRoll");
         gridView.setAdapter(cameraRollImgAdapter);
         new GetSnapsFromSystem().execute();
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
