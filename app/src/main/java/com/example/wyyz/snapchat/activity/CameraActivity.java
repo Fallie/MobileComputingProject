@@ -15,7 +15,6 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.GestureDetector;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
@@ -71,8 +70,8 @@ public class CameraActivity extends AppCompatActivity implements SurfaceHolder.C
     private static final int chosenSize = 0;
     //If the permission of accessing camera is set to true or false.
     private boolean permission = false;
-    //Gesture implementation
-    private GestureDetector gestureDetector;
+    //Record the current state of flash
+    private boolean flash = false;
 
     /*Buttons and views used in the corresponding layout.*/
     Button btnTakePhoto;
@@ -81,6 +80,7 @@ public class CameraActivity extends AppCompatActivity implements SurfaceHolder.C
     Button btnOpenSnap;
     Button btnProfile;
     Button btnDiscovery;
+    Button btnFlash;
     Button btnMsg;
     SurfaceView surfaceView;
     SurfaceHolder surfaceHolder;
@@ -269,6 +269,32 @@ public class CameraActivity extends AppCompatActivity implements SurfaceHolder.C
                 startActivity(intent);
             }
         });
+        btnFlash= (Button) findViewById(R.id.btnFlash);
+        btnFlash.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.i("click flash","change the state of flash");
+                updateFlashMode();
+            }
+        });
+
+    }
+
+    private void updateFlashMode() {
+
+        parameters = camera.getParameters();
+
+        //if flash is on then turn off, else turn on
+        if (flash) {
+            flash = false;
+            parameters.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
+            btnFlash.setBackgroundResource(R.drawable.flash_off);
+        } else {
+            flash = true;
+            parameters.setFlashMode(Camera.Parameters.FLASH_MODE_ON);
+            btnFlash.setBackgroundResource(R.drawable.flash_on_indicator);
+        }
+        camera.setParameters(parameters);
     }
 
     public void takePhoto() {
@@ -296,6 +322,7 @@ public class CameraActivity extends AppCompatActivity implements SurfaceHolder.C
                 Bitmap tmpPhoto = Bitmap.createBitmap(photo, 0, 0, photo.getWidth(),
                         photo.getHeight(), matrix, true);
                 TmpPhotoView.photo = tmpPhoto;
+                TmpPhotoView.copy = TmpPhotoView.photo;
                 //finish();
                 startActivity(intent);
                 //btnSavePhoto.setVisibility(View.VISIBLE);
@@ -480,6 +507,7 @@ public class CameraActivity extends AppCompatActivity implements SurfaceHolder.C
         parameters = camera.getParameters();
         List<Camera.Size> sizeList = parameters.getSupportedPictureSizes();
         parameters.setPictureSize(sizeList.get(chosenSize).width, sizeList.get(chosenSize).height);
+        parameters.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
         camera.setParameters(parameters);
         camera.setDisplayOrientation(90);
         try {
@@ -496,6 +524,7 @@ public class CameraActivity extends AppCompatActivity implements SurfaceHolder.C
         parameters = camera.getParameters();
         List<Camera.Size> sizeList = parameters.getSupportedPictureSizes();
         parameters.setPictureSize(sizeList.get(chosenSize).width, sizeList.get(chosenSize).height);
+        parameters.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
         camera.setParameters(parameters);
         camera.setDisplayOrientation(90);
         camera.startPreview();

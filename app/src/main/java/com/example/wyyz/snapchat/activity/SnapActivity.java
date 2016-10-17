@@ -23,11 +23,10 @@ import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
 
-
 public class SnapActivity extends FragmentActivity implements View.OnClickListener {
     CameraRollFragment cameraRollFragment;
     SnapsFragment snapsFragment;
-    private ArrayList<Integer> selectedSnapsId=new ArrayList<>();
+    private ArrayList<Integer> selectedSnapsId = new ArrayList<>();
     private boolean[] selectMap;
 
     private ViewPager pager ;
@@ -200,10 +199,4 @@ public class SnapActivity extends FragmentActivity implements View.OnClickListen
         }
     }
 
-    public void signOut(){
-        firebaseAuth.getInstance().signOut();
-        finish();
-        Intent intent = new Intent(this,MainActivity.class);
-        startActivity(intent);
-    }
 }
