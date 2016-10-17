@@ -24,7 +24,7 @@ import java.util.List;
 /**
  * Created by leify on 2016/10/16.
  */
-
+//This class is use to adapt the AllStoryList
 public class allStoryListAdapter extends BaseAdapter {
     Context context;
     ArrayList<ArrayList<FriendStorySnap>> list;
@@ -36,16 +36,7 @@ public class allStoryListAdapter extends BaseAdapter {
     private ArrayList<ArrayList<FriendStorySnap>> parse(ArrayList<ArrayList<FriendStorySnap>> _list)
     {
         ArrayList<ArrayList<FriendStorySnap>> list = _list;
-//                new ArrayList<ArrayList<FriendStorySnap>>();
-//        for(int i =0;i<_list.size();i++)
-//        {
-//            ArrayList<FriendStorySnap> story = new ArrayList<FriendStorySnap>();
-//            for(int r=0;r<_list.get(i).size();r++)
-////                if(isIndate(_list.get(i).get(r))&&isRecent(_list.get(i).get(r)))
-//                    story.add(_list.get(i).get(r));
-////            if(story.size()>0)
-//                list.add(story);
-//        }
+
         Log.e("copy length",""+list.size());
         return list;
     }
@@ -88,6 +79,7 @@ public class allStoryListAdapter extends BaseAdapter {
         return position;
     }
 
+    //to get the sub view
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         LayoutInflater layoutInflater = LayoutInflater.from(context);

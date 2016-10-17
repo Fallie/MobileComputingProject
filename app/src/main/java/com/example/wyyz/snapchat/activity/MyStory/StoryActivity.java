@@ -134,7 +134,7 @@ public class StoryActivity extends Activity {
 
 		try {
 
-
+//load the data
 
 			unsubscribed.clear();
 			subscribed.clear();
@@ -170,11 +170,12 @@ public class StoryActivity extends Activity {
 
 			LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
 					gridviewWidth, LinearLayout.LayoutParams.FILL_PARENT);
-			featureList.setLayoutParams(params); // 设置GirdView布局参数,横向布局的关键
-			featureList.setColumnWidth(itemWidth); // 设置列表项宽
-			featureList.setHorizontalSpacing(5); // 设置列表项水平间距
+			//set params to resize the view
+			featureList.setLayoutParams(params);
+			featureList.setColumnWidth(itemWidth);
+			featureList.setHorizontalSpacing(5);
 			featureList.setStretchMode(GridView.NO_STRETCH);
-			featureList.setNumColumns(size); // 设置列数量=列表集合数
+			featureList.setNumColumns(size);
 
 			setListViewHeightBasedOnChildren(subscriptionList);
 
@@ -219,12 +220,12 @@ public class StoryActivity extends Activity {
 
 		return myStory;
 	}
-
+//init the components
 	private void init() {
 
 		channels = DBOperator.getChannels();
 
-
+		//sort the channels
 		sort(channels);
 
 		frame = (ScrollView) findViewById(R.id.story_form);
@@ -289,7 +290,7 @@ public class StoryActivity extends Activity {
 		initAdapter(subscribed,unsubscribed);
 		initListener();
 	}
-
+//init the adapters
 	private void initAdapter(ArrayList<DiscoveryChannel> subscribed, ArrayList<DiscoveryChannel> unsubscribed) {
 
 		int size = unsubscribed.size();
@@ -300,13 +301,14 @@ public class StoryActivity extends Activity {
 		int gridviewWidth = (int) (size * (length + 4) * density);
 		int itemWidth = (int) (length * density);
 
+		//set params to resize the view
 		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
 				gridviewWidth, LinearLayout.LayoutParams.FILL_PARENT);
-		featureList.setLayoutParams(params); // 设置GirdView布局参数,横向布局的关键
-		featureList.setColumnWidth(itemWidth); // 设置列表项宽
-		featureList.setHorizontalSpacing(5); // 设置列表项水平间距
+		featureList.setLayoutParams(params);
+		featureList.setColumnWidth(itemWidth);
+		featureList.setHorizontalSpacing(5);
 		featureList.setStretchMode(GridView.NO_STRETCH);
-		featureList.setNumColumns(size); // 设置列数量=列表集合数
+		featureList.setNumColumns(size);
 
 		featureList.setAdapter(new featuredAdapter(this, unsubscribed));
 
@@ -318,7 +320,7 @@ public class StoryActivity extends Activity {
 
 
 
-
+//build the mystory list and change it size adaptingto its item number
 		storyList.setAdapter(new MyStoryListAdapter(this, myStory));
 		setListViewHeightBasedOnChildren(storyList);
 
@@ -330,6 +332,7 @@ public class StoryActivity extends Activity {
 		friendStoryList.setAdapter(new newStoryListAdapter(this, stories));
 		setListViewHeightBasedOnChildren(friendStoryList);
 
+		//build the all stories list
 		fetchAllStory(allStories);
 		allStoryList.setAdapter(new allStoryListAdapter(this, allStories));
 		setListViewHeightBasedOnChildren(allStoryList);
@@ -342,7 +345,7 @@ public class StoryActivity extends Activity {
 
 	}
 
-
+//init listener
 	private void initListener()
 	{
 		Log.e("initListener","start");
@@ -372,34 +375,18 @@ public class StoryActivity extends Activity {
 				public void onClick(View v) {
 					Log.e("Button action", "turn to search friend activity");
 					try {
-//						Log.e("stories size",""+stories.size());
-//						ArrayList<ArrayList<FriendStorySnap>> tmp = new ArrayList<ArrayList<FriendStorySnap>>();
-//						tmp = stories;
-//						for(int i =0;i<stories.size();i++)
-//							if(stories.get(i).size()==0)
-//								tmp.remove(stories.get(i));
-//						Log.e("stories size",""+tmp.size());
-//						stories.clear();
-//						stories.addAll(tmp);
+
 						Log.e("stories size",""+stories.size());
 						for(int i =0;i<stories.size();i++)
 							Log.e("story size "+i,""+stories.get(i).size());
-//						try {
 
-//						}catch(Exception e)
-//						{
-////							e.printStackTrace();
-//							Log.e("error",e.getMessage());
-//						}
-//						fetchFriendStory(new ArrayList<ArrayList<FriendStorySnap>> a);
 					}
 					catch(Exception e)
 					{
 						Log.e("error", e.getMessage());
 						e.printStackTrace();
 					}
-//				Intent intent = new Intent(StoryActivity.this, DiscoverActivity.class);
-//				startActivity(intent);
+
 				}
 			});
 
@@ -408,8 +395,7 @@ public class StoryActivity extends Activity {
 				@Override
 				public void onClick(View v) {
 					Log.e("Button action", "turn to chat activity");
-//				Intent intent = new Intent(StoryActivity.this, DiscoverActivity.class);
-//				startActivity(intent);
+
 				}
 			});
 
@@ -418,8 +404,7 @@ public class StoryActivity extends Activity {
 				@Override
 				public void onClick(View v) {
 					Log.e("Button action", "turn to camera activity");
-//				Intent intent = new Intent(StoryActivity.this, CameraActivity.class);
-//				startActivity(intent);
+
 				}
 			});
 
@@ -428,11 +413,10 @@ public class StoryActivity extends Activity {
 				@Override
 				public void onClick(View v) {
 					Log.e("Button action", "turn to story activity");
-//				Intent intent = new Intent(StoryActivity.this, DiscoverActivity.class);
-//				startActivity(intent);
 				}
 			});
 
+			//turn to the discover activity
 			Log.e("initListener", "featureList");
 			featureList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 				public void onItemClick(AdapterView<?> parent, View view,
@@ -461,6 +445,7 @@ public class StoryActivity extends Activity {
 				}
 			});
 
+			//turn to the subscribed discover channel
 			Log.e("initListener", "subscriptionList");
 			subscriptionList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 				public void onItemClick(AdapterView<?> parent, View view,
@@ -489,17 +474,7 @@ public class StoryActivity extends Activity {
 			});
 
 
-//			storyList.setOnChildClickListener(new ExpandableListView.OnChildClickListener()
-//			{
-//				@Override
-//				public boolean onChildClick(ExpandableListView parent, View v, int group_position, int child_position, long id)
-//				{
-//					Log.e("group",""+group_position);
-//					Log.e("child",""+child_position);
-//					return true;
-//				}
-//			});
-
+//add child listener to the expandable list
 			storyList.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
 				@Override
 				public boolean onChildClick(ExpandableListView parent, View v,
@@ -533,50 +508,36 @@ public class StoryActivity extends Activity {
 				}
 			});
 
-
+//expand the list
 			Log.e("initListener", "expand listener");
 			storyList.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
 
 				@Override
 				public void onGroupExpand(int groupPosition) {
-                /*
-                 * Log.e("expand", "扩展"); for (int i = 0; i < 4; i++) { if
-                 * ((groupPosition != i) && listView.isGroupExpanded(i)) {
-                 * listView.collapseGroup(i); } }
-                 */
-					/**
-					 * 计算group下的子项的高度
-					 */
+
 					setExpandedListViewHeightBasedOnChildren(storyList,
 							groupPosition);
-					// 更新group每一项的高度
+
 					setListViewHeightBasedOnChildren(
 							storyList);
 				}
 			});
 
-
+//collpase the list
 			Log.e("initListener", "collapsel listener");
 			storyList.setOnGroupCollapseListener(new ExpandableListView.OnGroupCollapseListener() {
 
 				@Override
 				public void onGroupCollapse(int groupPosition) {
-					Log.e("collapse", "收缩");
+					Log.e("collapse", "collapse");
 
-                /*
-                 * 计算group下的每一个子项的高度，然后收缩
-                 */
 					setCollapseListViewHeightBasedOnChildren(storyList,
 							groupPosition);
-                /*
-                 * 重新评估group的高度
-                 */
+
+
 					setListViewHeightBasedOnChildren(
 							storyList);
-                /*
-                 * ListUtil.setCollapseListViewHeightBasedOnChildren(listView,
-                 * groupPosition);
-                 */
+
 				}
 			});
 
@@ -697,7 +658,7 @@ public class StoryActivity extends Activity {
 
 		Log.e("initListener","finished");
 	}
-
+//sort the channel based on the subscription and visit num
 	private void sort (ArrayList<DiscoveryChannel> channels)
 	{
 		Object[] objects = channels.toArray();
@@ -745,7 +706,7 @@ public class StoryActivity extends Activity {
 			channels.add(channelArray[i]);
 	}
 
-
+//fetch recent data from the firebase
 	private void fetchFriendStory(final ArrayList<ArrayList<FriendStorySnap>> stories) {
 
 		stories.clear();
@@ -911,7 +872,7 @@ public class StoryActivity extends Activity {
 
 
 
-
+// fetch all data within a day from firebase
 	private void fetchAllStory(final ArrayList<ArrayList<FriendStorySnap>> stories) {
 
 		stories.clear();
@@ -1076,7 +1037,7 @@ public class StoryActivity extends Activity {
 	}
 
 
-
+//resize the listview to adapt to its items
 	public static void setListViewHeightBasedOnChildren(ListView listView) {
 		ListAdapter listAdapter = listView.getAdapter();
 		if (listAdapter == null) {
@@ -1095,7 +1056,7 @@ public class StoryActivity extends Activity {
 		params.height = totalHeight + (listView.getDividerHeight() * (listAdapter.getCount() - 1));
 		listView.setLayoutParams(params);
 	}
-
+//resize the expandable listview
 	public static void setExpandedListViewHeightBasedOnChildren(
 			ExpandableListView listView, int groupPosition) {
 		ExpandableListAdapter listAdapter = listView.getExpandableListAdapter();

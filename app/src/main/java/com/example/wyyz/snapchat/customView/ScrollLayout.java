@@ -11,7 +11,7 @@ import android.view.ViewGroup;
 import android.widget.Scroller;
 
 /**
- * 仿Launcher中的WorkSapce，可以左右滑动切换屏幕的类
+ * to make the screan swipeable
  * 
  */
 public class ScrollLayout extends ViewGroup {
@@ -193,7 +193,7 @@ public class ScrollLayout extends ViewGroup {
 				// Fling enough to move right
 				Log.e(TAG, "snap right");
 				onScreenChangeListener.onScreenChange(mCurScreen + 1);
-				//只往右移动才加载数据
+				//urn right to load data
 				onScreenChangeListenerDataLoad.onScreenChange(mCurScreen+1);
 				snapToScreen(mCurScreen + 1);
 			} else {
@@ -254,7 +254,7 @@ public class ScrollLayout extends ViewGroup {
 		return mTouchState != TOUCH_STATE_REST;
 	}
 
-	//分页监听
+	//page listener
 	public interface OnScreenChangeListener {
 		void onScreenChange(int currentIndex);
 	}
@@ -267,7 +267,7 @@ public class ScrollLayout extends ViewGroup {
 	}
 	
 	
-	//动态数据监听
+	//data listener
 	public interface OnScreenChangeListenerDataLoad {
 		void onScreenChange(int currentIndex);
 	}

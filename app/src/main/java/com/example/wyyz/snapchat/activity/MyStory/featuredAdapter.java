@@ -42,6 +42,7 @@ public class featuredAdapter extends BaseAdapter {
         return position;
     }
 
+    //to get the  sub view
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         LayoutInflater layoutInflater = LayoutInflater.from(context);

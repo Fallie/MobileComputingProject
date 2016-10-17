@@ -44,9 +44,9 @@ public class PageControlView extends LinearLayout {
 	private void generatePageControl(int currentIndex) {
 		this.removeAllViews();
 
-		int pageNum = 6; // 显示多少个 
-		int pageNo = currentIndex+1; //第几页
-		int pageSum = this.count; //总共多少页
+		int pageNum = 6; // suggest number
+		int pageNo = currentIndex+1; //page number
+		int pageSum = this.count; //page amount
 		
 		
 		if(pageSum>1){

@@ -115,6 +115,8 @@ public class MyStoryListAdapter extends BaseExpandableListAdapter {
         return 0;
     }
 
+
+    //to get the  snaps in MyStory
     @Override
     public View getChildView(int groupPosition, int childPosition,
                              boolean isLastChild, View convertView, ViewGroup parent) {

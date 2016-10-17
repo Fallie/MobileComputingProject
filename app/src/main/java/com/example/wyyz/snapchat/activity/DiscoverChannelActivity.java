@@ -37,7 +37,7 @@ import java.util.List;
 import static android.R.attr.data;
 
 /**
- * GridView分页显示安装的应用程序
+ * GridView to suggest the multiple page
  */
 public class DiscoverChannelActivity extends Activity {
 	private ScrollLayout mScrollLayout;
@@ -120,15 +120,10 @@ public class DiscoverChannelActivity extends Activity {
 		new Thread(new refreshThread()).start();
 		dialog.show();
 
-//		myHandler = new MyHandler(this,1);
-		
-//		//起一个线程更新数据
-//		MyThread m = new MyThread();
-//		new Thread(m).start();
 	}
 	
 	/**
-	 * gridView 的onItemLick响应事件
+	 * gridview listener
 	 */
 	public OnItemClickListener listener = new OnItemClickListener() {
 
@@ -157,20 +152,7 @@ public class DiscoverChannelActivity extends Activity {
 		}
 	}
 //
-//	@Override
-//	public boolean onKeyUp(int keyCode, KeyEvent event) {
-//		if(keyCode == KeyEvent.KEYCODE_BACK){
-//			return true;
-//		}else{
-//			return super.onKeyUp(keyCode, event);
-//		}
-//	}
-//
-//	@Override
-//	public void onBackPressed() {
-//		super.onBackPressed();
-//		finish();
-//	}
+
 
 	private void initComponent() {
 
@@ -184,7 +166,7 @@ public class DiscoverChannelActivity extends Activity {
 	
 	
 	
-	// 更新后台数据
+	// refresh the data
 	class MyThread implements Runnable {
 		public void run() {
 //			try {
@@ -204,7 +186,7 @@ public class DiscoverChannelActivity extends Activity {
 
 	public class refreshThread implements Runnable {
 
-		// 在run方法中完成网络耗时的操作
+		// download resources through internet
 		@Override
 		public void run() {
 			try{
@@ -291,18 +273,18 @@ public class DiscoverChannelActivity extends Activity {
 					mScrollLayout.addView(appPage);
 				}
 				Log.e("multiple app","load pageControl");
-				//加载分页
+				//load the multiple page
 				pageControl = (PageControlView) findViewById(R.id.pageControl);
 				pageControl.bindScrollViewGroup(mScrollLayout);
 				Log.e("multiple app","load pageControl data");
-				//加载分页数据
+				//load the page data
 				dataLoad.bindScrollViewGroup(mScrollLayout);
 			}
 			else if(msg.what == 2)
 			{
 				Log.e("multiple app","download data finish");
 				dialog.dismiss();
-				//起一个线程更新数据
+				//refresh data in a thread
 				MyThread m = new MyThread();
 				new Thread(m).start();
 			}
@@ -341,7 +323,7 @@ public class DiscoverChannelActivity extends Activity {
 
 	
 	
-	//分页数据
+	//page data
 	class DataLoading {
 		private int count;
 		public void bindScrollViewGroup(ScrollLayout scrollViewGroup) {
@@ -355,11 +337,7 @@ public class DiscoverChannelActivity extends Activity {
 		}
 		
 		private void generatePageControl(int currentIndex){
-//			//如果到最后一页，就加载16条记录
-//			if(count==currentIndex+1){
-//				MyThread m = new MyThread();
-//				new Thread(m).start();
-//			}
+
 		}
 	}
 }

@@ -24,7 +24,7 @@ import java.util.List;
 /**
  * Created by leify on 2016/10/16.
  */
-
+//This is to adapt to the recently coming stories
 public class newStoryListAdapter extends BaseAdapter {
     Context context;
     ArrayList<ArrayList<FriendStorySnap>> list;
@@ -92,6 +92,8 @@ public class newStoryListAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         LayoutInflater layoutInflater = LayoutInflater.from(context);
 
+
+        //the snap is not read yet
         if(list.get(position).size()>0) {
             List<FriendStorySnap> story = list.get(position);
             if (getLowestNum(list.get(position)) == 0) {
