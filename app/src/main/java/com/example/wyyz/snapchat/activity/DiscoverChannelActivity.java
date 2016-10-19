@@ -27,6 +27,8 @@ import com.example.wyyz.snapchat.R;
 import com.example.wyyz.snapchat.customView.PageControlView;
 import com.example.wyyz.snapchat.customView.ScrollLayout;
 import com.example.wyyz.snapchat.db.DataBaseOperator;
+import com.example.wyyz.snapchat.util.ConnectionDetector;
+import com.example.wyyz.snapchat.util.ShowNetworkAlert;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -55,6 +57,12 @@ public class DiscoverChannelActivity extends Activity {
 	private boolean subscriptionState;
 	private String channelName;
 	private List<Spanned> discovers;
+	// Connection detector class
+	private ConnectionDetector cd;
+	// flag for Internet connection status
+	private Boolean isInternetPresent = false;
+	// Alert Dialog Manager
+	private ShowNetworkAlert alert = new ShowNetworkAlert();
 
 	private DataBaseOperator DBOperator;
 
@@ -63,6 +71,8 @@ public class DiscoverChannelActivity extends Activity {
 		// TODO Auto-generated method stub
 		
 		super.onCreate(savedInstanceState);
+		cd = new ConnectionDetector(getApplicationContext());
+		checkavailability();
 		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		mContext = this;
 		setContentView(R.layout.discover_channel);
@@ -121,6 +131,21 @@ public class DiscoverChannelActivity extends Activity {
 		dialog.show();
 
 	}
+
+	public void checkavailability() {
+		// Check if Internet present
+		isInternetPresent = cd.isConnectingToInternet();
+		if (!isInternetPresent) {
+			// Internet Connection is not present
+			alert.showAlertDialog(DiscoverChannelActivity.this,
+					"Fail",
+					"Internet Connection is NOT Available", false);
+			// stop executing code by return
+			return;
+		}
+	}
+
+
 	
 	/**
 	 * gridview listener
@@ -159,7 +184,7 @@ public class DiscoverChannelActivity extends Activity {
 		dialog = new ProgressDialog(this);
 		dialog.setTitle("Notification");
 		dialog.setMessage("Loading...");
-		dialog.setCancelable(false);
+		dialog.setCancelable(true);
 	}
 
 

@@ -40,8 +40,11 @@ import com.example.wyyz.snapchat.util.TmpText;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -54,7 +57,10 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 /**This class is for creating preview after taking a photo.
  * This activity supports edit, add pictogram, add text, cancel editing, set timer, create mystory,
@@ -430,9 +436,9 @@ public class PreviewActivity extends AppCompatActivity implements View.OnClickLi
                 Log.e("image save url",downloadUrl.toString());
 
 
-                String userId = mAuth.getInstance().getCurrentUser().getUid();
+                final String userId = mAuth.getInstance().getCurrentUser().getUid();
                 final FirebaseDatabase database = FirebaseDatabase.getInstance();
-                DatabaseReference ref = database.getReference();
+                final DatabaseReference ref = database.getReference();
 
                 DatabaseReference myStoryRef = ref.child("MyStory").child(userId).child(photo.getTimestamp());
 
@@ -451,6 +457,40 @@ public class PreviewActivity extends AppCompatActivity implements View.OnClickLi
                 myStorySnap.setPath(downloadUrl.toString());
                 myStorySnap.setTimestamp(photo.getTimestamp());
                 myStorySnap.setTimingOut(photo.getTimingOut());
+
+                DatabaseReference friendRef = ref.child("Users").child(userId).child("friends");
+//		Log.e("read friend",friendRef.toString());
+                friendRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+//				Log.e("read friend","start");
+                        if (dataSnapshot.getValue() != null) {
+//					Log.d("friendDataSnap", dataSnapshot.getValue().toString());
+                            Map<String, Object> objectMap = (HashMap<String, Object>) dataSnapshot.getValue();
+                            Set<String> friendIdSet = new HashSet<String>();
+                            Iterator<Map.Entry<String, Object>> entries = objectMap.entrySet().iterator();
+                            while (entries.hasNext()) {
+                                Map.Entry<String, Object> entry = entries.next();
+                                friendIdSet.add(entry.getKey());
+                            }
+
+                            //get user instance of friend
+                            Log.e("friend size", "" + friendIdSet.size());
+                            for (final String friendid : friendIdSet) {
+                                Log.e("friend to add record",  friendid);
+                                DatabaseReference myStoryRef = ref.child("MyStoryVisitRecord").child(userId).child(photo.getTimestamp()).child(friendid);
+                                Map<String, Object> updates = new HashMap<String, Object>();
+                                updates.put("visitNum", 0);
+
+                                myStoryRef.updateChildren(updates);
+                            }
+                            Log.e("visit record","finished");
+                        }
+                    }
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                    }
+                });
                 try {
                     SnapChatDB.getInstance(PreviewActivity.this).saveMyStory(myStorySnap, userId);
                 }

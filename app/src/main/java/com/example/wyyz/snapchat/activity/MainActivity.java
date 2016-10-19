@@ -20,6 +20,8 @@ import android.widget.Toast;
 import com.example.wyyz.snapchat.R;
 import com.example.wyyz.snapchat.db.SnapChatDB;
 import com.example.wyyz.snapchat.model.User;
+import com.example.wyyz.snapchat.util.ConnectionDetector;
+import com.example.wyyz.snapchat.util.ShowNetworkAlert;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -44,6 +46,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private SnapChatDB snapChatDB;
     private boolean autoLogin;
     private ProgressDialog progressDialog;
+    // Connection detector class
+    private ConnectionDetector cd;
+    // flag for Internet connection status
+    private Boolean isInternetPresent = false;
+    // Alert Dialog Manager
+    private ShowNetworkAlert alert = new ShowNetworkAlert();
 
     @Bind(R.id.input_email) EditText _emailText;
     @Bind(R.id.input_password)EditText _passwordText;
@@ -54,6 +62,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        cd = new ConnectionDetector(getApplicationContext());
+        checkavailability();
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
         mAuth = FirebaseAuth.getInstance();
@@ -86,6 +96,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             }
         };
+    }
+
+    public void checkavailability() {
+        // Check if Internet present
+        isInternetPresent = cd.isConnectingToInternet();
+        if (!isInternetPresent) {
+            // Internet Connection is not present
+            alert.showAlertDialog(MainActivity.this,
+                    "Fail",
+                    "Internet Connection is NOT Available", false);
+            // stop executing code by return
+            return;
+        }
     }
 
     @Override

@@ -48,6 +48,10 @@ public class featuredAdapter extends BaseAdapter {
         LayoutInflater layoutInflater = LayoutInflater.from(context);
         convertView = layoutInflater.inflate(R.layout.activity_cornerstone_item, null);
         ImageView imageView = (ImageView) convertView.findViewById(R.id.imageView);
+        imageView.setMinimumHeight(200);
+        imageView.setMaxHeight(200);
+        imageView.setMinimumWidth(200);
+        imageView.setMaxWidth(200);
 
 //        CityItem city = list.get(position);
 

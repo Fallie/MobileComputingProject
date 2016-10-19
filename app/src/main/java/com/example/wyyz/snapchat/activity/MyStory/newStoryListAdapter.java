@@ -50,28 +50,6 @@ public class newStoryListAdapter extends BaseAdapter {
         return list;
     }
 
-    private boolean isRecent(FriendStorySnap snap)
-    {
-//        if(snap.getVisitNum()<2)
-//            return true;
-//        else
-//            return false;
-        return true;
-    }
-
-    private boolean isIndate(FriendStorySnap snap)
-    {
-//        Date date = Calendar.getInstance().getTime();
-//        Date snapDate = snap.getTimestamp();
-//
-//        long day = date.getTime() / (24*60*60*1000) - snapDate.getTime() / (24*60*60*1000);
-//
-//        if(!(day>1))
-//            return true;
-//        else
-//            return false;
-        return true;
-    }
 
     @Override
     public int getCount() {
@@ -106,10 +84,13 @@ public class newStoryListAdapter extends BaseAdapter {
                 TextView storyTimeText = (TextView) convertView.findViewById(R.id.storyTimeText);
 
 //        CityItem city = list.get(position);
-
+                Date time=list.get(position).get(0).getTimestamp();
+                for(FriendStorySnap snap: list.get(position))
+                        if(time.before(snap.getTimestamp()))
+                            time = snap.getTimestamp();
 //        imageView.setImageBitmap(channel.getProfile());
                 storyNameText.setText(list.get(position).get(0).getUserName());
-                storyTimeText.setText(list.get(position).get(0).getTimestamp().toString());
+                storyTimeText.setText(time.toString());
             } else if (getLowestNum(list.get(position)) == 1) {
                 convertView = layoutInflater.inflate(R.layout.mystory_nonheader, null);
                 ImageView imageView = (ImageView) convertView.findViewById(R.id.headerPreview);

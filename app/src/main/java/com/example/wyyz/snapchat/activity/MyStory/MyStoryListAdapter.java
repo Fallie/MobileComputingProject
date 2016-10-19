@@ -72,6 +72,7 @@
 package com.example.wyyz.snapchat.activity.MyStory;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -85,6 +86,8 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.wyyz.snapchat.R;
+import com.example.wyyz.snapchat.activity.CameraActivity;
+import com.example.wyyz.snapchat.activity.SnapActivity;
 import com.example.wyyz.snapchat.model.FriendStory;
 import com.example.wyyz.snapchat.model.MyStorySnap;
 
@@ -199,6 +202,8 @@ public class MyStoryListAdapter extends BaseExpandableListAdapter {
 				public void onClick(View v) {
 //					String email = searchView.getText().toString();
 					Log.e("start activity", "save to memory");
+                    Intent intent = new Intent(context, SnapActivity.class);
+                    context.startActivity(intent);
 				}
 			});
 			ImageButton addSnap = (ImageButton) convertView.findViewById(R.id.AddSnap);
@@ -208,6 +213,8 @@ public class MyStoryListAdapter extends BaseExpandableListAdapter {
 				public void onClick(View v) {
 //					String email = searchView.getText().toString();
 					Log.e("open activity", "camera");
+                    Intent intent = new Intent(context, CameraActivity.class);
+                    context.startActivity(intent);
 				}
 			});
             } else {

@@ -24,11 +24,14 @@ import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 
 import com.example.wyyz.snapchat.R;
+import com.example.wyyz.snapchat.activity.MyStory.StoryActivity;
 import com.example.wyyz.snapchat.customView.LazyScrollView;
 import com.example.wyyz.snapchat.customView.Rotate3dAnimation;
 import com.example.wyyz.snapchat.db.DataBaseOperator;
 import com.example.wyyz.snapchat.model.DiscoveryChannel;
+import com.example.wyyz.snapchat.util.ConnectionDetector;
 import com.example.wyyz.snapchat.util.OnSwipeTouchListener;
+import com.example.wyyz.snapchat.util.ShowNetworkAlert;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -61,35 +64,61 @@ public class DiscoverActivity extends Activity {
 
 	private DataBaseOperator DBOperator;
 	private ArrayList<DiscoveryChannel> channels;
+	// Connection detector class
+	private ConnectionDetector cd;
+	// flag for Internet connection status
+	private Boolean isInternetPresent = false;
+	// Alert Dialog Manager
+	private ShowNetworkAlert alert = new ShowNetworkAlert();
 
 	private ArrayList<ArrayList<String>> contents = new ArrayList<ArrayList<String>>();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
-		this.setContentView(R.layout.activity_cornerstone);
+		try {
+			super.onCreate(savedInstanceState);
+		cd = new ConnectionDetector(getApplicationContext());
+		checkavailability();
+			this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+			this.setContentView(R.layout.activity_cornerstone);
 
-		DBOperator = new DataBaseOperator(this);
-		DBOperator.initialise();
-		DBOperator.update("leif@gmail.com");
+			DBOperator = new DataBaseOperator(this);
+			DBOperator.initialise();
+			DBOperator.update("leif@gmail.com");
 
-		init();
+			init();
 //		CornerstoneControl cornerstoneControl = new CornerstoneControl(this, mHandler);
 //		cornerstoneControl.onSuccess();
-		int channelNum = DBOperator.getChannelNum();
+			int channelNum = DBOperator.getChannelNum();
 
-		for(int i=0;i<channelNum;i++)
-		{
-			infos.add(""+i);
+			for (int i = 0; i < channelNum; i++) {
+				infos.add("" + i);
+			}
+
+
+			Message msg = Message.obtain();
+			msg.obj = infos;
+			msg.what = 0;
+			mHandler.sendMessage(msg);
 		}
-
-
-		Message msg = Message.obtain();
-		msg.obj = infos;
-		msg.what = 0;
-		mHandler.sendMessage(msg);
+		catch(Exception e)
+		{
+			Log.e("erroe", e.getMessage());
+		}
 	}
+	public void checkavailability() {
+		// Check if Internet present
+		isInternetPresent = cd.isConnectingToInternet();
+		if (!isInternetPresent) {
+			// Internet Connection is not present
+			alert.showAlertDialog(DiscoverActivity.this,
+					"Fail",
+					"Internet Connection is NOT Available", false);
+			// stop executing code by return
+			return;
+		}
+	}
+
 	@SuppressWarnings("deprecation")
 	private void init() {
 //init the ui componet
